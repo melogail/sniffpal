@@ -12,13 +12,7 @@ import { useTranslations } from '@/composables/useTranslations';
 import { petTitle } from '@/lib/petTitle';
 import { taxonomyName } from '@/lib/taxonomy';
 import { cn } from '@/lib/utils';
-import type {
-    CommentBounds,
-    PetCard,
-    ReportCategory,
-    ReportReason,
-    SelectOption,
-} from '@/types';
+import type { CommentBounds, PetCard, ReportReasonsByType } from '@/types';
 
 /**
  * One listing, as a grid tile — drawn as legacy's `components/web/PetCard.vue`
@@ -145,24 +139,23 @@ const canInteract = computed(() => Boolean(page.props.auth.user));
  * does for its inline thread (and it renders no card). Established 2026-09-06
  * by reading the `Inertia::render()` payloads of `HomeController::index`,
  * `ProfileController::show` and `PetController::show`, each of which sends
- * `reportCategories`, `reportReasons` and `commentBounds`; not by rendering
+ * `reportReasons` and `commentBounds`; not by rendering
  * any of them.
  *
  * The optionality below is therefore a *fallback*, not a description of any
  * current page: each prop that fails to arrive turns off exactly one control —
  * no character counter without the bound, no report entry in a comment's menu
- * without both vocabularies — rather than breaking the dialog. Nothing errors
+ * without the reason vocabulary — rather than breaking the dialog. Nothing errors
  * and `vue-tsc` stays clean either way, which is the whole hazard: the three
  * `as ... | undefined` casts here are a widening on server-supplied props, so
  * they silence the one tool that would otherwise catch a controller that
  * stopped sending a key (`.ai/rules/general.md`, "Review what a change REMOVED
  * — and what it merely made optional").
  *
- * Read those three controller keys as live consumers of this component, not as
- * spare payload. `Home` carrying the two report vocabularies repairs a parity
- * regression against legacy and `reportCategories` goes past what legacy ever
- * sent, so parity is the floor here and never a licence to delete: removing one
- * key turns its control off on that page silently.
+ * Read those controller keys as live consumers of this component, not as
+ * spare payload. `Home` carrying the report vocabulary repairs a parity
+ * regression against legacy, so parity is the floor here and never a licence
+ * to delete: removing one key turns its control off on that page silently.
  */
 const commentMaxLength = computed(
     () =>
@@ -170,15 +163,8 @@ const commentMaxLength = computed(
         null,
 );
 
-const reportCategories = computed(
-    () =>
-        page.props.reportCategories as
-            | SelectOption<ReportCategory>[]
-            | undefined,
-);
-
 const reportReasons = computed(
-    () => page.props.reportReasons as SelectOption<ReportReason>[] | undefined,
+    () => page.props.reportReasons as ReportReasonsByType | undefined,
 );
 
 const place = computed(() =>
@@ -273,7 +259,6 @@ const frame = cn(
                 :pet="pet"
                 :can-interact="canInteract"
                 :comment-max-length="commentMaxLength"
-                :report-categories="reportCategories"
                 :report-reasons="reportReasons"
                 class="mt-auto"
             />

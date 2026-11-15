@@ -29,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property string $body
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read User|Admin|null $author The MorphTo's two targets; null once that account is deleted.
  */
 #[Fillable(['ticket_id', 'author_type', 'author_id', 'body'])]
 class TicketMessage extends Model

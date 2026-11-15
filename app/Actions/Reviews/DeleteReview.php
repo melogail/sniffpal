@@ -71,7 +71,7 @@ class DeleteReview
     public function handle(Review $review): bool
     {
         return DB::transaction(function () use ($review): bool {
-            $review->reports()->delete();
+            $review->reports()->pending()->delete();
 
             return (bool) $review->delete();
         });

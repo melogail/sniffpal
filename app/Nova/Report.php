@@ -2,14 +2,18 @@
 
 namespace App\Nova;
 
-use App\Enums\ReportCategory;
+use App\Enums\Reportable;
 use App\Enums\ReportReason;
+use App\Enums\ReportResolution;
 use App\Enums\ReportStatus;
 use App\Models\Report as ReportModel;
-use App\Nova\Actions\ChangeReportStatus;
+use App\Models\User as UserModel;
 use App\Nova\Actions\PurgeOrphanedReports;
-use App\Nova\Filters\ReportCategoryFilter;
+use App\Nova\Actions\ReopenReport;
+use App\Nova\Actions\ResolveReport;
+use App\Nova\Filters\ReportableTypeFilter;
 use App\Nova\Filters\ReportReasonFilter;
+use App\Nova\Filters\ReportResolutionFilter;
 use App\Nova\Filters\ReportStatusFilter;
 use App\Nova\Metrics\PendingReports;
 use App\Nova\Metrics\ReportsByStatus;
@@ -25,6 +29,7 @@ use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\KeyValue;
 use Laravel\Nova\Fields\MorphTo;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Filters\Filter;
@@ -43,24 +48,26 @@ use Laravel\Nova\ResourceTool;
  * the column defaults to `pending` and a Form Request forwarding validated()
  * must never be able to file a report that is already resolved. Every field on
  * this resource is therefore read only, including status: the only way to move
- * a report is Actions\ChangeReportStatus, which assigns the property
- * explicitly. There is no create form and no update form (see
+ * a report is Actions\ResolveReport (or ReopenReport), which goes through
+ * App\Actions\Reports\ResolveReport and assigns the property explicitly. There is no create form and no update form (see
  * App\Nova\Policies\ReportPolicy); a report is user-filed evidence, not
  * something an admin authors or edits.
  *
  * ## Reaching the target
  *
- * `reportable_type` holds a morph alias (`comment` or `review`, the backing
- * values of App\Enums\Reportable), so the MorphTo below lists exactly the two
- * Nova resources those aliases map to. It is the link a moderator follows from
- * "somebody reported this" to the thing itself, where Comment and Review each
- * carry their own delete action.
+ * `reportable_type` holds a morph alias (the backing values of
+ * App\Enums\Reportable), so the MorphTo below lists exactly the Nova
+ * resources those aliases map to. It is the link a moderator follows from
+ * "somebody reported this" to the thing itself, where each target resource
+ * carries its own actions.
  *
  * A report whose target has already been deleted resolves to a null
- * `reportable`. Those rows are the ones the cleanup Actions exist to prevent
- * (.ai/rules/actions.md); when one does appear, it shows as an empty target and
- * is cleared with Actions\PurgeOrphanedReports, which refuses to touch a report
- * whose target still resolves. Nova's own delete button is off for this
+ * `reportable`. For a **pending** report that is a stranded row the cleanup
+ * Actions exist to prevent (.ai/rules/actions.md); for a **resolved** one it is
+ * expected — the decision removed the content and the row is kept as the
+ * moderation record (strikes, who decided, the note). Either is cleared with
+ * Actions\PurgeOrphanedReports, which refuses to touch a report whose target
+ * still resolves. Nova's own delete button is off for this
  * resource (ReportPolicy::delete) so that a bulk "select all" cannot empty the
  * queue.
  *
@@ -110,7 +117,7 @@ class Report extends Resource
      *
      * @var array<int, string>
      */
-    public static $with   = ['user', 'reportable'];
+    public static $with   = ['user', 'subject', 'reportable', 'resolvedBy'];
 
     /**
      * Order the queue by what still needs deciding, then oldest first.
@@ -141,12 +148,18 @@ class Report extends Resource
      */
     public static function defaultOrderings(Builder $query): Builder
     {
-        $model = $query->getModel();
+        $model        = $query->getModel();
+
+        $highPriority = ReportReason::highPriorityValues();
 
         return $query
             ->orderByRaw(
                 'case when reports.status = ? then 0 else 1 end',
                 [ReportStatus::Pending->value],
+            )
+            ->orderByRaw(
+                'case when reports.reason in ('.implode(',', array_fill(0, count($highPriority), '?')).') then 0 else 1 end',
+                $highPriority,
             )
             ->orderBy($model->getQualifiedCreatedAtColumn())
             ->orderBy($model->getQualifiedKeyName());
@@ -176,18 +189,33 @@ class Report extends Resource
                 ->types([
                     Comment::class,
                     Review::class,
+                    Pet::class,
+                    User::class,
                 ])
                 ->exceptOnForms(),
+
+            BelongsTo::make('Subject', 'subject', User::class)
+                ->exceptOnForms()
+                ->nullable()
+                ->help('The member accountable for the reported content. Kept even after the content is deleted.'),
+
+            Number::make('Strikes against subject', fn (): ?int => $this->resource->subject instanceof UserModel
+                ? $this->resource->subject->strikeCount()
+                : null)
+                ->onlyOnDetail()
+                ->help('Resolved reports held against this member, all time.'),
+
+            Number::make('Other pending reports on this target', fn (): int => ReportModel::query()
+                ->pending()
+                ->where('reportable_type', $this->resource->reportable_type)
+                ->where('reportable_id', $this->resource->reportable_id)
+                ->whereKeyNot($this->resource->getKey())
+                ->count())
+                ->onlyOnDetail(),
 
             BelongsTo::make('Reported By', 'user', User::class)
                 ->exceptOnForms()
                 ->searchable(),
-
-            Select::make('Category', 'category')
-                ->options(ReportCategory::class)
-                ->displayUsingLabels()
-                ->exceptOnForms()
-                ->sortable(),
 
             Select::make('Reason', 'reason')
                 ->options(ReportReason::class)
@@ -198,6 +226,32 @@ class Report extends Resource
             Textarea::make('Description')
                 ->exceptOnForms()
                 ->alwaysShow(),
+
+            Badge::make('Resolution', 'resolution')
+                ->map([
+                    ReportResolution::Warned->value             => 'info',
+                    ReportResolution::ContentRemoved->value     => 'danger',
+                    ReportResolution::ContentPurged->value      => 'danger',
+                    ReportResolution::AccountDeactivated->value => 'danger',
+                ])
+                ->labels(collect(ReportResolution::cases())
+                    ->mapWithKeys(fn (ReportResolution $case): array => [$case->value => $case->label()])
+                    ->all())
+                ->nullable()
+                ->hideFromIndex(),
+
+            Textarea::make('Moderator Note', 'moderator_note')
+                ->exceptOnForms()
+                ->alwaysShow(),
+
+            BelongsTo::make('Resolved By', 'resolvedBy', Admin::class)
+                ->exceptOnForms()
+                ->nullable()
+                ->hideFromIndex(),
+
+            DateTime::make('Resolved At', 'resolved_at')
+                ->exceptOnForms()
+                ->hideFromIndex(),
 
             KeyValue::make('Metadata', 'metadata')
                 ->keyLabel('Field')
@@ -210,9 +264,6 @@ class Report extends Resource
                 ->sortable()
                 ->filterable(),
 
-            DateTime::make('Last Decision At', 'updated_at')
-                ->exceptOnForms()
-                ->hideFromIndex(),
         ];
     }
 
@@ -251,8 +302,9 @@ class Report extends Resource
     {
         return [
             ReportStatusFilter::make(),
-            ReportCategoryFilter::make(),
+            ReportableTypeFilter::make(),
             ReportReasonFilter::make(),
+            ReportResolutionFilter::make(),
         ];
     }
 
@@ -274,7 +326,12 @@ class Report extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
-            ChangeReportStatus::make(),
+            ResolveReport::make()
+                ->confirmText('Records the decision on this report and every pending report on the same target, acts on the content or account where the decision says so, and tells the reporter the outcome.')
+                ->confirmButtonText('Apply decision')
+                ->cancelButtonText('Cancel'),
+
+            ReopenReport::make(),
 
             PurgeOrphanedReports::make()
                 ->confirmText('This permanently deletes the selected reports. It refuses to run if any of them still points at a comment or review that exists — those are evidence and belong in Change Status.')

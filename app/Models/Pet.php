@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Concerns\HasComments;
 use App\Concerns\HasLikes;
+use App\Concerns\HasReport;
 use App\Concerns\HasSaves;
 use App\Contracts\Commentable;
 use App\Contracts\Likeable;
+use App\Contracts\Reportable;
 use App\Enums\HealthStatus;
 use App\Enums\ListingType;
 use App\Enums\PetGender;
@@ -119,10 +121,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
     'traits',
     'additional_info',
 ])]
-class Pet extends Model implements Commentable, HasMedia, Likeable
+class Pet extends Model implements Commentable, HasMedia, Likeable, Reportable
 {
     /** @use HasFactory<PetFactory> */
-    use HasComments, HasFactory, HasLikes, HasSaves, InteractsWithMedia, SoftDeletes;
+    use HasComments, HasFactory, HasLikes, HasReport, HasSaves, InteractsWithMedia, SoftDeletes;
 
     /**
      * The single photo collection; the cover photo is the member carrying the
@@ -194,6 +196,26 @@ class Pet extends Model implements Commentable, HasMedia, Likeable
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * A listing whose owner has been deactivated is unreachable, like the
+     * owner's profile (see User::resolveRouteBinding()).
+     */
+    public function resolveRouteBinding($value, $field = null): ?self
+    {
+        $pet = $this->resolveRouteBindingQuery($this, $value, $field)
+            ->whereHas('user', fn (Builder $users) => $users->active())
+            ->first();
+
+        return $pet instanceof self ? $pet : null;
+    }
+
+    public function reportSubject(): ?User
+    {
+        $this->loadMissing('user');
+
+        return $this->user;
     }
 
     /**

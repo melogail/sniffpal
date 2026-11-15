@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { MessageSquare, PawPrint, Settings } from '@lucide/vue';
+import { MessageSquare, PawPrint, Settings, ShieldCheck } from '@lucide/vue';
 import Heading from '@/components/Heading.vue';
 import HelpFaq from '@/components/help/HelpFaq.vue';
 import HelpTopicLink from '@/components/help/HelpTopicLink.vue';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/composables/useTranslations';
-import { support } from '@/routes';
+import { guidelines, support } from '@/routes';
 import { edit as editProfile } from '@/routes/profile';
 import { create as createPet } from '@/routes/pets';
 
@@ -75,6 +75,12 @@ const { t } = useTranslations();
                     :title="t('help.account_settings')"
                     :description="t('help.account_settings_desc')"
                     :href="editProfile()"
+                />
+                <HelpTopicLink
+                    :icon="ShieldCheck"
+                    :title="t('guidelines.title')"
+                    :description="t('guidelines.help_link_desc')"
+                    :href="guidelines()"
                 />
             </div>
         </section>

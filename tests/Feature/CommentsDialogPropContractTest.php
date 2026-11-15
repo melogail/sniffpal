@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\Models\Comment;
 use App\Models\Pet;
@@ -15,7 +14,7 @@ use Inertia\Testing\AssertableInertia;
  * One component consumes three pages. `Home` and `profile.show` mount it from a
  * feed card through `PetCardCommentButton`; `pets.show` mounts the same list
  * and composer inline through `CommentThread`. Every prop it reads is
- * **optional** the whole way down — `maxLength`, `reportCategories` and
+ * **optional** the whole way down — `maxLength` and
  * `reportReasons` are all `?` on the Vue side — so a page that stops sending
  * one turns off exactly one control and nothing else: no character counter
  * under the composer, or no report entry in a comment's menu. Nothing throws,
@@ -136,8 +135,7 @@ test('ships the report vocabulary and the comment ceiling the dialog reads', fun
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->component($component)
-            ->where('reportCategories', ReportCategory::options())
-            ->where('reportReasons', ReportReason::options())
+            ->where('reportReasons', ReportReason::optionsByTarget())
             ->where('commentBounds', ['max_length' => 140, 'thread_per_page' => 3]));
 })->with(COMMENTS_DIALOG_HOST_COMPONENTS);
 

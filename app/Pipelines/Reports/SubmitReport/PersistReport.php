@@ -74,9 +74,9 @@ class PersistReport
         try {
             $report = Report::create([
                 'user_id'         => $context->reporter->getKey(),
+                'subject_user_id' => $context->reportableAsTarget()->reportSubject()?->getKey(),
                 'reportable_type' => Relation::getMorphAlias($reportable::class),
                 'reportable_id'   => $reportable->getKey(),
-                'category'        => $context->category,
                 'reason'          => $context->reason,
                 'description'     => $context->description,
             ]);

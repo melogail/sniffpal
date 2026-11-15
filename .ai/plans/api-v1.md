@@ -8,7 +8,7 @@ JSON API for the Flutter app (`~/mobile-apps/sniffpal`). Mirrors the web feature
 
 ## Backend
 - Controllers in `app/Http/Controllers/Api/V1/` and `Api/V1/Auth/`.
-- Resources in `app/Http/Resources/{Comment,Conversation,Message,Notification,Pet,Profile,Review,Ticket,User}`; the same resource classes feed Inertia props on the web.
+- Resources in `app/Http/Resources/{Comment,Conversation,Message,Notification,Pet,Profile,Review,Ticket,User}`; the same resource classes feed Inertia props on the web. `Ticket/TicketThreadResource` is API-only (header + thread in one body). `User/AccountResource` carries `show_phone` and `whatsapp_enabled` so the app's privacy screen reads and writes the same keys as the web.
 - Form requests are shared with the web via the `*ValidationRules` concerns.
 - `UseSanctumGuard` middleware makes `auth()` resolve the bearer token user on `api/*`.
 
@@ -17,6 +17,7 @@ JSON API for the Flutter app (`~/mobile-apps/sniffpal`). Mirrors the web feature
 - Auth: `POST auth/register|login|logout|forgot-password|social/{provider}|email/verification-notification`.
 - `auth:sanctum`: `GET|PATCH|DELETE me`, `GET me/badges`, `PUT me/password`, notifications (index, read, read-all, destroy-all), conversations (index, store, show, messages index/store, read), messages (update, destroy, pin), likes (`pets/{pet}/like`, `comments/{comment}/like`, `profiles/{user}/like`), comments store/update/destroy, reviews store/update/destroy, reports store.
 - `auth:sanctum` + `verified`: `POST pets`, `PUT|DELETE pets/{pet}`, `PATCH pets/{pet}/status`.
+- Support: public `POST contact`; `auth:sanctum` `GET|POST me/tickets`, `GET me/tickets/{ticket}`, `POST me/tickets/{ticket}/reply|close` (see [support-tickets.md](support-tickets.md), [contact-form.md](contact-form.md)). `GET options` also carries `ticket_categories` and `bounds.support`.
 
 ## Frontend
 None here; consumer is the Flutter app.

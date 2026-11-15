@@ -17,6 +17,28 @@ describe('show', function () {
             ->assertJsonPath('is_self', false);
     });
 
+    test('the phone shows only when the owner allows it and WhatsApp only to a signed-in viewer', function () {
+        $profile = User::factory()->create(['phone' => '+20 100 000 0000', 'show_phone' => true, 'whatsapp_enabled' => true]);
+
+        $this->getJson(route('api.v1.profiles.show', $profile))
+            ->assertOk()
+            ->assertJsonPath('phone', '+20 100 000 0000')
+            ->assertJsonPath('whatsapp', null);
+
+        Sanctum::actingAs(User::factory()->create());
+
+        $this->getJson(route('api.v1.profiles.show', $profile))
+            ->assertOk()
+            ->assertJsonPath('whatsapp', 'https://wa.me/201000000000');
+
+        $private = User::factory()->create(['phone' => '+20 100 000 0001']);
+
+        $this->getJson(route('api.v1.profiles.show', $private))
+            ->assertOk()
+            ->assertJsonMissingPath('phone')
+            ->assertJsonPath('whatsapp', null);
+    });
+
     test('a deactivated profile is a 404', function () {
         $profile = User::factory()->inactive()->create();
 

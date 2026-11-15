@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Auth\SocialLoginController;
 use App\Http\Controllers\Api\V1\BadgeController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CommentController;
+use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\MessageController;
 use App\Http\Controllers\Api\V1\NotificationController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Api\V1\PetController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\ReviewController;
+use App\Http\Controllers\Api\V1\TicketController;
 use App\Models\Pet;
 use Illuminate\Support\Facades\Route;
 
@@ -95,6 +97,14 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         ->name('reviews.index');
 
     /*
+     * The guest contact form, public as on the web (`contact.store`) and on
+     * the same IP-keyed limiter. A member opens a ticket instead (below).
+     */
+    Route::post('contact', [ContactController::class, 'store'])
+        ->middleware('throttle:contact-messages')
+        ->name('contact.store');
+
+    /*
     |----------------------------------------------------------------------
     | Auth
     |----------------------------------------------------------------------
@@ -167,6 +177,31 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
                 Route::post('read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
                 Route::delete('/', [NotificationController::class, 'destroyAll'])->name('destroy-all');
                 Route::post('{notification}/read', [NotificationController::class, 'markAsRead'])->name('read');
+            });
+        });
+
+        /*
+         * The member's support desk — routes/settings.php `tickets.*`, which
+         * sit behind `auth` alone there too, so an account still waiting on
+         * its verification mail can ask why. Same limiters: opening a ticket
+         * creates two rows and spends `ticket-messages`; a follow-up or close
+         * on an owned ticket is `content-edits` like every owned-row write.
+         * Under `me/` because every row here is the caller's own.
+         */
+        Route::prefix('me/tickets')->name('tickets.')->group(function (): void {
+            Route::get('/', [TicketController::class, 'index'])->name('index');
+
+            Route::post('/', [TicketController::class, 'store'])
+                ->middleware('throttle:ticket-messages')
+                ->name('store');
+
+            Route::whereNumber('ticket')->group(function (): void {
+                Route::get('{ticket}', [TicketController::class, 'show'])->name('show');
+
+                Route::middleware('throttle:content-edits')->group(function (): void {
+                    Route::post('{ticket}/reply', [TicketController::class, 'reply'])->name('reply');
+                    Route::post('{ticket}/close', [TicketController::class, 'close'])->name('close');
+                });
             });
         });
     });

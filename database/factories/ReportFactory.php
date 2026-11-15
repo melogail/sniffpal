@@ -2,37 +2,30 @@
 
 namespace Database\Factories;
 
-use App\Enums\ReportCategory;
+use App\Contracts\Reportable;
 use App\Enums\ReportReason;
+use App\Enums\ReportResolution;
 use App\Enums\ReportStatus;
-use App\Models\Comment;
+use App\Models\Admin;
 use App\Models\Report;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
- * Reports are unique per (user, reportable_type, reportable_id): a user may
- * report a given comment or review only once. Build them from distinct pairs.
- *
  * @extends Factory<Report>
  */
 class ReportFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var class-string<Report>
-     */
     protected $model = Report::class;
 
     /**
-     * Define the model's default state.
-     *
-     * The optional() metadata is wrapped in a closure so it is only built when
-     * the value is kept: passthrough() takes an already-evaluated argument, and
-     * Factory::expandAttributes() resolves the closure afterwards.
+     * A fresh, pending report against a new review. `status` is pending rather
+     * than random: the cleanup flows delete only pending reports on removed
+     * content, so a random status would make those tests flaky. Use
+     * `resolved()` / `dismissed()` for a decided report.
      *
      * @return array<string, mixed>
      */
@@ -40,12 +33,12 @@ class ReportFactory extends Factory
     {
         return [
             'user_id'         => User::factory(),
+            'subject_user_id' => null,
             'reportable_type' => Relation::getMorphAlias(Review::class),
             'reportable_id'   => Review::factory(),
-            'category'        => fake()->randomElement(ReportCategory::cases()),
             'reason'          => fake()->randomElement(ReportReason::cases()),
             'description'     => fake()->optional(0.7)->paragraph(),
-            'status'          => fake()->randomElement(ReportStatus::cases()),
+            'status'          => ReportStatus::Pending,
             'metadata'        => fake()->optional(0.5)->passthrough(
                 fn (array $attributes): array => [
                     'ip_address' => fake()->ipv4(),
@@ -56,20 +49,17 @@ class ReportFactory extends Factory
     }
 
     /**
-     * File the report against a comment or a review, the two models on the
-     * Reportable whitelist.
+     * Point the report at an existing target and record who is accountable for it.
      */
-    public function forReportable(Comment|Review $reportable): static
+    public function forReportable(Model&Reportable $reportable): static
     {
         return $this->state(fn (array $attributes): array => [
             'reportable_type' => $reportable->getMorphClass(),
             'reportable_id'   => $reportable->getKey(),
+            'subject_user_id' => $reportable->reportSubject()?->getKey(),
         ]);
     }
 
-    /**
-     * Leave the report awaiting a moderator decision.
-     */
     public function pending(): static
     {
         return $this->state(fn (array $attributes): array => [
@@ -77,17 +67,22 @@ class ReportFactory extends Factory
         ]);
     }
 
-    /**
-     * Close the report, a moderator having acted on it.
-     *
-     * The companion of pending(): the default draws a random ReportStatus, so a
-     * test that needs a report the moderation queue must *not* count cannot get
-     * one from the definition.
-     */
-    public function resolved(): static
+    public function resolved(ReportResolution $resolution = ReportResolution::ContentRemoved): static
     {
         return $this->state(fn (array $attributes): array => [
-            'status' => ReportStatus::Resolved,
+            'status'      => ReportStatus::Resolved,
+            'resolution'  => $resolution,
+            'resolved_by' => Admin::factory(),
+            'resolved_at' => now(),
+        ]);
+    }
+
+    public function dismissed(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'status'      => ReportStatus::Rejected,
+            'resolved_by' => Admin::factory(),
+            'resolved_at' => now(),
         ]);
     }
 }

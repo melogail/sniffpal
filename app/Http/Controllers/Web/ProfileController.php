@@ -7,7 +7,6 @@ use App\Actions\Profiles\LoadProfileForDisplay;
 use App\Concerns\CommentValidationRules;
 use App\Concerns\ResolvesRequestUser;
 use App\Concerns\ReviewValidationRules;
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Pet\PetCardResource;
@@ -47,7 +46,7 @@ use Inertia\Response;
  *
  * ## This is where the report vocabulary finally reaches the frontend
  *
- * ReportCategory::options() and ReportReason::options() had no route anywhere in
+ * ReportReason::options() had no route anywhere in
  * the application, so the report dialog the report vertical was built for had no
  * source for its two select controls. They ship as props here — the same
  * arrangement PetController::create uses for the listing form's enums — because
@@ -126,13 +125,12 @@ class ProfileController extends Controller
         $profile = $loadProfileForDisplay->handle($user, $this->viewer($request));
 
         return Inertia::render('profile/Show', [
-            'profile'          => ProfileResource::make($profile['user']),
-            'listings'         => PetCardResource::collection($profile['listings']),
-            'reviews'          => ReviewResource::collection($profile['reviews']),
-            'reportCategories' => ReportCategory::options(),
-            'reportReasons'    => ReportReason::options(),
-            'reviewBounds'     => $this->reviewBounds(),
-            'commentBounds'    => $this->commentBounds(),
+            'profile'       => ProfileResource::make($profile['user']),
+            'listings'      => PetCardResource::collection($profile['listings']),
+            'reviews'       => ReviewResource::collection($profile['reviews']),
+            'reportReasons' => ReportReason::optionsByTarget(),
+            'reviewBounds'  => $this->reviewBounds(),
+            'commentBounds' => $this->commentBounds(),
         ]);
     }
 

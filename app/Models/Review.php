@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 
 /**
  * A rating (1-5) plus optional comment written by a user about a reviewable model.
@@ -117,13 +116,11 @@ class Review extends Model implements Reportable
 
     /**
      * The review's author is answerable for it, so they cannot report it.
-     *
-     * @return Collection<int, User>
      */
-    public function reportSubjects(): Collection
+    public function reportSubject(): ?User
     {
         $this->loadMissing('user');
 
-        return collect([$this->user])->filter()->values();
+        return $this->user;
     }
 }

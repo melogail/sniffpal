@@ -16,7 +16,7 @@ Signed-in account management: profile details and avatar, password, 2FA, passkey
 `GET settings` → redirect to profile; `GET|PATCH|DELETE settings/profile`; `GET settings/privacy`; `GET settings/security`; `PUT settings/password`; `GET settings/appearance` (Inertia shortcut); tickets routes. API: `GET|PATCH|DELETE api/v1/me`, `PUT api/v1/me/password`.
 
 ## Frontend
-`pages/settings/{Profile,Security,Privacy,Appearance,Tickets,Ticket}.vue` sharing a settings layout. Profile shows the avatar at the top; privacy holds `show_phone` and `whatsapp_enabled`.
+`pages/settings/{Profile,Security,Privacy,Appearance,Tickets,Ticket}.vue` sharing a settings layout. Profile shows the avatar at the top; privacy holds `show_phone` and `whatsapp_enabled`. Mobile mirrors the split: Edit profile, Privacy (`/settings/privacy`, saved through `PATCH me`), Password, Support tickets.
 
 ## Guards
 Throttles `profile-updates` (10/min), `password-changes` (6/min), `account-deletions` (10/min, 20/h), `password-confirmations`. Deletion requires password confirmation.

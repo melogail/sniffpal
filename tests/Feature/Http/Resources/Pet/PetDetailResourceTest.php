@@ -167,7 +167,7 @@ test('every top level key the resource emits is either a rule on the edit reques
     $readShapes = [
         'id', 'slug', 'age', 'views', 'category', 'breed', 'user', 'is_owner',
         'featured_image', 'photos', 'likes_count', 'comments_count',
-        'root_comments_count', 'is_liked',
+        'root_comments_count', 'is_liked', 'has_reported',
         'comments', 'created_at', 'updated_at',
     ];
 

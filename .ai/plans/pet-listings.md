@@ -36,6 +36,6 @@ Nova `Pet` resource with `PurgePetListing` action. Metric `NewPets`.
 
 ## Open work
 - Per-page Open Graph title/description for listing pages (only a default og:image exists).
-- Pets are not reportable (only comments and reviews are).
 - `views` is a vanity counter and is unthrottled on a public GET; do not build metrics on it.
 - Analytics events (post created, shared, conversation started) are not emitted anywhere.
+- Listings of a deactivated owner are hidden from the feed (`ScopeToAvailablePets`) and 404 on show (`Pet::resolveRouteBinding`); comment/review loaders do not yet filter by author state.

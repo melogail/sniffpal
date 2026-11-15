@@ -26,20 +26,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useMutationSurface } from '@/composables/useMutationSurface';
 import { useTranslations } from '@/composables/useTranslations';
 import { store as storeReport } from '@/routes/reports';
-import type {
-    ReportCategory,
-    ReportReason,
-    ReportableType,
-    SelectOption,
-} from '@/types';
+import type { ReportReasonsByType, ReportableType } from '@/types';
 
 /**
- * Report a comment or a review.
+ * Report a comment, a review, a listing or a member.
  *
- * The option lists are page props (`profile.show`, `pets.show` carry them);
- * there is no options endpoint, so a page that hosts this dialog has to accept
- * and forward them. A surface that has neither does not render this control at
- * all rather than offering two empty selects — see `CommentBody`.
+ * `reasons` is the page prop (`home`, `profile.show`, `pets.show` carry it),
+ * keyed by target type; there is no options endpoint, so a page that hosts this
+ * dialog has to accept and forward it. A surface without it does not render
+ * this control at all rather than offering an empty select — see `CommentBody`.
  *
  * `CannotReportOwnContent` surfaces under the flow-level key `report`, not
  * under a field, so that message is rendered above the fields rather than
@@ -68,19 +63,20 @@ import type {
 const {
     reportableType,
     reportableId,
-    categories,
     reasons,
     reported = false,
     showTrigger = true,
+    triggerLabel = undefined,
 } = defineProps<{
     reportableType: ReportableType;
     reportableId: number;
-    categories: SelectOption<ReportCategory>[];
-    reasons: SelectOption<ReportReason>[];
+    reasons: ReportReasonsByType;
     /** Already reported by this viewer — no form is offered either way. */
     reported?: boolean;
     /** Render the built-in flag button. Off when a menu item opens this. */
     showTrigger?: boolean;
+    /** The built-in trigger's text; `common.report` ("Report") when omitted. */
+    triggerLabel?: string;
 }>();
 
 const open = defineModel<boolean>('open', { default: false });
@@ -89,6 +85,7 @@ const { t } = useTranslations();
 const surface = useMutationSurface();
 
 const options = computed(() => ({ preserveScroll: true, ...surface.visit }));
+const reasonOptions = computed(() => reasons[reportableType] ?? []);
 </script>
 
 <template>
@@ -104,7 +101,7 @@ const options = computed(() => ({ preserveScroll: true, ...surface.visit }));
                 {{
                     reported
                         ? t('comments.already_reported')
-                        : t('common.report')
+                        : (triggerLabel ?? t('common.report'))
                 }}
             </Button>
         </DialogTrigger>
@@ -147,29 +144,6 @@ const options = computed(() => ({ preserveScroll: true, ...surface.visit }));
                 <InputError :message="errors.report" />
 
                 <div class="grid gap-2">
-                    <Label for="report-category">
-                        {{ t('reports.category') }}
-                    </Label>
-                    <Select name="category" required>
-                        <SelectTrigger id="report-category" class="w-full">
-                            <SelectValue
-                                :placeholder="t('reports.select_category')"
-                            />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem
-                                v-for="option in categories"
-                                :key="option.value"
-                                :value="option.value"
-                            >
-                                {{ option.label }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <InputError :message="errors.category" />
-                </div>
-
-                <div class="grid gap-2">
                     <Label for="report-reason">
                         {{ t('reports.reason') }}
                     </Label>
@@ -181,7 +155,7 @@ const options = computed(() => ({ preserveScroll: true, ...surface.visit }));
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem
-                                v-for="option in reasons"
+                                v-for="option in reasonOptions"
                                 :key="option.value"
                                 :value="option.value"
                             >
@@ -190,6 +164,12 @@ const options = computed(() => ({ preserveScroll: true, ...surface.visit }));
                         </SelectContent>
                     </Select>
                     <InputError :message="errors.reason" />
+                    <p
+                        v-if="reportableType === 'pet'"
+                        class="text-muted-foreground text-xs"
+                    >
+                        {{ t('reports.pet_hint') }}
+                    </p>
                 </div>
 
                 <div class="grid gap-2">

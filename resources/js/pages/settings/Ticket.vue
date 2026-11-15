@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head, Link } from '@inertiajs/vue3';
+import { Form, Head, Link, router, usePage } from '@inertiajs/vue3';
+import { useEchoNotification } from '@laravel/echo-vue';
 import { ArrowLeft, CheckCircle2 } from '@lucide/vue';
 import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
@@ -42,6 +43,30 @@ const { tag } = useLocale();
 const openedOn = computed(() => formatDate(ticket.created_at, tag.value));
 
 const options = { preserveScroll: true };
+
+/**
+ * Realtime: support's reply or close arrives as `TicketRepliedNotification`
+ * on the member's private channel, the same one the bell listens on. The
+ * thread and the status are then re-read rather than taken from the payload,
+ * which carries keys and ids only. The route is `auth`, so the viewer is set.
+ * shortcut: a status change without a reply or close sends no notification, so it shows on the next visit.
+ */
+const viewerId = usePage().props.auth.user?.id;
+
+if (viewerId) {
+    useEchoNotification<{ type: string; ticket_id: number }>(
+        `App.Models.User.${viewerId}`,
+        (notification) => {
+            if (
+                notification.type === 'ticket' &&
+                notification.ticket_id === ticket.id
+            ) {
+                router.reload({ only: ['ticket', 'messages', 'canReply'] });
+            }
+        },
+        'App\\Notifications\\TicketRepliedNotification',
+    );
+}
 </script>
 
 <template>

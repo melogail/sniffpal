@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "npm run development",
+    "development": "mix",
+    "watch": "mix watch",
+    "prod": "npm run production",
+    "production": "mix --production"
+  },
+  "devDependencies": {
+    "laravel-nova-devtool": "file:../../vendor/laravel/nova-devtool",
+    "tailwindcss": "^3.4.19",
+    "webpack": "5.105.4"
+  },
+  "overrides": {
+    "webpack": "5.105.4"
+  }
+}

@@ -22,14 +22,18 @@ test('the tickets index renders with the open count, status badge and category l
         ->assertJsonPath('resources.1.title', 'Missing breed');
 });
 
-test('a ticket detail page lists its thread through the ticket-messages resource', function () {
+test('a ticket detail page is the chat tool first, with the raw thread collapsed under it', function () {
     $admin  = Admin::factory()->create();
     $ticket = Ticket::factory()->answered('We fixed it.')->create();
 
     $this->actingAs($admin, 'admin')
         ->getJson("/nova-api/tickets/{$ticket->getKey()}")
         ->assertOk()
-        ->assertJsonPath('resource.title', $ticket->subject);
+        ->assertJsonPath('resource.title', $ticket->subject)
+        ->assertJsonPath('panels.0.component', 'ticket-thread')
+        ->assertJsonPath('panels.0.showToolbar', true)
+        ->assertJsonPath('panels.1.name', 'Messages')
+        ->assertJsonPath('panels.1.fields.0.collapsedByDefault', true);
 
     $this->actingAs($admin, 'admin')
         ->getJson("/nova-api/ticket-messages?viaResource=tickets&viaResourceId={$ticket->getKey()}&viaRelationship=messages&relationshipType=hasMany")

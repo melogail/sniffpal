@@ -2,7 +2,7 @@
 
 namespace App\Concerns;
 
-use App\Enums\ReportCategory;
+use App\Enums\Reportable;
 use App\Enums\ReportReason;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
@@ -50,11 +50,10 @@ trait ReportValidationRules
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    protected function reportRules(): array
+    protected function reportRules(Reportable $target): array
     {
         return [
-            'category'    => ['required', Rule::enum(ReportCategory::class)],
-            'reason'      => ['required', Rule::enum(ReportReason::class)],
+            'reason'      => ['required', Rule::enum(ReportReason::class)->only(ReportReason::forTarget($target))],
             'description' => ['nullable', 'string', 'max:'.$this->maxDescriptionLength()],
         ];
     }

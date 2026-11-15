@@ -83,7 +83,7 @@ Generated from `php artisan route:list --path=api`. Run it for the live list; th
 | --- | --- | --- | --- |
 | POST | `/reports/{reportable_type}/{reportable_id}` | Verified | `reports` |
 
-`{reportable_type}` is `user`, `comment` or `review`.
+`{reportable_type}` is `pet`, `user`, `comment` or `review`. Body: `reason` (one of the reasons `GET /options` lists under `report_reasons.{reportable_type}`) and optional `description`. Limiter: 5/min and 20/day per user.
 
 ## Messaging
 
@@ -107,6 +107,19 @@ Generated from `php artisan route:list --path=api`. Run it for the live list; th
 | POST | `/notifications/{notification}/read` | Auth | `content-edits` |
 | POST | `/notifications/read-all` | Auth | `inbox-actions` |
 | DELETE | `/notifications` | Auth | `inbox-actions` |
+
+## Support
+
+| Method | Path | Auth | Limiter |
+| --- | --- | --- | --- |
+| POST | `/contact` | — (guest contact form) | `contact-messages` |
+| GET | `/me/tickets` | Auth | — |
+| POST | `/me/tickets` | Auth | `ticket-messages` |
+| GET | `/me/tickets/{ticket}` | Auth, owner | — |
+| POST | `/me/tickets/{ticket}/reply` | Auth, owner, not closed | `content-edits` |
+| POST | `/me/tickets/{ticket}/close` | Auth, owner, not closed | `content-edits` |
+
+`GET /me/tickets` pages on `?tickets=N` (ListUserTickets' page name). `POST /me/tickets`, `GET /me/tickets/{ticket}` and the close answer with `TicketThreadResource`: the ticket header plus `messages[]` and `can_reply`. A reply answers `201` with the `TicketMessageResource` it created. Ticket categories and the message ceiling ride on `GET /options` as `ticket_categories` and `bounds.support.max_message_length`.
 
 ## Response shapes
 

@@ -234,6 +234,8 @@ class Pet extends Resource
             new Panel('Timestamps', $this->timestampFields()),
 
             MorphMany::make('Comments', 'comments', Comment::class),
+
+            MorphMany::make('Reports', 'reports', Report::class),
         ];
     }
 

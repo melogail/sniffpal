@@ -76,7 +76,8 @@ trait ResolvesMorphTarget
     {
         $modelClass = $this->modelClass();
 
-        $model      = (new $modelClass)->resolveRouteBinding($id);
+        $instance   = new $modelClass;
+        $model      = $instance->resolveRouteBinding($id, $instance->getKeyName());
 
         if (! $model instanceof Model) {
             throw (new ModelNotFoundException)->setModel($modelClass, [$id]);

@@ -1,23 +1,18 @@
 <script setup lang="ts">
-import { Link } from "@inertiajs/vue3";
-import { computed } from "vue";
-import StartConversationButton from "@/components/messaging/StartConversationButton.vue";
-import { countLabel } from "@/components/pets/card/labels";
-import PetCardCommentButton from "@/components/pets/card/PetCardCommentButton.vue";
-import PetCardShareMenu from "@/components/pets/card/PetCardShareMenu.vue";
-import PetLikeButton from "@/components/pets/PetLikeButton.vue";
-import WhatsAppButton from "@/components/pets/WhatsAppButton.vue";
-import { Button } from "@/components/ui/button";
-import { useLocale } from "@/composables/useLocale";
-import { useTranslations } from "@/composables/useTranslations";
-import { petTitle } from "@/lib/petTitle";
-import { show as showPet } from "@/routes/pets";
-import type {
-    PetCard,
-    ReportCategory,
-    ReportReason,
-    SelectOption,
-} from "@/types";
+import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import StartConversationButton from '@/components/messaging/StartConversationButton.vue';
+import { countLabel } from '@/components/pets/card/labels';
+import PetCardCommentButton from '@/components/pets/card/PetCardCommentButton.vue';
+import PetCardShareMenu from '@/components/pets/card/PetCardShareMenu.vue';
+import PetLikeButton from '@/components/pets/PetLikeButton.vue';
+import WhatsAppButton from '@/components/pets/WhatsAppButton.vue';
+import { Button } from '@/components/ui/button';
+import { useLocale } from '@/composables/useLocale';
+import { useTranslations } from '@/composables/useTranslations';
+import { petTitle } from '@/lib/petTitle';
+import { show as showPet } from '@/routes/pets';
+import type { PetCard, ReportReasonsByType } from '@/types';
 
 /**
  * The card's action rows, laid out as legacy's (`components/web/PetCard.vue`,
@@ -89,7 +84,7 @@ const { pet, canInteract } = defineProps<{
     /** A signed-in viewer. Every write on this row needs a verified account. */
     canInteract: boolean;
     /**
-     * `commentBounds.max_length`, `reportCategories` and `reportReasons`, from
+     * `commentBounds.max_length` and `reportReasons`, from
      * whichever page mounted the card. Both pages that render a card — `Home`
      * and `profile.show` — ship all three today, as `pets.show` does for its
      * inline thread; established 2026-09-06 by reading the three
@@ -103,8 +98,7 @@ const { pet, canInteract } = defineProps<{
      * the casts there hide a missing key from `vue-tsc`.
      */
     commentMaxLength?: number | null;
-    reportCategories?: SelectOption<ReportCategory>[];
-    reportReasons?: SelectOption<ReportReason>[];
+    reportReasons?: ReportReasonsByType;
 }>();
 
 const { t } = useTranslations();
@@ -126,7 +120,7 @@ const owner = computed(() =>
  * state, so the label stays the same in both.
  */
 const likeLabel = computed(
-    () => `Like ${name.value}, ${countLabel(pet.likes_count, "like")}`,
+    () => `Like ${name.value}, ${countLabel(pet.likes_count, 'like')}`,
 );
 
 /**
@@ -143,7 +137,7 @@ const likeLabel = computed(
  */
 const messageLabel = computed(() =>
     owner.value
-        ? t("messaging.message_name_about", {
+        ? t('messaging.message_name_about', {
               name: owner.value.name,
               pet: name.value,
           })
@@ -151,7 +145,7 @@ const messageLabel = computed(() =>
 );
 
 const viewDetailsLabel = computed(
-    () => `${t("pets.view_details")}: ${name.value}`,
+    () => `${t('pets.view_details')}: ${name.value}`,
 );
 </script>
 
@@ -173,7 +167,6 @@ const viewDetailsLabel = computed(
                 :comments="pet.comments"
                 :can-interact="canInteract"
                 :max-length="commentMaxLength"
-                :report-categories="reportCategories"
                 :report-reasons="reportReasons"
             />
 
@@ -201,7 +194,7 @@ const viewDetailsLabel = computed(
                 class="h-11 flex-1 rounded-[14px]"
             >
                 <Link :href="showPet(pet.slug)" :aria-label="viewDetailsLabel">
-                    {{ t("pets.view_details") }}
+                    {{ t('pets.view_details') }}
                 </Link>
             </Button>
         </div>

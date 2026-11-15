@@ -1,11 +1,11 @@
-import type { Comment, CommentPreview } from "./comments";
-import type { Coordinate, DecimalColumn } from "./profile";
+import type { Comment, CommentPreview } from './comments';
+import type { Coordinate, DecimalColumn } from './profile';
 
-export type PetListingType = "adoption" | "sale" | "mating";
-export type PetStatus = "available" | "unavailable";
+export type PetListingType = 'adoption' | 'sale' | 'mating';
+export type PetStatus = 'available' | 'unavailable';
 /** `mixed` is a litter with both sexes in it; see `PetCard.male_count`. */
-export type PetGender = "male" | "female" | "mixed";
-export type PetHealthStatus = "healthy" | "minor_issues" | "chronic_condition";
+export type PetGender = 'male' | 'female' | 'mixed';
+export type PetHealthStatus = 'healthy' | 'minor_issues' | 'chronic_condition';
 
 /**
  * One `{value, label}` pair from a backing enum's `options()`.
@@ -193,6 +193,8 @@ export type PetDetail = {
     breed?: PetBreedOption | null;
     user?: PetOwner;
     is_owner: boolean;
+    /** The signed-in viewer already filed a report about this listing. */
+    has_reported: boolean;
     location: {
         city: string;
         state: string;

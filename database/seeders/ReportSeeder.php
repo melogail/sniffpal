@@ -2,11 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Contracts\Reportable;
+use App\Models\Admin;
 use App\Models\Comment;
+use App\Models\Pet;
 use App\Models\Report;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -19,6 +23,10 @@ class ReportSeeder extends Seeder
     public const REPORTED_COMMENT_COUNT = 12;
 
     public const REPORTED_REVIEW_COUNT  = 8;
+
+    public const REPORTED_PET_COUNT     = 6;
+
+    public const REPORTED_USER_COUNT    = 3;
 
     /**
      * Share of reports left awaiting a moderator decision.
@@ -46,6 +54,8 @@ class ReportSeeder extends Seeder
             $targets = [
                 ...$this->unreported(Comment::class, self::REPORTED_COMMENT_COUNT)->all(),
                 ...$this->unreported(Review::class, self::REPORTED_REVIEW_COUNT)->all(),
+                ...$this->unreported(Pet::class, self::REPORTED_PET_COUNT)->all(),
+                ...$this->unreported(User::class, self::REPORTED_USER_COUNT)->all(),
             ];
 
             foreach ($targets as $target) {
@@ -79,20 +89,26 @@ class ReportSeeder extends Seeder
      *
      * @param  Collection<int, User>  $users
      */
-    protected function report(Comment|Review $target, Collection $users): void
+    protected function report(Model&Reportable $target, Collection $users): void
     {
-        $reporter = $users
-            ->reject(fn (User $user): bool => $user->getKey() === $target->user_id)
+        $subjectId = $target->reportSubject()?->getKey();
+        $reporter  = $users
+            ->reject(fn (User $user): bool => $user->getKey() === $subjectId)
             ->random();
 
-        $factory  = Report::factory()
+        $factory   = Report::factory()
             ->for($reporter)
             ->forReportable($target);
 
         if (fake()->boolean(self::PENDING_CHANCE)) {
-            $factory = $factory->pending();
+            $factory->create();
+
+            return;
         }
 
-        $factory->create();
+        $admin     = Admin::query()->first();
+
+        $factory   = fake()->boolean(70) ? $factory->resolved() : $factory->dismissed();
+        $factory->create($admin === null ? [] : ['resolved_by' => $admin->getKey()]);
     }
 }

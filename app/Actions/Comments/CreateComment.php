@@ -37,7 +37,10 @@ use Illuminate\Pipeline\Pipeline;
  */
 class CreateComment
 {
-    public function __construct(private readonly Pipeline $pipeline) {}
+    public function __construct(
+        private readonly Pipeline $pipeline,
+        private readonly BroadcastCommentThreadChange $broadcastChange,
+    ) {}
 
     public function handle(
         User $author,
@@ -56,7 +59,7 @@ class CreateComment
             mask: (string) config('bad-words.mask', '****'),
         );
 
-        return $this->pipeline
+        $comment = $this->pipeline
             ->send($context)
             ->through([
                 ResolveCommentable::class,
@@ -67,6 +70,10 @@ class CreateComment
                 NotifyCommentable::class,
             ])
             ->then(fn (PublishCommentContext $completed): Comment => $completed->comment());
+
+        $this->broadcastChange->handle($comment, 'created');
+
+        return $comment;
     }
 
     /**

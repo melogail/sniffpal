@@ -3,7 +3,6 @@
 namespace App\Pipelines\Reports\SubmitReport;
 
 use App\Exceptions\Reports\CannotReportOwnContent;
-use App\Models\User;
 use Closure;
 
 /**
@@ -18,7 +17,7 @@ use Closure;
  *
  * It now applies to every type, and not because a longer list was written down:
  * the question is asked of the target itself through
- * App\Contracts\Reportable::reportSubjects(), read via the context's narrowing
+ * App\Contracts\Reportable::reportSubject(), read via the context's narrowing
  * accessor, so a case added to App\Enums\Reportable either implements the
  * contract and is checked here, or raises ReportingNotSupported. There is no
  * type branch left to forget.
@@ -37,9 +36,7 @@ class EnsureNotSelfReport
 {
     public function handle(SubmitReportContext $context, Closure $next): mixed
     {
-        $isOwnContent = $context->reportableAsTarget()
-            ->reportSubjects()
-            ->contains(fn (User $subject): bool => $subject->is($context->reporter));
+        $isOwnContent = $context->reportableAsTarget()->reportSubject()?->is($context->reporter) ?? false;
 
         if ($isOwnContent) {
             throw CannotReportOwnContent::make();

@@ -22,7 +22,8 @@
         "laravel/socialite": "^5.31",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "spatie/laravel-medialibrary": "^11.23.5"
+        "spatie/laravel-medialibrary": "^11.23.5",
+        "sniffpal/ticket-thread": "@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -84,6 +85,9 @@
             "@types:check",
             "@php artisan test"
         ],
+        "test:smoke": "@php artisan test --compact --group=smoke",
+        "test:security": "@php artisan test --compact --group=security",
+        "test:regression": "@php artisan test --compact --group=regression",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
@@ -128,6 +132,10 @@
             "name": "nova",
             "type": "composer",
             "url": "https://nova.laravel.com"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/ticket-thread"
         }
     ]
 }

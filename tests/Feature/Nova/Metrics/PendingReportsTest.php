@@ -62,9 +62,9 @@ test('falls as reports are decided', function () {
     $queue = Report::factory()->count(3)->pending()->create();
 
     $this->actingAs($admin, 'admin')
-        ->postJson('/nova-api/reports/action?action=change-status', [
+        ->postJson('/nova-api/reports/action?action=resolve-report', [
             'resources' => [$queue->first()->getKey()],
-            'status'    => ReportStatus::Resolved->value,
+            'decision'  => 'dismiss',
         ])
         ->assertOk();
 

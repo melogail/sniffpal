@@ -324,3 +324,18 @@ describe('what it deliberately leaves alone', function () {
             ->is_pinned->toBeTrue();
     });
 });
+
+test('removes pending reports against the profile and its listings, and keeps resolved ones without a subject', function () {
+    $user           = User::factory()->create();
+    $pet            = Pet::factory()->for($user)->create();
+    $pendingProfile = Report::factory()->forReportable($user)->create();
+    $pendingListing = Report::factory()->forReportable($pet)->create();
+    $decided        = Report::factory()->forReportable($user)->resolved()->create();
+
+    app(DeleteUserAccount::class)->handle($user);
+
+    $this->assertModelMissing($pendingProfile);
+    $this->assertModelMissing($pendingListing);
+    $this->assertModelExists($decided);
+    expect($decided->fresh()->subject_user_id)->toBeNull();
+});

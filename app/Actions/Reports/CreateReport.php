@@ -3,7 +3,6 @@
 namespace App\Actions\Reports;
 
 use App\Enums\Reportable;
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\Models\Report;
 use App\Models\User;
@@ -49,7 +48,6 @@ class CreateReport
         User $reporter,
         Reportable $reportableType,
         int $reportableId,
-        ReportCategory $category,
         ReportReason $reason,
         ?string $description = null,
     ): Report {
@@ -57,7 +55,6 @@ class CreateReport
             reporter: $reporter,
             reportableType: $reportableType,
             reportableId: $reportableId,
-            category: $category,
             reason: $reason,
             description: $description,
         );

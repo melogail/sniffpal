@@ -17,7 +17,6 @@ use App\Enums\HealthStatus;
 use App\Enums\ListingType;
 use App\Enums\PetGender;
 use App\Enums\PetStatus;
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pet\StorePetRequest;
@@ -113,7 +112,7 @@ class PetController extends Controller
      * Show a listing. Public: guests reach a shared link without signing in.
      *
      * The report vocabulary ships as props because this page hosts the *comment*
-     * report dialog, and ReportCategory / ReportReason had no route anywhere in
+     * report dialog, and ReportReason had no route anywhere in
      * the application — the report vertical shipped a write endpoint whose
      * dialog had no source for its two select controls. Same arrangement
      * `create` uses for the listing form's enums, and the same two props
@@ -130,10 +129,9 @@ class PetController extends Controller
         $recordPetView->handle($pet, $this->viewer($request), $this->visitorKey($request));
 
         return Inertia::render('pets/Show', [
-            'pet'              => PetDetailResource::make($loadPetDetail->handle($pet, $this->viewer($request))),
-            'reportCategories' => ReportCategory::options(),
-            'reportReasons'    => ReportReason::options(),
-            'commentBounds'    => $this->commentBounds(),
+            'pet'           => PetDetailResource::make($loadPetDetail->handle($pet, $this->viewer($request))),
+            'reportReasons' => ReportReason::optionsByTarget(),
+            'commentBounds' => $this->commentBounds(),
         ]);
     }
 

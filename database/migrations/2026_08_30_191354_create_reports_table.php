@@ -19,15 +19,23 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->morphs('reportable');
-            $table->string('category');
+            $table->foreignId('subject_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('reportable_type');
+            $table->unsignedBigInteger('reportable_id');
             $table->string('reason');
             $table->text('description')->nullable();
             $table->string('status')->default('pending');
+            $table->string('resolution')->nullable();
+            $table->text('moderator_note')->nullable();
+            $table->foreignId('resolved_by')->nullable()->constrained('admins')->nullOnDelete();
+            $table->timestamp('resolved_at')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
 
             $table->index('status');
+            $table->index('resolved_by');
+            $table->index(['reportable_type', 'reportable_id', 'status'], 'reports_reportable_status_index');
+            $table->index(['subject_user_id', 'status', 'resolved_at'], 'reports_subject_status_resolved_at_index');
             $table->unique(['user_id', 'reportable_type', 'reportable_id']);
         });
     }

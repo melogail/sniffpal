@@ -3,44 +3,43 @@
 namespace App\Pipelines\Profiles\DeleteAccount;
 
 use App\Models\Comment;
+use App\Models\Pet;
 use App\Models\Report;
 use App\Models\Review;
+use App\Models\User;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
- * Remove every report filed against content this delete is about to destroy.
+ * Remove the undecided reports filed against the member's content and profile.
  *
- * The sharpest of the orphan cases, and the one that was measured: A reviews B,
- * C reports that review, A's account is deleted — `reviews.user_id` cascades
- * the review away and C's report survives, sitting in the moderation queue with
- * `reportable` resolving to null. A moderator can neither act on it nor dismiss
- * it, and one more arrives with every account closed.
- *
- * Both reportable types are handled here because `reports` is one table with
- * one shape; splitting into per-type steps would be two classes doing the
- * identical DELETE with a different alias. A *new* polymorphic child of User
- * gets its own step; a new reportable type is a new arm here.
- *
- * Reports the account *filed* are not touched: `reports.user_id` cascades them,
- * and their targets still exist.
- *
- * The morph aliases come from `Relation::getMorphAlias()`, never a class name —
- * the morph map is enforced, so `reportable_type` holds `review` and `comment`,
- * and a class-name comparison would delete nothing and report success.
+ * `reports.reportable_id` is a morph column with no foreign key, so nothing
+ * cascades these. Only **pending** rows go: a resolved report is the moderation
+ * record (strikes, "resolved by", the note) and is kept with a null target and,
+ * through `subject_user_id`'s nullOnDelete, a null subject. Reports the member
+ * filed themselves cascade on `reports.user_id`.
  */
 class DeleteContentReports
 {
     public function handle(DeleteAccountContext $context, Closure $next): mixed
     {
+        $targets = [
+            Relation::getMorphAlias(Review::class)  => $context->reviewIds(),
+            Relation::getMorphAlias(Comment::class) => $context->commentIds(),
+            Relation::getMorphAlias(Pet::class)     => $context->petIds(),
+            Relation::getMorphAlias(User::class)    => [$context->user->getKey()],
+        ];
+
         Report::query()
-            ->where(fn (Builder $query): Builder => $query
-                ->where('reportable_type', Relation::getMorphAlias(Review::class))
-                ->whereIn('reportable_id', $context->reviewIds()))
-            ->orWhere(fn (Builder $query): Builder => $query
-                ->where('reportable_type', Relation::getMorphAlias(Comment::class))
-                ->whereIn('reportable_id', $context->commentIds()))
+            ->pending()
+            ->where(function (Builder $query) use ($targets): void {
+                foreach ($targets as $type => $ids) {
+                    $query->orWhere(fn (Builder $query): Builder => $query
+                        ->where('reportable_type', $type)
+                        ->whereIn('reportable_id', $ids));
+                }
+            })
             ->delete();
 
         return $next($context);

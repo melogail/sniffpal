@@ -119,3 +119,15 @@ test('deleting a reply leaves its parent and the parent reactions in place', fun
     $this->assertModelMissing($reply);
     $this->assertModelMissing($grandchild);
 });
+
+test('keeps a resolved report on a deleted comment as the moderation record', function () {
+    $comment = Comment::factory()->create();
+    $decided = Report::factory()->forReportable($comment)->resolved()->create();
+    $pending = Report::factory()->forReportable($comment)->create();
+
+    app(DeleteComment::class)->handle($comment);
+
+    $this->assertModelMissing($comment);
+    $this->assertModelMissing($pending);
+    $this->assertModelExists($decided);
+});

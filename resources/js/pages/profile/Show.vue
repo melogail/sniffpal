@@ -10,11 +10,9 @@ import type {
     Paginated,
     PetCard,
     ProfileSummary,
-    ReportCategory,
-    ReportReason,
+    ReportReasonsByType,
     Review,
     ReviewBounds,
-    SelectOption,
 } from '@/types';
 
 /**
@@ -50,8 +48,7 @@ const { profile } = defineProps<{
     profile: ProfileSummary;
     listings: Paginated<PetCard>;
     reviews: Paginated<Review>;
-    reportCategories: SelectOption<ReportCategory>[];
-    reportReasons: SelectOption<ReportReason>[];
+    reportReasons: ReportReasonsByType;
     /**
      * `petconnect.reviews.min_rate` / `max_rate` / `max_comment_length`, built
      * from the same accessors the validator's rules are. The star widget used
@@ -75,6 +72,7 @@ const canReview = computed(() => canInteract.value && !profile.has_reviewed);
             :profile="profile"
             :can-interact="canInteract"
             :bounds="reviewBounds"
+            :report-reasons="reportReasons"
         />
 
         <section class="space-y-4">
@@ -109,7 +107,6 @@ const canReview = computed(() => canInteract.value && !profile.has_reviewed);
                 :subject-id="profile.id"
                 :can-review="canReview"
                 :bounds="reviewBounds"
-                :report-categories="reportCategories"
                 :report-reasons="reportReasons"
             />
         </section>

@@ -17,7 +17,26 @@ describe('me', function () {
             ->assertJsonPath('id', $user->getKey())
             ->assertJsonPath('is_verified', false)
             ->assertJsonPath('two_factor_enabled', false)
+            ->assertJsonPath('show_phone', false)
+            ->assertJsonPath('whatsapp_enabled', false)
             ->assertJsonPath('location', 'Cairo, Egypt');
+    });
+
+    test('saves the privacy flags through the same PATCH as the web privacy page', function () {
+        $user = User::factory()->create(['phone' => '+20 100 000 0000']);
+        Sanctum::actingAs($user);
+
+        $this->patchJson(route('api.v1.me.update'), [
+            'name'             => $user->name,
+            'email'            => $user->email,
+            'show_phone'       => true,
+            'whatsapp_enabled' => true,
+        ])
+            ->assertOk()
+            ->assertJsonPath('show_phone', true)
+            ->assertJsonPath('whatsapp_enabled', true);
+
+        expect($user->fresh()->whatsappUrl())->toBe('https://wa.me/201000000000');
     });
 
     test('updates the profile through the settings form request', function () {

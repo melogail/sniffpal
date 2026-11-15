@@ -190,3 +190,13 @@ test('serialises every review with its author, so a dropped eager load cannot pa
         ->and($page['payload']['data'][0]['author'])->toHaveKeys(['id', 'name', 'username', 'location', 'avatar'])
         ->and($page['payload']['data'][1])->toHaveKey('author');
 });
+
+test('leaves out reviews written by a deactivated member', function () {
+    $subject = User::factory()->create();
+    $visible = Review::factory()->forUser($subject)->create();
+    Review::factory()->forUser($subject)->for(User::factory()->inactive())->create();
+
+    $page    = app(ListReviews::class)->handle(Reviewable::User, $subject->getKey());
+
+    expect($page->pluck('id')->all())->toBe([$visible->getKey()]);
+});

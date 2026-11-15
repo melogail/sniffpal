@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 /*
@@ -44,7 +46,27 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/**
+ * First-party routes: no host of their own and not a vendor dashboard. Nova
+ * answers on every host while NOVA_DOMAIN is unset, so it is dropped by path.
+ *
+ * @return Collection<int, Route>
+ */
+function applicationRoutes(): Collection
 {
-    // ..
+    return collect(app('router')->getRoutes()->getRoutes())
+        ->filter(fn (Route $route): bool => $route->getDomain() === null
+            && preg_match('#^(nova|nova-api|nova-vendor|horizon|telescope|pulse|_boost|_debugbar|sanctum|broadcasting|storage|livewire)(/|$)#', $route->uri()) !== 1)
+        ->values();
+}
+
+/**
+ * The middleware a route really runs, groups expanded and priority-sorted,
+ * as "Class" or "Class:params" strings.
+ *
+ * @return list<string>
+ */
+function routeMiddleware(Route $route): array
+{
+    return array_values(array_filter(app('router')->gatherRouteMiddleware($route), 'is_string'));
 }

@@ -48,3 +48,16 @@ export type Comment = CommentPreview & {
 
 /** What `comments.index` / `comments.store` take as their morph-type segment. */
 export type CommentableType = 'pet';
+
+/**
+ * `App\Actions\Comments\BroadcastCommentThreadChange` — the public
+ * `comments.{type}.{id}` channel's one event. Ids and a count only; a listener
+ * refetches through the gated endpoints rather than trusting the wire.
+ */
+export type CommentThreadChanged = {
+    action: 'created' | 'updated' | 'deleted';
+    comment_id: number;
+    parent_id: number | null;
+    /** Roots and replies — what the thread header pill shows. */
+    comments_count: number;
+};

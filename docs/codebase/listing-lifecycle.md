@@ -221,8 +221,7 @@ The redirect lands on `PetController@show`, which renders an Inertia page from a
 ```php
 return Inertia::render('pets/Show', [
     'pet'              => PetDetailResource::make($loadPetDetail->handle($pet, $this->viewer($request))),
-    'reportCategories' => ReportCategory::options(),
-    'reportReasons'    => ReportReason::options(),
+    'reportReasons'    => ReportReason::optionsByTarget(),
     'commentBounds'    => $this->commentBounds(),
 ]);
 ```
@@ -243,12 +242,11 @@ Resources only emit relations that were eager-loaded, so a missing eager load sh
 
 ```ts
 import { home } from '@/routes';
-import type { CommentBounds, PetDetail, ReportCategory, ReportReason, SelectOption } from '@/types';
+import type { CommentBounds, PetDetail, ReportReasonsByType } from '@/types';
 
 const { pet } = defineProps<{
     pet: PetDetail;
-    reportCategories: SelectOption<ReportCategory>[];
-    reportReasons: SelectOption<ReportReason>[];
+    reportReasons: ReportReasonsByType;
     commentBounds: CommentBounds;
 }>();
 ```

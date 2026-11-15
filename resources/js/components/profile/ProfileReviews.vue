@@ -6,11 +6,9 @@ import ReviewCard from '@/components/reviews/ReviewCard.vue';
 import ReviewForm from '@/components/reviews/ReviewForm.vue';
 import type {
     Paginated,
-    ReportCategory,
-    ReportReason,
+    ReportReasonsByType,
     Review,
     ReviewBounds,
-    SelectOption,
 } from '@/types';
 
 /**
@@ -27,8 +25,7 @@ defineProps<{
     canReview: boolean;
     /** `petconnect.reviews.*`, from the page's `reviewBounds` prop. */
     bounds: ReviewBounds;
-    reportCategories: SelectOption<ReportCategory>[];
-    reportReasons: SelectOption<ReportReason>[];
+    reportReasons: ReportReasonsByType;
 }>();
 </script>
 
@@ -55,7 +52,6 @@ defineProps<{
                     :key="review.id"
                     :review="review"
                     :bounds="bounds"
-                    :report-categories="reportCategories"
                     :report-reasons="reportReasons"
                 />
             </div>

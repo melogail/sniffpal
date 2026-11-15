@@ -117,6 +117,7 @@ class ProfileResource extends JsonResource
             'is_self'          => $viewer?->getKey() === $this->getKey(),
             'is_liked'         => (bool) ($this->is_liked ?? false),
             'has_reviewed'     => (bool) ($this->has_reviewed ?? false),
+            'has_reported'     => (bool) ($this->has_reported ?? false),
 
             'pets_count'       => (int) ($this->pets_count ?? 0),
             'reviews_count'    => (int) ($this->reviews_count ?? 0),

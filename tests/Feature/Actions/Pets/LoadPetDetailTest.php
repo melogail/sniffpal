@@ -228,3 +228,13 @@ test('serialises the detail payload without a further query, because every relat
 
     expect($queries)->toBeEmpty();
 });
+
+test('leaves out comments by a deactivated member on the listing page', function () {
+    $pet     = Pet::factory()->create();
+    $visible = Comment::factory()->for($pet, 'commentable')->create();
+    Comment::factory()->for($pet, 'commentable')->for(User::factory()->inactive())->create();
+
+    $loaded  = app(LoadPetDetail::class)->handle($pet, null);
+
+    expect($loaded->comments->pluck('id')->all())->toBe([$visible->getKey()]);
+});

@@ -5,6 +5,7 @@ namespace App\Actions\Pets;
 use App\Models\Comment;
 use App\Models\Pet;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -68,12 +69,14 @@ class LoadPetDetail
                     /** @var MorphMany<Comment, Pet> $comments Narrowed inline: with() only accepts a bare Relation closure, and the scopes need the related model. */
                     $comments
                         ->whereNull('parent_id')
+                        ->whereHas('user', fn (Builder $users) => $users->active())
                         ->with([
                             'user.media',
                             'replies' => function (Relation $replies) use ($viewer, $replyPreview): void {
                                 /** @var HasMany<Comment, Comment> $replies */
                                 $replies
                                     ->with('user.media')
+                                    ->whereHas('user', fn (Builder $users) => $users->active())
                                     ->withCount(['likes', 'replies'])
                                     ->withLikedBy($viewer)
                                     ->withReportedBy($viewer)
@@ -90,6 +93,7 @@ class LoadPetDetail
             ])
             ->withCount(['likes', 'comments', 'rootComments'])
             ->withLikedBy($viewer)
+            ->withReportedBy($viewer)
             ->firstOrFail();
     }
 }

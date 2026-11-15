@@ -6,6 +6,7 @@ use App\Models\Pet;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Everything the public profile page renders, in three queries plus paging.
@@ -109,6 +110,7 @@ class LoadProfileForDisplay
             ->withCount('pets')
             ->withLikedBy($viewer)
             ->withReviewedBy($viewer)
+            ->withReportedBy($viewer)
             ->with('media')
             ->findOrFail($profile->getKey());
 
@@ -146,6 +148,7 @@ class LoadProfileForDisplay
     {
         return $profile->reviews()
             ->with('user.media')
+            ->whereHas('user', fn (Builder $users) => $users->active())
             ->withReportedBy($viewer)
             ->latest('created_at')
             ->latest('id')

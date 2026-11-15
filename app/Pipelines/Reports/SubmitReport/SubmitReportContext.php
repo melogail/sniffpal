@@ -4,7 +4,6 @@ namespace App\Pipelines\Reports\SubmitReport;
 
 use App\Contracts\Reportable;
 use App\Enums\Reportable as ReportableType;
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\Exceptions\Reports\ReportingNotSupported;
 use App\Models\Report;
@@ -55,7 +54,6 @@ class SubmitReportContext
         public readonly User $reporter,
         public readonly ReportableType $reportableType,
         public readonly int $reportableId,
-        public readonly ReportCategory $category,
         public readonly ReportReason $reason,
         public readonly ?string $description = null,
     ) {}

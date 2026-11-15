@@ -4,6 +4,7 @@ namespace App\Nova\Dashboards;
 
 use App\Nova\Metrics\PendingReports;
 use App\Nova\Metrics\ReportsByStatus;
+use App\Nova\Metrics\ReportsByType;
 use App\Nova\Metrics\ReportsFiled;
 use Laravel\Nova\Card;
 use Laravel\Nova\Dashboard;
@@ -29,6 +30,7 @@ class Moderation extends Dashboard
         return [
             PendingReports::make(),
             ReportsByStatus::make(),
+            ReportsByType::make(),
             ReportsFiled::make(),
         ];
     }

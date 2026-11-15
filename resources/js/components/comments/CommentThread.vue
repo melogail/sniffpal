@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { useEchoPublic } from '@laravel/echo-vue';
 import { MessageSquare } from '@lucide/vue';
+import { ref } from 'vue';
 import CommentComposer from '@/components/comments/CommentComposer.vue';
 import CommentComposerGate from '@/components/comments/CommentComposerGate.vue';
 import CommentList from '@/components/comments/CommentList.vue';
@@ -7,9 +9,8 @@ import { useTranslations } from '@/composables/useTranslations';
 import type {
     Comment,
     CommentableType,
-    ReportCategory,
-    ReportReason,
-    SelectOption,
+    CommentThreadChanged,
+    ReportReasonsByType,
 } from '@/types';
 
 /**
@@ -37,7 +38,7 @@ import type {
  * because that is what the endpoint pages. The two are equal only on a thread
  * nobody has replied to.
  */
-defineProps<{
+const { commentsCount, commentableType, commentableId } = defineProps<{
     comments?: Comment[];
     /** Roots *and* replies — the number the header pill shows. */
     commentsCount: number;
@@ -50,11 +51,25 @@ defineProps<{
     /** `petconnect.comments.max_length` — the composer's ceiling. */
     maxLength: number;
     canInteract: boolean;
-    reportCategories: SelectOption<ReportCategory>[];
-    reportReasons: SelectOption<ReportReason>[];
+    reportReasons: ReportReasonsByType;
 }>();
 
 const { t } = useTranslations();
+
+/**
+ * Realtime: the pill follows the broadcast count once one has arrived, since
+ * the prop is a snapshot only a full visit refreshes. `CommentList` reloads the
+ * rows off the same event.
+ */
+const liveCount = ref<number | null>(null);
+
+useEchoPublic<CommentThreadChanged>(
+    `comments.${commentableType}.${commentableId}`,
+    '.CommentThreadChanged',
+    (change) => {
+        liveCount.value = change.comments_count;
+    },
+);
 </script>
 
 <template>
@@ -73,7 +88,7 @@ const { t } = useTranslations();
             <span
                 class="bg-secondary text-secondary-foreground rounded-full px-3 py-0.5 text-[11px] font-semibold"
             >
-                {{ t('comments.count', { count: commentsCount }) }}
+                {{ t('comments.count', { count: liveCount ?? commentsCount }) }}
             </span>
         </div>
 
@@ -94,7 +109,6 @@ const { t } = useTranslations();
                 :thread-per-page="threadPerPage"
                 :max-length="maxLength"
                 :can-interact="canInteract"
-                :report-categories="reportCategories"
                 :report-reasons="reportReasons"
             />
         </div>

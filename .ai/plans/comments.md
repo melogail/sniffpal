@@ -12,12 +12,13 @@ Threaded discussion under a pet listing. Replies nest under a parent comment; co
 - Content sanitised by `app/Actions/Content/SanitizeContent.php`.
 - Requests under `app/Http/Requests/Comment/`, rules in `CommentValidationRules`; resources in `app/Http/Resources/Comment/`; `CommentPolicy` (author edits/deletes; listing owner may delete).
 - Notification: `ModelCommentedNotification` (database + broadcast) to the listing owner and thread participants via `commentNotificationRecipients()`.
+- Realtime: `BroadcastCommentThreadChange` (called by Create/Update/DeleteComment) sends an anonymous `CommentThreadChanged` event (`action`, `comment_id`, `parent_id`, `comments_count`; never content) on the public channel `comments.{type}.{id}`; listeners refetch through the gated endpoints.
 
 ## Routes
 Web and API: `GET comments/{type}/{id}`, `POST comments/{type}/{id}`, `PUT comments/{comment}`, `DELETE comments/{comment}`, `GET comments/{comment}/replies`, `POST comments/{comment}/like`.
 
 ## Frontend
-Comment thread components rendered inside `pages/pets/Show.vue`.
+Comment thread components rendered inside `pages/pets/Show.vue`. `CommentList`, `CommentItem` and `CommentThread` subscribe to `comments.{type}.{id}` via `useEchoPublic`: roots reload page one, a root reloads its own replies, the header pill takes the broadcast count.
 
 ## Guards
 Throttles `comments` (10/min), `content-edits` (30/min), `comment-likes` (30/min). Max length from `bounds.comments`.

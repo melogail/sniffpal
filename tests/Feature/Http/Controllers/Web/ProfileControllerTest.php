@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\MediaLibrary\MediaPathGenerator;
 use App\Models\Breed;
@@ -170,17 +169,16 @@ test('binds the profile by id and not by username', function () {
 });
 
 /**
- * ReportCategory::options() and ReportReason::options() had no route anywhere in
- * the application, so the review report dialog this page hosts had no source for
- * its two select controls.
+ * ReportReason::options() had no route anywhere in the application, so the
+ * review report dialog this page hosts had no source for its select control.
  */
 test('ships the report vocabulary the review report dialog needs', function () {
     $profile = User::factory()->create();
 
     $this->get(route('profile.show', $profile))
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('reportCategories', ReportCategory::options())
-            ->where('reportReasons', ReportReason::options()));
+            ->where('reportReasons', ReportReason::optionsByTarget())
+            ->where('profile.has_reported', false));
 });
 
 describe('the payload', function () {

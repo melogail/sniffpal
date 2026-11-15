@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
+import { useEchoPublic } from '@laravel/echo-vue';
 import { computed, ref } from 'vue';
 import CommentBody from '@/components/comments/CommentBody.vue';
 import CommentComposer from '@/components/comments/CommentComposer.vue';
@@ -12,10 +13,9 @@ import type {
     Comment,
     CommentableType,
     CommentPreview,
+    CommentThreadChanged,
     Paginated,
-    ReportCategory,
-    ReportReason,
-    SelectOption,
+    ReportReasonsByType,
 } from '@/types';
 
 /**
@@ -44,15 +44,14 @@ import type {
  * unverified reader who opened the reply box is told what is missing rather
  * than handed a form whose submit navigates the page away.
  */
-const { comment } = defineProps<{
+const { comment, commentableType, commentableId } = defineProps<{
     comment: Comment;
     commentableType: CommentableType;
     commentableId: number;
     /** `petconnect.comments.max_length`, when the page was shipped it. */
     maxLength?: number | null;
     canInteract: boolean;
-    reportCategories?: SelectOption<ReportCategory>[];
-    reportReasons?: SelectOption<ReportReason>[];
+    reportReasons?: ReportReasonsByType;
 }>();
 
 /**
@@ -73,6 +72,8 @@ const lastPage = ref<number | null>(null);
 /** The newest `meta.total` seen — a fresher count than the prop's snapshot. */
 const fetchedTotal = ref<number | null>(null);
 const loading = ref(false);
+/** Whether the preview prop is still part of the list; a replace drops it. */
+const seeded = ref(true);
 
 const http = useHttp<Record<string, never>, Paginated<CommentPreview>>();
 
@@ -80,7 +81,10 @@ const http = useHttp<Record<string, never>, Paginated<CommentPreview>>();
 const replies = computed<CommentPreview[]>(() => {
     const byId = new Map<number, CommentPreview>();
 
-    for (const reply of [...(comment.replies ?? []), ...fetched.value]) {
+    for (const reply of [
+        ...(seeded.value ? (comment.replies ?? []) : []),
+        ...fetched.value,
+    ]) {
         byId.set(reply.id, reply);
     }
 
@@ -132,28 +136,55 @@ const advertisedReplies = computed(() =>
     ),
 );
 
-async function loadMore(): Promise<void> {
-    if (loading.value || !hasMore.value) {
-        return;
-    }
-
+/**
+ * One page of replies. `replace` swaps what is on screen for page one, preview
+ * included, which is how a reply someone else edited or deleted leaves the
+ * list; `loadMore` extends it instead.
+ */
+async function requestReplies(page: number, replace: boolean): Promise<void> {
     loading.value = true;
 
     try {
-        const page = await http.get(
-            commentReplies.url(comment.id, {
-                query: { page: loadedPage.value + 1 },
-            }),
+        const response = await http.get(
+            commentReplies.url(comment.id, { query: { page } }),
         );
 
-        fetched.value = [...fetched.value, ...page.data];
-        loadedPage.value = page.meta.current_page;
-        lastPage.value = page.meta.last_page;
-        fetchedTotal.value = page.meta.total;
+        if (replace) {
+            seeded.value = false;
+            fetched.value = response.data;
+        } else {
+            fetched.value = [...fetched.value, ...response.data];
+        }
+
+        loadedPage.value = response.meta.current_page;
+        lastPage.value = response.meta.last_page;
+        fetchedTotal.value = response.meta.total;
     } finally {
         loading.value = false;
     }
 }
+
+function loadMore(): Promise<void> {
+    return loading.value || !hasMore.value
+        ? Promise.resolve()
+        : requestReplies(loadedPage.value + 1, false);
+}
+
+/**
+ * Realtime: a reply to this root written, edited or deleted by anyone lands as
+ * a page one reload. Every row on the page shares the one channel subscription
+ * (`@laravel/echo-vue` refcounts it) and keeps only the events about itself.
+ * shortcut: a reload while "show replies" is fetching is dropped, reopen to catch up.
+ */
+useEchoPublic<CommentThreadChanged>(
+    `comments.${commentableType}.${commentableId}`,
+    '.CommentThreadChanged',
+    (change) => {
+        if (change.parent_id === comment.id && !loading.value) {
+            void requestReplies(1, true);
+        }
+    },
+);
 </script>
 
 <template>
@@ -163,7 +194,6 @@ async function loadMore(): Promise<void> {
             :max-length="maxLength"
             :can-interact="canInteract"
             can-reply
-            :report-categories="reportCategories"
             :report-reasons="reportReasons"
             @reply="replying = !replying"
             @deleted="emit('deleted', $event)"
@@ -179,7 +209,6 @@ async function loadMore(): Promise<void> {
                 :comment="reply"
                 :max-length="maxLength"
                 :can-interact="canInteract"
-                :report-categories="reportCategories"
                 :report-reasons="reportReasons"
                 @deleted="emit('deleted', $event)"
             />

@@ -1,0 +1,27 @@
+{
+    "name": "sniffpal/ticket-thread",
+    "description": "Nova resource tool: the support ticket detail page as a chat thread.",
+    "keywords": ["laravel", "nova"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sniffpal\\TicketThread\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sniffpal\\TicketThread\\ToolServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

@@ -7,7 +7,6 @@ use App\Actions\Pets\ListPetCategories;
 use App\Concerns\CommentValidationRules;
 use App\Concerns\ResolvesRequestUser;
 use App\Enums\ListingType;
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pet\ListHomeFeedRequest;
@@ -91,21 +90,20 @@ class HomeController extends Controller
         $this->authorize('viewAny', Pet::class);
 
         return Inertia::render('Home', [
-            'pets'             => Inertia::scroll(fn () => PetCardResource::collection($listHomeFeedPets->handle(
+            'pets'          => Inertia::scroll(fn () => PetCardResource::collection($listHomeFeedPets->handle(
                 viewer: $this->viewer($request),
                 filters: $request->filters(),
                 latitude: $request->latitude(),
                 longitude: $request->longitude(),
                 radiusKm: $request->radiusKm(),
             ))),
-            'filters'          => $request->filters(),
-            'nearby'           => $request->hasCoordinates(),
-            'radius'           => $request->radiusKm(),
-            'listingTypes'     => ListingType::options(),
-            'reportCategories' => ReportCategory::options(),
-            'reportReasons'    => ReportReason::options(),
-            'commentBounds'    => $this->commentBounds(),
-            'filterBounds'     => [
+            'filters'       => $request->filters(),
+            'nearby'        => $request->hasCoordinates(),
+            'radius'        => $request->radiusKm(),
+            'listingTypes'  => ListingType::options(),
+            'reportReasons' => ReportReason::optionsByTarget(),
+            'commentBounds' => $this->commentBounds(),
+            'filterBounds'  => [
                 'default_radius_km' => $request->defaultRadiusKm(),
                 'min_radius_km'     => $request->minRadiusKm(),
                 'max_radius_km'     => $request->maxRadiusKm(),
@@ -113,7 +111,7 @@ class HomeController extends Controller
                 'default_age_min'   => $request->defaultAgeMin(),
                 'default_age_max'   => $request->defaultAgeMax(),
             ],
-            'categories'       => Inertia::defer(
+            'categories'    => Inertia::defer(
                 fn () => PetCategoryOptionResource::collection($listPetCategories->handle()),
             ),
         ]);

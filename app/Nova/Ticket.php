@@ -19,6 +19,8 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Panel;
+use Sniffpal\TicketThread\TicketThread;
 
 /**
  * The support desk: every ticket, with its thread underneath.
@@ -32,6 +34,12 @@ use Laravel\Nova\Http\Requests\NovaRequest;
  *
  * The queue is the Open badge in the menu (NovaServiceProvider::menu) and the
  * Status filter here: Open is "waiting on us", Answered is "waiting on them".
+ *
+ * The detail page is the TicketThread resource tool (nova-components/
+ * ticket-thread): a chat view with the header in a sidebar, the thread in the
+ * main column and the status in a dropdown, writing through the two actions.
+ * The fields below are index-only for that reason; the raw Messages table
+ * stays underneath, collapsed, as the audit view.
  *
  * `user` is the account that opened it; a row whose account has since been
  * deleted keeps the name and address copied at the time, and the team's
@@ -90,26 +98,29 @@ class Ticket extends Resource
     /**
      * Get the fields displayed by the resource.
      *
-     * @return array<int, Field>
+     * @return array<int, Field|Panel>
      */
     public function fields(NovaRequest $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make()->sortable()->hideFromDetail(),
 
             BelongsTo::make('Member', 'user', User::class)
                 ->nullable()
-                ->readonly(),
+                ->readonly()
+                ->hideFromDetail(),
 
             Text::make('Name')
                 ->rules($this->senderNameRules())
                 ->readonly()
-                ->sortable(),
+                ->sortable()
+                ->hideFromDetail(),
 
             Text::make('Email')
                 ->rules($this->senderEmailRules())
                 ->readonly()
-                ->copyable(),
+                ->copyable()
+                ->hideFromDetail(),
 
             Select::make('Category')
                 ->options(self::enumOptions(TicketCategory::class))
@@ -117,12 +128,14 @@ class Ticket extends Resource
                 ->displayUsingLabels()
                 ->readonly()
                 ->sortable()
-                ->filterable(),
+                ->filterable()
+                ->hideFromDetail(),
 
             Text::make('Subject')
                 ->rules($this->subjectRules())
                 ->readonly()
-                ->sortable(),
+                ->sortable()
+                ->hideFromDetail(),
 
             Badge::make('Status')
                 ->map([
@@ -132,23 +145,23 @@ class Ticket extends Resource
                 ])
                 ->labels(self::enumOptions(TicketStatus::class))
                 ->sortable()
-                ->filterable(),
+                ->filterable()
+                ->hideFromDetail(),
 
             DateTime::make('Opened', 'created_at')
                 ->readonly()
                 ->sortable()
-                ->exceptOnForms(),
+                ->onlyOnIndex(),
 
             DateTime::make('Last activity', 'last_activity_at')
                 ->readonly()
                 ->sortable()
-                ->exceptOnForms(),
+                ->onlyOnIndex(),
 
-            DateTime::make('Closed', 'closed_at')
-                ->readonly()
-                ->onlyOnDetail(),
+            TicketThread::make(),
 
-            HasMany::make('Messages', 'messages', TicketMessage::class),
+            HasMany::make('Messages', 'messages', TicketMessage::class)
+                ->collapsedByDefault(),
         ];
     }
 

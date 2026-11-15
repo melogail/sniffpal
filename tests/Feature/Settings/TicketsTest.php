@@ -149,7 +149,7 @@ test('a reply from the team on the ticket model marks it answered and notifies t
     Notification::assertSentTo(
         $member,
         TicketRepliedNotification::class,
-        fn (TicketRepliedNotification $notification, array $channels): bool => $channels === ['database', 'mail']
+        fn (TicketRepliedNotification $notification, array $channels): bool => $channels === ['database', 'broadcast', 'mail']
             && $notification->toArray($member)['message_key'] === 'notifications.ticket_answered'
             && $notification->toArray($member)['url'] === route('tickets.show', $ticket),
     );

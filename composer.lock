@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8214a1be34f86ac07a6f1c5e7cfaa51a",
+    "content-hash": "9297d455bcdbfc446c84f4da5b486131",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -6189,6 +6189,43 @@
                 }
             ],
             "time": "2024-06-11T12:45:25+00:00"
+        },
+        {
+            "name": "sniffpal/ticket-thread",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/ticket-thread",
+                "reference": "25a961059a1609aee6a3da60c5315a6661c0c406"
+            },
+            "require": {
+                "illuminate/support": "^13.0",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Sniffpal\\TicketThread\\ToolServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sniffpal\\TicketThread\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Nova resource tool: the support ticket detail page as a chat thread.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "spatie/image",
@@ -14421,11 +14458,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "sniffpal/ticket-thread": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.3"
+        "php": "^8.4"
     },
     "platform-dev": {},
     "plugin-api-version": "2.9.0"

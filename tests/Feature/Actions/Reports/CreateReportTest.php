@@ -2,12 +2,12 @@
 
 use App\Actions\Reports\CreateReport;
 use App\Enums\Reportable;
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\Exceptions\Reports\AlreadyReported;
 use App\Exceptions\Reports\CannotReportOwnContent;
 use App\Exceptions\Reports\ReportingNotSupported;
 use App\Models\Admin;
+use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Pet;
 use App\Models\Report;
@@ -36,6 +36,8 @@ function reportableAuthoredBy(Reportable $type, User $author): Model
     return match ($type) {
         Reportable::Comment => Comment::factory()->for($author)->create(),
         Reportable::Review  => Review::factory()->for($author)->create(),
+        Reportable::Pet     => Pet::factory()->for($author)->create(),
+        Reportable::User    => $author,
     };
 }
 
@@ -45,25 +47,25 @@ function fileReport(User $reporter, Reportable $type, int $id): Report
         reporter: $reporter,
         reportableType: $type,
         reportableId: $id,
-        category: ReportCategory::Abuse,
-        reason: ReportReason::HateSpeech,
+        reason: ReportReason::Spam,
         description: 'Abusive towards the seller.',
     );
 }
 
 test('writes the report against the resolved target with the pending status', function (Reportable $type) {
     $reporter = User::factory()->create();
-    $target   = reportableAuthoredBy($type, User::factory()->create());
+    $author   = User::factory()->create();
+    $target   = reportableAuthoredBy($type, $author);
 
     $report   = fileReport($reporter, $type, $target->getKey());
 
     $this->assertDatabaseHas('reports', [
         'id'              => $report->getKey(),
         'user_id'         => $reporter->getKey(),
+        'subject_user_id' => $author->getKey(),
         'reportable_type' => Relation::getMorphAlias($target::class),
         'reportable_id'   => $target->getKey(),
-        'category'        => ReportCategory::Abuse->value,
-        'reason'          => ReportReason::HateSpeech->value,
+        'reason'          => ReportReason::Spam->value,
         'status'          => 'pending',
         'description'     => 'Abusive towards the seller.',
     ]);
@@ -126,7 +128,6 @@ test('turns the unique index violation into the same refusal when the guard step
         reporter: $reporter,
         reportableType: Reportable::Review,
         reportableId: $target->getKey(),
-        category: ReportCategory::Abuse,
         reason: ReportReason::Spam,
     );
     $context->setReportable($target);
@@ -161,10 +162,9 @@ test('raises ReportingNotSupported for a resolved target that does not implement
         reporter: User::factory()->create(),
         reportableType: Reportable::Review,
         reportableId: 1,
-        category: ReportCategory::Abuse,
         reason: ReportReason::Spam,
     );
-    $context->setReportable(Pet::factory()->create());
+    $context->setReportable(Category::factory()->create());
 
     expect(fn () => $context->reportableAsTarget())->toThrow(ReportingNotSupported::class);
 });

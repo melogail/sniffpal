@@ -101,6 +101,7 @@ Route::get('pets/{pet}', [PetController::class, 'show'])
 */
 
 Route::inertia('help', 'Help')->name('help');
+Route::inertia('guidelines', 'Guidelines')->name('guidelines');
 Route::inertia('support', 'Support')->name('support');
 
 /*

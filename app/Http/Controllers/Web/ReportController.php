@@ -61,12 +61,11 @@ class ReportController extends Controller
             reporter: $this->actor($request),
             reportableType: $reportable_type,
             reportableId: $reportable_id,
-            category: $request->category(),
             reason: $request->reason(),
             description: $request->description(),
         );
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Report submitted.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Report submitted. We will let you know what we decide.')]);
 
         return back();
     }

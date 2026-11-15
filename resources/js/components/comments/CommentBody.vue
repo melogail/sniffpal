@@ -34,12 +34,7 @@ import { useTranslations } from '@/composables/useTranslations';
 import { formatRelative } from '@/lib/datetime';
 import { like as likeComment } from '@/routes/comments';
 import { show as showProfile } from '@/routes/profile';
-import type {
-    CommentPreview,
-    ReportCategory,
-    ReportReason,
-    SelectOption,
-} from '@/types';
+import type { CommentPreview, ReportReasonsByType } from '@/types';
 
 /**
  * One comment, whether it is a thread root or a reply.
@@ -85,7 +80,7 @@ import type {
  * a dialog opened from a feed card as it does on the listing page. Established
  * 2026-09-06 by reading the `Inertia::render()` payloads of
  * `PetController::show`, `ProfileController::show` and `HomeController::index`,
- * all three of which ship `reportCategories` and `reportReasons`; separately,
+ * all three of which ship `reportReasons`; separately,
  * the control on a feed-mounted dialog was observed working end to end this
  * phase, through to a `reports` row (observed by the agent that made the fix,
  * not re-run here).
@@ -138,8 +133,7 @@ const {
     canInteract,
     canReply = false,
     maxLength = null,
-    reportCategories = [],
-    reportReasons = [],
+    reportReasons = undefined,
 } = defineProps<{
     comment: CommentPreview;
     /** `petconnect.comments.max_length`, when the page was shipped it. */
@@ -147,8 +141,7 @@ const {
     /** A signed-in viewer. Comment writes need a verified account. */
     canInteract: boolean;
     canReply?: boolean;
-    reportCategories?: SelectOption<ReportCategory>[];
-    reportReasons?: SelectOption<ReportReason>[];
+    reportReasons?: ReportReasonsByType;
 }>();
 
 const emit = defineEmits<{
@@ -183,8 +176,7 @@ const canReport = computed(
         canInteract &&
         !comment.is_author &&
         !comment.has_reported &&
-        reportCategories.length > 0 &&
-        reportReasons.length > 0,
+        (reportReasons?.comment?.length ?? 0) > 0,
 );
 
 const hasMenu = computed(() => comment.is_author || canReport.value);
@@ -396,8 +388,7 @@ const likeLabel = computed(
             v-model:open="reporting"
             reportable-type="comment"
             :reportable-id="comment.id"
-            :categories="reportCategories"
-            :reasons="reportReasons"
+            :reasons="reportReasons!"
             :reported="comment.has_reported"
             :show-trigger="false"
         />

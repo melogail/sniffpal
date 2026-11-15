@@ -198,7 +198,13 @@ class User extends Resource
 
             HasMany::make('Reviews Written', 'givenReviews', Review::class),
 
-            HasMany::make('Reports Filed', 'reports', Report::class),
+            Number::make('Strikes', fn (): int => $this->resource->strikeCount())
+                ->onlyOnDetail()
+                ->help('Resolved reports held against this member. Resolve the report rather than deactivating from here, so the reporter is told.'),
+
+            MorphMany::make('Reports Against', 'reports', Report::class),
+
+            HasMany::make('Reports Filed', 'filedReports', Report::class),
         ];
     }
 

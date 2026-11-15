@@ -105,7 +105,6 @@ Every page declares its props from `resources/js/types`, which mirror the PHP re
 const { pet, canInteract } = defineProps<{
     pet: PetCard;
     canInteract: boolean;
-    reportCategories?: SelectOption<ReportCategory>[];
 }>();
 ```
 

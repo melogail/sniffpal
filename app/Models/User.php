@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Concerns\HasLikes;
+use App\Concerns\HasReport;
 use App\Concerns\HasReviews;
 use App\Contracts\Likeable;
+use App\Contracts\Reportable;
 use App\Contracts\Reviewable;
 use App\MediaLibrary\ConvertibleImageTypes;
 use App\Notifications\VerifyEmailNotification;
@@ -16,6 +18,8 @@ use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -85,10 +89,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 #[ObservedBy([UserObserver::class])]
-class User extends Authenticatable implements HasLocalePreference, HasMedia, Likeable, MustVerifyEmail, PasskeyUser, Reviewable
+class User extends Authenticatable implements HasLocalePreference, HasMedia, Likeable, MustVerifyEmail, PasskeyUser, Reportable, Reviewable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, HasLikes, HasReviews, InteractsWithMedia, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+    use HasApiTokens, HasFactory, HasLikes, HasReport, HasReviews, InteractsWithMedia, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
     /**
      * The DB defaults the model declares non-nullable, restated here so a
@@ -318,6 +322,20 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     }
 
     /**
+     * Members who have not been deactivated. Used through `whereHas('user')` so
+     * a deactivated member's listings, comments and reviews leave the public
+     * surfaces with them.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function active(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
      * A fresh opaque directory name for this user's uploaded files.
      *
      * The one place the value is drawn. UserObserver::creating is the one place
@@ -442,11 +460,29 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     }
 
     /**
+     * Reports this member has filed against others.
+     *
      * @return HasMany<Report, $this>
      */
-    public function reports(): HasMany
+    public function filedReports(): HasMany
     {
         return $this->hasMany(Report::class);
+    }
+
+    /**
+     * A profile report is about this very account.
+     */
+    public function reportSubject(): ?User
+    {
+        return $this;
+    }
+
+    /**
+     * Resolved reports held against this member: the strike count.
+     */
+    public function strikeCount(?Carbon $since = null): int
+    {
+        return Report::query()->upheldAgainst($this, $since)->count();
     }
 
     /**

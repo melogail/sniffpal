@@ -351,8 +351,10 @@ class RateLimitServiceProvider extends ServiceProvider
         RateLimiter::for('reviews', fn (Request $request): Limit => Limit::perMinute(10)
             ->by($this->rateLimitKey($request)));
 
-        RateLimiter::for('reports', fn (Request $request): Limit => Limit::perMinute(5)
-            ->by($this->rateLimitKey($request)));
+        RateLimiter::for('reports', fn (Request $request): array => [
+            Limit::perMinute(5)->by('minute:'.$this->rateLimitKey($request)),
+            Limit::perDay(20)->by('day:'.$this->rateLimitKey($request)),
+        ]);
 
         RateLimiter::for('conversations', fn (Request $request): array => [
             Limit::perMinute(5)->by('minute:'.$this->rateLimitKey($request)),

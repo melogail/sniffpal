@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { Clock, Eye, MapPin } from "@lucide/vue";
-import { computed } from "vue";
-import StartConversationButton from "@/components/messaging/StartConversationButton.vue";
-import WhatsAppButton from "@/components/pets/WhatsAppButton.vue";
+import { Clock, Eye, MapPin } from '@lucide/vue';
+import { computed } from 'vue';
+import StartConversationButton from '@/components/messaging/StartConversationButton.vue';
+import WhatsAppButton from '@/components/pets/WhatsAppButton.vue';
 import {
     ageLabel,
     countLabel,
     litterLabel,
-} from "@/components/pets/card/labels";
-import PetLikeButton from "@/components/pets/PetLikeButton.vue";
-import PetOwnerActions from "@/components/pets/PetOwnerActions.vue";
-import { Badge } from "@/components/ui/badge";
-import { useLocale } from "@/composables/useLocale";
-import { useTranslations } from "@/composables/useTranslations";
-import { petTitle } from "@/lib/petTitle";
-import { taxonomyName } from "@/lib/taxonomy";
-import type { PetDetail, PetGender } from "@/types";
+} from '@/components/pets/card/labels';
+import PetLikeButton from '@/components/pets/PetLikeButton.vue';
+import PetOwnerActions from '@/components/pets/PetOwnerActions.vue';
+import ReportDialog from '@/components/reports/ReportDialog.vue';
+import { Badge } from '@/components/ui/badge';
+import { useLocale } from '@/composables/useLocale';
+import { useTranslations } from '@/composables/useTranslations';
+import { petTitle } from '@/lib/petTitle';
+import { taxonomyName } from '@/lib/taxonomy';
+import type { PetDetail, PetGender, ReportReasonsByType } from '@/types';
 
 /**
  * The listing's identity and its action bar — legacy's `PetHeader`.
@@ -165,12 +166,16 @@ import type { PetDetail, PetGender } from "@/types";
  * `Message Catharine Zulauf about Mose` contains the visible "Message" and
  * `إرسال الرسالة` does not — the Arabic gap above, observed rather than argued.
  */
-const { pet, canLike, canMessage } = defineProps<{
+const { pet, canLike, canMessage, canReport } = defineProps<{
     pet: PetDetail;
     /** A signed-in viewer; a guest is sent to sign in instead of a 403. */
     canLike: boolean;
     /** A signed-in viewer who is not the owner may open a thread. */
     canMessage: boolean;
+    /** A signed-in viewer who is not the owner may report the listing. */
+    canReport: boolean;
+    /** The `reportReasons` page prop, keyed by target type. */
+    reportReasons: ReportReasonsByType;
 }>();
 
 const { t } = useTranslations();
@@ -179,11 +184,11 @@ const { locale, tag } = useLocale();
 /** The name, or a litter title when the listing has none. */
 const name = computed(() => petTitle(pet, t, locale.value.current));
 
-const statusClass: Record<PetDetail["status"], string> = {
+const statusClass: Record<PetDetail['status'], string> = {
     available:
-        "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+        'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
     unavailable:
-        "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+        'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
 };
 
 /**
@@ -199,7 +204,7 @@ const statusClass: Record<PetDetail["status"], string> = {
  * both, in that order.
  */
 const statusLabel = computed(() =>
-    pet.status === "available" ? t("pets.available") : t("pets.unavailable"),
+    pet.status === 'available' ? t('pets.available') : t('pets.unavailable'),
 );
 
 /**
@@ -210,7 +215,7 @@ const statusLabel = computed(() =>
  * state, so the name does not change with it.
  */
 const likeLabel = computed(
-    () => `Like ${name.value}, ${countLabel(pet.likes_count, "like")}`,
+    () => `Like ${name.value}, ${countLabel(pet.likes_count, 'like')}`,
 );
 
 /**
@@ -224,7 +229,7 @@ const likeLabel = computed(
  */
 const messageLabel = computed(() =>
     pet.user
-        ? t("messaging.message_name_about", {
+        ? t('messaging.message_name_about', {
               name: pet.user.name,
               pet: name.value,
           })
@@ -240,9 +245,9 @@ const category = computed(() =>
 );
 
 const GENDER_KEY: Record<PetGender, string> = {
-    male: "pets.male",
-    female: "pets.female",
-    mixed: "pets.mixed",
+    male: 'pets.male',
+    female: 'pets.female',
+    mixed: 'pets.mixed',
 };
 
 const gender = computed(() => t(GENDER_KEY[pet.gender]));
@@ -253,7 +258,7 @@ const litter = computed(() =>
 );
 
 const place = computed(() =>
-    [pet.location.city, pet.location.state].filter(Boolean).join(", "),
+    [pet.location.city, pet.location.state].filter(Boolean).join(', '),
 );
 
 /**
@@ -270,7 +275,7 @@ const age = computed(() => (pet.age === null ? null : ageLabel(t, pet.age)));
 
 /** `views` is a plain integer column; the grouping separator is the locale's. */
 const views = computed(() =>
-    t(pet.views === 1 ? "pets.view_count" : "pets.views_count", {
+    t(pet.views === 1 ? 'pets.view_count' : 'pets.views_count', {
         count: new Intl.NumberFormat(tag.value).format(pet.views),
     }),
 );
@@ -379,6 +384,14 @@ const views = computed(() =>
                         v-if="canMessage && pet.user?.whatsapp"
                         :url="pet.user.whatsapp"
                         :owner-name="pet.user.name"
+                    />
+                    <ReportDialog
+                        v-if="canReport"
+                        reportable-type="pet"
+                        :reportable-id="pet.id"
+                        :reasons="reportReasons"
+                        :reported="pet.has_reported"
+                        :trigger-label="t('reports.report_listing')"
                     />
                 </div>
             </div>

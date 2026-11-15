@@ -240,6 +240,8 @@ describe('taxonomy and options', function () {
             ->assertOk()
             ->assertJsonPath('bounds.comments.max_length', 140)
             ->assertJsonPath('locales.supported', ['en', 'ar'])
+            ->assertJsonPath('bounds.support.max_message_length', 2000)
+            ->assertJsonCount(7, 'ticket_categories')
             ->assertJsonCount(3, 'listing_types');
     });
 });

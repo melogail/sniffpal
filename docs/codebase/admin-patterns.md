@@ -66,7 +66,7 @@ class DeleteReview extends DestructiveAction
 }
 ```
 
-The same shape applies to `DeleteUserAccount`, `PurgePetListing`, `DeleteCommentThread`, `DeleteCategory`, `DeactivateUser`, `ReactivateUser`, `ChangeReportStatus` and `PurgeOrphanedReports`.
+The same shape applies to `DeleteUserAccount`, `PurgePetListing`, `DeleteCommentThread`, `DeleteCategory`, `DeactivateUser`, `ReactivateUser`, `ResolveReport`, `ReopenReport` and `PurgeOrphanedReports`.
 
 ## Gate and guard
 

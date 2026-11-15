@@ -34,13 +34,16 @@ use Illuminate\Support\Facades\DB;
  */
 class DeleteComment
 {
-    public function __construct(private readonly Pipeline $pipeline) {}
+    public function __construct(
+        private readonly Pipeline $pipeline,
+        private readonly BroadcastCommentThreadChange $broadcastChange,
+    ) {}
 
     public function handle(Comment $comment): bool
     {
         $context = new DeleteCommentThreadContext($comment);
 
-        return DB::transaction(fn (): bool => $this->pipeline
+        $deleted = DB::transaction(fn (): bool => $this->pipeline
             ->send($context)
             ->through([
                 CollectCommentSubtree::class,
@@ -49,5 +52,11 @@ class DeleteComment
                 DeleteCommentRoot::class,
             ])
             ->then(fn (DeleteCommentThreadContext $completed): bool => $completed->deleted()));
+
+        if ($deleted) {
+            $this->broadcastChange->handle($comment, 'deleted');
+        }
+
+        return $deleted;
     }
 }

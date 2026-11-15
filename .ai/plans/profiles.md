@@ -16,7 +16,7 @@ A user's public page: avatar, bio, location, verified badge, their listings, rev
 `GET profile/{user}` (profile.show), `POST profile/{user}/like`. API `GET profiles/{user}`, `/pets`, `/reviews`, `POST profiles/{user}/like`.
 
 ## Frontend
-`pages/profile/Show.vue`. Phone and WhatsApp buttons render only for signed-in viewers and only when the owner enabled them (privacy settings).
+`pages/profile/Show.vue`. Phone and WhatsApp buttons render only for signed-in viewers and only when the owner enabled them (privacy settings). The mobile profile screen and listing detail do the same from `phone` / `whatsapp` on `ProfileResource` and `PetOwnerResource`.
 
 ## Guards
 Throttle `profile-likes`. Inactive users return 404 to the public.

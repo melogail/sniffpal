@@ -4,12 +4,7 @@ import { computed, ref } from 'vue';
 import CommentsDialog from '@/components/comments/CommentsDialog.vue';
 import { countLabel } from '@/components/pets/card/labels';
 import { Button } from '@/components/ui/button';
-import type {
-    Comment,
-    ReportCategory,
-    ReportReason,
-    SelectOption,
-} from '@/types';
+import type { Comment, ReportReasonsByType } from '@/types';
 
 /**
  * `comments_count`, as the trigger for the listing's comments dialog.
@@ -24,13 +19,13 @@ import type {
  *
  * ## The props the dialog needs, and where they come from
  *
- * `maxLength`, `reportCategories` and `reportReasons` are page props, read off
+ * `maxLength` and `reportReasons` are page props, read off
  * `page.props` by `PetListingCard` and handed down through `PetCardActions`.
  * Both pages that mount a feed card ship all three — `Home` and `profile.show`
  * — as `pets.show` does for the inline thread. Established 2026-09-06 by
  * reading the `Inertia::render()` payloads of `HomeController::index`,
  * `ProfileController::show` and `PetController::show`, each of which sends
- * `reportCategories`, `reportReasons` and `commentBounds`; not by rendering
+ * `reportReasons` and `commentBounds`; not by rendering
  * them here. The report control on a dialog opened from a feed card was
  * separately observed working end to end this phase, through to a `reports`
  * row, by the agent that made the fix.
@@ -99,8 +94,7 @@ const { commentsCount, name } = defineProps<{
     comments?: Comment[];
     canInteract: boolean;
     maxLength?: number | null;
-    reportCategories?: SelectOption<ReportCategory>[];
-    reportReasons?: SelectOption<ReportReason>[];
+    reportReasons?: ReportReasonsByType;
 }>();
 
 /** Writes made in the open dialog, as a delta on the feed's count. */
@@ -129,7 +123,6 @@ const label = computed(
         :comments="comments"
         :can-interact="canInteract"
         :max-length="maxLength"
-        :report-categories="reportCategories"
         :report-reasons="reportReasons"
         @posted="countPosted"
         @deleted="countDeleted"

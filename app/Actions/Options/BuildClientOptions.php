@@ -6,12 +6,13 @@ use App\Concerns\CommentValidationRules;
 use App\Concerns\MessageValidationRules;
 use App\Concerns\PetPhotoRules;
 use App\Concerns\ReviewValidationRules;
+use App\Concerns\TicketValidationRules;
 use App\Enums\HealthStatus;
 use App\Enums\ListingType;
 use App\Enums\PetGender;
 use App\Enums\PetStatus;
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
+use App\Enums\TicketCategory;
 
 /**
  * Everything the mobile client needs to draw a form before it has any data.
@@ -33,6 +34,7 @@ class BuildClientOptions
     }
     use PetPhotoRules;
     use ReviewValidationRules;
+    use TicketValidationRules;
 
     /**
      * @return array<string, mixed>
@@ -44,8 +46,8 @@ class BuildClientOptions
             'statuses'          => PetStatus::options(),
             'genders'           => PetGender::options(),
             'health_statuses'   => HealthStatus::options(),
-            'report_categories' => ReportCategory::options(),
-            'report_reasons'    => ReportReason::options(),
+            'report_reasons'    => ReportReason::optionsByTarget(),
+            'ticket_categories' => TicketCategory::options(),
             'bounds'            => [
                 'filters'  => [
                     'default_radius_km' => (float) config('petconnect.nearby.default_radius_km', 20),
@@ -63,6 +65,7 @@ class BuildClientOptions
                     'bio_max_length'       => (int) config('petconnect.profiles.bio_max_length', 1000),
                     'max_avatar_kilobytes' => (int) config('petconnect.profiles.max_avatar_kilobytes', 2048),
                 ],
+                'support'  => $this->ticketBounds(),
             ],
             'locales'           => [
                 'supported' => config('petconnect.locales.supported', ['en']),

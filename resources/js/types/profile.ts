@@ -42,6 +42,8 @@ export type ProfileSummary = {
     avatar: string | null;
     is_verified: boolean;
     is_self: boolean;
+    /** The signed-in viewer already filed a report about this member. */
+    has_reported: boolean;
     is_liked: boolean;
     pets_count: number;
     reviews_count: number;
@@ -93,6 +95,6 @@ export type ProfileFormData = {
 /** The `locale` shared prop, present on every page. */
 export type LocaleState = {
     current: string;
-    direction: "ltr" | "rtl";
+    direction: 'ltr' | 'rtl';
     supported: string[];
 };

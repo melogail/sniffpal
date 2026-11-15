@@ -95,7 +95,6 @@ class ReportFiledNotification extends Notification implements ShouldQueueAfterCo
             'reporter_id'     => $this->report->user_id,
             'reportable_type' => $this->report->reportable_type,
             'reportable_id'   => $this->report->reportable_id,
-            'category'        => $this->report->category->value,
             'reason'          => $this->report->reason->value,
             'status'          => $this->report->status->value,
             'excerpt'         => $this->report->description === null

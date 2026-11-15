@@ -29,13 +29,13 @@ test('returns 403 to a report edited through Nova while the decision action stil
     expect($report->fresh()->status)->toBe(ReportStatus::Pending);
 
     $this->actingAs($admin, 'admin')
-        ->postJson('/nova-api/reports/action?action=change-status', [
+        ->postJson('/nova-api/reports/action?action=resolve-report', [
             'resources' => [$report->getKey()],
-            'status'    => ReportStatus::Resolved->value,
+            'decision'  => 'dismiss',
         ])
         ->assertOk();
 
-    expect($report->fresh()->status)->toBe(ReportStatus::Resolved);
+    expect($report->fresh()->status)->toBe(ReportStatus::Rejected);
 });
 
 test('returns 403 to a request for the report edit form', function () {

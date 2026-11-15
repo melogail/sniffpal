@@ -5,6 +5,7 @@ use App\Enums\ListingType;
 use App\Models\Breed;
 use App\Models\Category;
 use App\Models\Pet;
+use App\Models\User;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
 
@@ -195,4 +196,11 @@ test('without coordinates the feed is ordered newest first', function () {
     $newer = Pet::factory()->available()->create(['created_at' => now()]);
 
     expect(feedIds())->toBe([$newer->getKey(), $older->getKey()]);
+});
+
+test('a listing whose owner is deactivated does not reach the feed', function () {
+    $visible = Pet::factory()->available()->create();
+    Pet::factory()->available()->for(User::factory()->inactive())->create();
+
+    expect(feedIds())->toBe([$visible->getKey()]);
 });

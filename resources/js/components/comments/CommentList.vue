@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
+import { useEchoPublic } from '@laravel/echo-vue';
 import { MessageSquare } from '@lucide/vue';
 import { computed, onMounted, ref } from 'vue';
 import CommentItem from '@/components/comments/CommentItem.vue';
@@ -12,10 +13,9 @@ import { index as commentIndex } from '@/routes/comments';
 import type {
     Comment,
     CommentableType,
+    CommentThreadChanged,
     Paginated,
-    ReportCategory,
-    ReportReason,
-    SelectOption,
+    ReportReasonsByType,
 } from '@/types';
 
 /**
@@ -110,8 +110,7 @@ const {
     /** `petconnect.comments.max_length` — the composer's ceiling. */
     maxLength?: number | null;
     canInteract: boolean;
-    reportCategories?: SelectOption<ReportCategory>[];
-    reportReasons?: SelectOption<ReportReason>[];
+    reportReasons?: ReportReasonsByType;
 }>();
 
 /**
@@ -310,6 +309,21 @@ onMounted(() => {
     }
 });
 
+/**
+ * Realtime: a root written, edited or deleted by anyone else lands as a page
+ * one `reload()`, the same refresh a local write asks for. Replies are the
+ * row's business — `CommentItem` listens on the same channel for its own id.
+ */
+useEchoPublic<CommentThreadChanged>(
+    `comments.${commentableType}.${commentableId}`,
+    '.CommentThreadChanged',
+    (change) => {
+        if (change.parent_id === null) {
+            void reload();
+        }
+    },
+);
+
 defineExpose({ reload });
 </script>
 
@@ -334,7 +348,6 @@ defineExpose({ reload });
                 :commentable-id="commentableId"
                 :max-length="maxLength"
                 :can-interact="canInteract"
-                :report-categories="reportCategories"
                 :report-reasons="reportReasons"
                 @posted="emit('posted')"
                 @deleted="emit('deleted', $event)"

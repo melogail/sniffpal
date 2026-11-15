@@ -8,6 +8,7 @@ use App\Exceptions\Reviews\ReviewingNotSupported;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -97,6 +98,7 @@ class ListReviews
 
         return $reviewable->reviews()
             ->with('user.media')
+            ->whereHas('user', fn (Builder $users) => $users->active())
             ->withReportedBy($viewer)
             ->latest('created_at')
             ->latest('id')

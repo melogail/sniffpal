@@ -46,3 +46,15 @@ test('removes every report filed against the review, not just the first', functi
 
     $this->assertDatabaseEmpty('reports');
 });
+
+test('keeps a resolved report on the review as the moderation record', function () {
+    $review  = Review::factory()->create();
+    $decided = Report::factory()->forReportable($review)->resolved()->create();
+    $pending = Report::factory()->forReportable($review)->create();
+
+    app(DeleteReview::class)->handle($review);
+
+    $this->assertModelMissing($review);
+    $this->assertModelMissing($pending);
+    $this->assertModelExists($decided);
+});

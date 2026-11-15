@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Report;
 
 use App\Concerns\ReportValidationRules;
-use App\Enums\ReportCategory;
+use App\Enums\Reportable;
 use App\Enums\ReportReason;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -55,20 +55,22 @@ class StoreReportRequest extends FormRequest
      */
     public function rules(): array
     {
-        return $this->reportRules();
-    }
-
-    /**
-     * The submitted category.
-     */
-    public function category(): ReportCategory
-    {
-        return ReportCategory::from((string) $this->validated('category'));
+        return $this->reportRules($this->target());
     }
 
     /**
      * The submitted reason.
      */
+    /**
+     * The bound `{reportable_type}` route parameter.
+     */
+    public function target(): Reportable
+    {
+        $target = $this->route('reportable_type');
+
+        return $target instanceof Reportable ? $target : Reportable::from((string) $target);
+    }
+
     public function reason(): ReportReason
     {
         return ReportReason::from((string) $this->validated('reason'));

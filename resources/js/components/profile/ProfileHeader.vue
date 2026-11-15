@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { Link } from "@inertiajs/vue3";
-import { BadgeCheck, CalendarDays, MapPin, Phone, Settings } from "@lucide/vue";
-import { computed } from "vue";
-import StartConversationButton from "@/components/messaging/StartConversationButton.vue";
-import ProfileLikeButton from "@/components/profile/ProfileLikeButton.vue";
-import ProfileStat from "@/components/profile/ProfileStat.vue";
-import RatingStars from "@/components/reviews/RatingStars.vue";
-import UserAvatar from "@/components/UserAvatar.vue";
-import { Button } from "@/components/ui/button";
-import { useLocale } from "@/composables/useLocale";
-import { formatDate } from "@/lib/datetime";
-import { edit as editProfile } from "@/routes/profile";
-import type { ProfileSummary, ReviewBounds } from "@/types";
+import { Link } from '@inertiajs/vue3';
+import { BadgeCheck, CalendarDays, MapPin, Phone, Settings } from '@lucide/vue';
+import { computed } from 'vue';
+import StartConversationButton from '@/components/messaging/StartConversationButton.vue';
+import ProfileLikeButton from '@/components/profile/ProfileLikeButton.vue';
+import ProfileStat from '@/components/profile/ProfileStat.vue';
+import ReportDialog from '@/components/reports/ReportDialog.vue';
+import RatingStars from '@/components/reviews/RatingStars.vue';
+import UserAvatar from '@/components/UserAvatar.vue';
+import { Button } from '@/components/ui/button';
+import { useLocale } from '@/composables/useLocale';
+import { useTranslations } from '@/composables/useTranslations';
+import { formatDate } from '@/lib/datetime';
+import { edit as editProfile } from '@/routes/profile';
+import type {
+    ProfileSummary,
+    ReportReasonsByType,
+    ReviewBounds,
+} from '@/types';
 
 /**
  * The identity block at the top of a public profile.
@@ -29,14 +35,17 @@ const { profile, canInteract } = defineProps<{
     canInteract: boolean;
     /** `petconnect.reviews.*`, so the stars draw the real scale. */
     bounds: ReviewBounds;
+    /** The `reportReasons` page prop, keyed by target type. */
+    reportReasons: ReportReasonsByType;
 }>();
 
+const { t } = useTranslations();
 const { tag } = useLocale();
 
 const joinedOn = computed(() => formatDate(profile.created_at, tag.value));
 const rating = computed(() =>
     profile.reviews_avg_rate === null
-        ? "—"
+        ? '—'
         : profile.reviews_avg_rate.toFixed(1),
 );
 </script>
@@ -140,6 +149,15 @@ const rating = computed(() =>
                 :url="profile.whatsapp"
                 :owner-name="profile.name"
                 appearance="default"
+            />
+
+            <ReportDialog
+                v-if="canInteract"
+                reportable-type="user"
+                :reportable-id="profile.id"
+                :reasons="reportReasons"
+                :reported="profile.has_reported"
+                :trigger-label="t('reports.report_profile')"
             />
         </div>
     </header>

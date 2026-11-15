@@ -95,9 +95,9 @@ test('records a nova write against a short morph alias', function (string $alias
         $report = Report::factory()->pending()->create();
 
         $test->actingAs($admin, 'admin')
-            ->postJson('/nova-api/reports/action?action=change-status', [
+            ->postJson('/nova-api/reports/action?action=resolve-report', [
                 'resources' => [$report->getKey()],
-                'status'    => 'resolved',
+                'decision'  => 'dismiss',
             ])
             ->assertOk();
     }],

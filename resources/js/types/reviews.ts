@@ -35,34 +35,36 @@ export type ReviewBounds = {
     max_comment_length: number;
 };
 
-export type ReportCategory =
-    | 'abuse'
-    | 'bug'
-    | 'copyright'
-    | 'technical'
-    | 'feedback'
-    | 'other';
-
 export type ReportReason =
     | 'spam'
+    | 'harassment'
     | 'hate_speech'
     | 'false_information'
-    | 'violation'
     | 'inappropriate_content'
+    | 'scam_or_fraud'
+    | 'animal_welfare'
+    | 'prohibited_animal'
+    | 'misleading_listing'
+    | 'duplicate_listing'
+    | 'no_longer_available'
+    | 'impersonation'
+    | 'fake_review'
     | 'other';
 
-/**
- * The two option lists a report dialog needs.
- *
- * They are props on the page that hosts the dialog (`profile.show`,
- * `pets.show`), not a separate endpoint, so a page with a report control has to
- * accept and forward them.
- */
-export type ReportOptions = {
-    reportCategories: SelectOption<ReportCategory>[];
-    reportReasons: SelectOption<ReportReason>[];
-};
+/** What `reports.store` takes as its morph-type segment. */
+export type ReportableType = 'comment' | 'review' | 'pet' | 'user';
 
-/** What `reports.store` and `reviews.store` take as their morph-type segment. */
-export type ReportableType = 'comment' | 'review';
+/**
+ * The reason options a report dialog offers, keyed by target type.
+ *
+ * A page prop on every page that hosts a report control (`home`, `pets.show`,
+ * `profile.show`), not a separate endpoint, so a page has to accept and
+ * forward it. `ReportDialog` picks the list for its own `reportableType`.
+ */
+export type ReportReasonsByType = Record<
+    ReportableType,
+    SelectOption<ReportReason>[]
+>;
+
+/** What `reviews.store` takes as its morph-type segment. */
 export type ReviewableType = 'user';

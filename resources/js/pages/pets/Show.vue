@@ -12,13 +12,7 @@ import { useLocale } from '@/composables/useLocale';
 import { useTranslations } from '@/composables/useTranslations';
 import { petTitle } from '@/lib/petTitle';
 import { home } from '@/routes';
-import type {
-    CommentBounds,
-    PetDetail,
-    ReportCategory,
-    ReportReason,
-    SelectOption,
-} from '@/types';
+import type { CommentBounds, PetDetail, ReportReasonsByType } from '@/types';
 
 /**
  * One listing. Public — a shared link has to work for somebody with no account.
@@ -69,8 +63,7 @@ import type {
  */
 const { pet } = defineProps<{
     pet: PetDetail;
-    reportCategories: SelectOption<ReportCategory>[];
-    reportReasons: SelectOption<ReportReason>[];
+    reportReasons: ReportReasonsByType;
     commentBounds: CommentBounds;
 }>();
 
@@ -86,6 +79,9 @@ const name = computed(() => petTitle(pet, t, locale.value.current));
 const isSignedIn = computed(() => Boolean(page.props.auth.user));
 
 const canMessageOwner = computed(() => isSignedIn.value && !pet.is_owner);
+
+/** Same gate as messaging, named for what it guards. */
+const canReport = computed(() => isSignedIn.value && !pet.is_owner);
 
 /** The description, flattened to one line and cut for a share card. */
 const excerpt = computed(() => {
@@ -136,6 +132,8 @@ const excerpt = computed(() => {
                     :pet="pet"
                     :can-like="isSignedIn"
                     :can-message="canMessageOwner"
+                    :can-report="canReport"
+                    :report-reasons="reportReasons"
                 />
 
                 <PetFactsCard :pet="pet" />
@@ -149,7 +147,6 @@ const excerpt = computed(() => {
                     :max-length="commentBounds.max_length"
                     :thread-per-page="commentBounds.thread_per_page"
                     :can-interact="isSignedIn"
-                    :report-categories="reportCategories"
                     :report-reasons="reportReasons"
                 />
             </div>

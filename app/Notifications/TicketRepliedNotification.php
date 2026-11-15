@@ -41,7 +41,7 @@ class TicketRepliedNotification extends Notification implements ShouldQueueAfter
      */
     public function via(object $notifiable): array
     {
-        return $notifiable instanceof User ? ['database', 'mail'] : ['mail'];
+        return $notifiable instanceof User ? ['database', 'broadcast', 'mail'] : ['mail'];
     }
 
     public function toMail(object $notifiable): MailMessage

@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\Reportable;
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\Models\Admin;
 use App\Models\Comment;
@@ -25,6 +24,8 @@ function reportableTargetAuthoredBy(Reportable $type, User $author): Model
     return match ($type) {
         Reportable::Comment => Comment::factory()->for($author)->create(),
         Reportable::Review  => Review::factory()->for($author)->create(),
+        Reportable::Pet     => Pet::factory()->for($author)->create(),
+        Reportable::User    => $author,
     };
 }
 
@@ -34,8 +35,7 @@ function reportableTargetAuthoredBy(Reportable $type, User $author): Model
 function reportPayload(): array
 {
     return [
-        'category'    => ReportCategory::Abuse->value,
-        'reason'      => ReportReason::HateSpeech->value,
+        'reason'      => ReportReason::Spam->value,
         'description' => 'Abusive towards the seller.',
     ];
 }
@@ -54,8 +54,6 @@ function reportPayload(): array
  */
 const REPORTABLE_TYPES_OFF_THE_WHITELIST = [
     'a url encoded class name'       => ['App%5CModels%5CComment'],
-    'a morph alias for a profile'    => ['user'],
-    'a morph alias for a listing'    => ['pet'],
     'a morph alias for a moderator'  => ['admin'],
     'a value on no whitelist at all' => ['dragon'],
 ];
@@ -113,8 +111,7 @@ test('files the report against a whitelisted target', function (Reportable $type
         'user_id'         => $reporter->getKey(),
         'reportable_type' => $type->value,
         'reportable_id'   => $target->getKey(),
-        'category'        => ReportCategory::Abuse->value,
-        'reason'          => ReportReason::HateSpeech->value,
+        'reason'          => ReportReason::Spam->value,
         'status'          => 'pending',
     ]);
 })->with(Reportable::cases());
@@ -171,7 +168,7 @@ test('refuses a report of the reporter own content on the flow level key and wri
     $this->actingAs($author)
         ->post(route('reports.store', ['reportable_type' => $type->value, 'reportable_id' => $target->getKey()]), reportPayload())
         ->assertInvalid(['report' => 'You cannot report your own content.'])
-        ->assertValid(['category', 'reason', 'description']);
+        ->assertValid(['reason', 'description']);
 
     $this->assertDatabaseEmpty('reports');
 })->with(Reportable::cases());
@@ -184,20 +181,30 @@ test('refuses a second report of the same target on the flow level key and leave
     $this->actingAs($reporter)
         ->post(route('reports.store', ['reportable_type' => $type->value, 'reportable_id' => $target->getKey()]), reportPayload())
         ->assertInvalid(['report' => 'You have already reported this.'])
-        ->assertValid(['category', 'reason', 'description']);
+        ->assertValid(['reason', 'description']);
 
     expect(Report::query()->count())->toBe(1);
 })->with(Reportable::cases());
 
-test('rejects a category that is not a ReportCategory case and writes nothing', function () {
-    $target = Review::factory()->create();
+test('rejects a reason that is not offered for the target and writes nothing', function () {
+    $target = Comment::factory()->create();
 
     $this->actingAs(User::factory()->create())
-        ->post(route('reports.store', ['reportable_type' => 'review', 'reportable_id' => $target->getKey()]), [
+        ->post(route('reports.store', ['reportable_type' => 'comment', 'reportable_id' => $target->getKey()]), [
             ...reportPayload(),
-            'category' => 'nuisance',
+            'reason' => ReportReason::FakeReview->value,
         ])
-        ->assertInvalid(['category']);
+        ->assertInvalid(['reason']);
+
+    $this->assertDatabaseEmpty('reports');
+});
+
+test('returns 404 for a listing whose owner is deactivated and writes nothing', function () {
+    $pet = Pet::factory()->for(User::factory()->inactive())->create();
+
+    $this->actingAs(User::factory()->create())
+        ->post(route('reports.store', ['reportable_type' => 'pet', 'reportable_id' => $pet->getKey()]), reportPayload())
+        ->assertNotFound();
 
     $this->assertDatabaseEmpty('reports');
 });
@@ -215,14 +222,13 @@ test('rejects a reason that is not a ReportReason case and writes nothing', func
     $this->assertDatabaseEmpty('reports');
 });
 
-test('rejects a report with no category and no reason and writes nothing', function () {
+test('rejects a report with no reason and writes nothing', function () {
     $target = Review::factory()->create();
 
     $this->actingAs(User::factory()->create())
         ->post(route('reports.store', ['reportable_type' => 'review', 'reportable_id' => $target->getKey()]), [])
         ->assertInvalid([
-            'category' => 'The category field is required.',
-            'reason'   => 'The reason field is required.',
+            'reason' => 'The reason field is required.',
         ]);
 
     $this->assertDatabaseEmpty('reports');
@@ -281,4 +287,32 @@ test('returns 429 once the acting user passes 5 reports in a minute', function (
         ->assertTooManyRequests();
 
     expect(Report::query()->count())->toBe(5);
+});
+
+test('returns 429 once the acting user passes 20 reports in a day, however spread out', function () {
+    $reporter = User::factory()->create();
+
+    for ($attempt = 0; $attempt < 20; $attempt++) {
+        if ($attempt > 0 && $attempt % 5 === 0) {
+            $this->travel(2)->minutes();
+        }
+
+        $this->actingAs($reporter)
+            ->post(route('reports.store', [
+                'reportable_type' => 'review',
+                'reportable_id'   => Review::factory()->create()->getKey(),
+            ]), reportPayload())
+            ->assertRedirect();
+    }
+
+    $this->travel(2)->minutes();
+
+    $this->actingAs($reporter)
+        ->post(route('reports.store', [
+            'reportable_type' => 'review',
+            'reportable_id'   => Review::factory()->create()->getKey(),
+        ]), reportPayload())
+        ->assertTooManyRequests();
+
+    expect(Report::query()->count())->toBe(20);
 });

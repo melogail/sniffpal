@@ -36,6 +36,8 @@ class AccountResource extends JsonResource
             'is_verified'        => $this->isVerified(),
             'two_factor_enabled' => $this->two_factor_confirmed_at !== null,
             'phone'              => $this->phone,
+            'show_phone'         => (bool) $this->show_phone,
+            'whatsapp_enabled'   => (bool) $this->whatsapp_enabled,
             'bio'                => $this->bio,
             'address'            => $this->address,
             'city'               => $this->city,

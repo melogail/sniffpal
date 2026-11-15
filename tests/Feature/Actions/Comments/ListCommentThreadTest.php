@@ -193,3 +193,17 @@ test('serialises a page of the thread in a constant number of queries however ma
     expect($atNineComments)->toBe($atThirtyComments)
         ->and($atThirtyComments)->toBe(THREAD_PAYLOAD_QUERY_COST);
 });
+
+test('leaves out comments and replies written by a deactivated member', function () {
+    $pet      = Pet::factory()->create();
+    $inactive = User::factory()->inactive()->create();
+    $visible  = Comment::factory()->for($pet, 'commentable')->create();
+    Comment::factory()->for($pet, 'commentable')->for($inactive)->create();
+    Comment::factory()->reply($visible)->for($inactive)->create();
+    $reply    = Comment::factory()->reply($visible)->create();
+
+    $page     = app(ListCommentThread::class)->handle(commentableType: Commentable::Pet, commentableId: $pet->getKey());
+
+    expect($page->pluck('id')->all())->toBe([$visible->getKey()])
+        ->and($page->first()->replies->pluck('id')->all())->toBe([$reply->getKey()]);
+});

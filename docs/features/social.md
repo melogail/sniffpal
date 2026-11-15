@@ -29,12 +29,12 @@ Likes toggle. Saves are bookmarks on listings, kept in `saves`. Both need a veri
 
 ## Reports
 
-Members report users, comments and reviews (`Reportable` enum) with a `ReportCategory` (abuse, bug, copyright, technical, feedback, other), a `ReportReason` and free text. `ReportFiledNotification` alerts staff.
+Members report listings, profiles, comments and reviews (`Reportable` enum) with a per-target `ReportReason` and free text. `ReportFiledNotification` alerts staff. The report records `subject_user_id` (the accountable member) so decisions survive the content being deleted; resolved reports are the strike record (`User::strikeCount()`). Reporters get `ReportResolvedNotification`; the subject gets `ModerationNoticeNotification` (mail when deactivated).
 
 Moderation happens in Nova:
 
-- `Report` resource with filters by status and category
-- `ChangeReportStatus`: pending → reviewed → resolved / rejected
+- `Report` resource with filters by status, target type, reason and resolution; pending and high-priority reasons first
+- `ResolveReport`: one decision select (review / dismiss / warn / remove / purge / deactivate) that runs `App\Actions\Reports\ResolveReport`, closes sibling reports and notifies both sides; `ReopenReport` undoes the record
 - `PurgeOrphanedReports` removes reports whose target is gone
 - Content actions (`DeleteCommentThread`, `DeleteReview`, `PurgePetListing`) and account actions (`DeactivateUser`, `DeleteUserAccount`) complete the toolset
 

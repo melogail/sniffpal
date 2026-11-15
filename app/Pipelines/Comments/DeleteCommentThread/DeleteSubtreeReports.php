@@ -8,7 +8,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
- * Remove the reports filed against every comment in the subtree.
+ * Remove the **pending** reports filed against every comment in the subtree.
  *
  * The sharpest of the orphan cases. `reports` has, like `likes`, no foreign key
  * on the morph id, so nothing in the schema removes these when the comment
@@ -24,12 +24,10 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * an id being reused. See .ai/rules/migrations.md before repeating it. The
  * dangling queue item is reason enough for this step.
  *
- * Deleting a report here discards a moderation record. That is accepted: the
- * subject of the record no longer exists, the outcome the reporter wanted has
- * happened, and Nova's own ActionEvent log is where a durable audit trail
- * belongs (Phase 3). Retaining them would mean a `reports` archive table and a
- * decision about what a report against nothing means to a moderator — worth
- * doing on purpose, not as a side effect of a delete button.
+ * Decided reports (resolved or rejected) are kept on purpose: the row carries
+ * `subject_user_id`, the resolution, the moderator and the note, and is the
+ * strike record `User::strikeCount()` reads. A decided report whose target is
+ * gone is expected, not an orphan; only an undecided one is.
  */
 class DeleteSubtreeReports
 {
@@ -38,6 +36,7 @@ class DeleteSubtreeReports
         Report::query()
             ->where('reportable_type', Relation::getMorphAlias(Comment::class))
             ->whereIn('reportable_id', $context->subtreeIds())
+            ->pending()
             ->delete();
 
         return $next($context);

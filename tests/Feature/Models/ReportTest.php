@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
 use App\Enums\ReportStatus;
 use App\Models\Comment;
+use App\Models\Pet;
 use App\Models\Report;
 use App\Models\Review;
 use App\Models\User;
@@ -69,7 +69,6 @@ test('rejects a mass assigned moderation status', function () {
         'user_id'         => User::factory()->create()->getKey(),
         'reportable_type' => 'comment',
         'reportable_id'   => $comment->getKey(),
-        'category'        => ReportCategory::Abuse,
         'reason'          => ReportReason::Spam,
         'status'          => ReportStatus::Resolved,
     ]))->toThrow(MassAssignmentException::class);
@@ -84,9 +83,17 @@ test('files a new report as pending', function () {
         'user_id'         => User::factory()->create()->getKey(),
         'reportable_type' => 'comment',
         'reportable_id'   => $comment->getKey(),
-        'category'        => ReportCategory::Abuse,
         'reason'          => ReportReason::Spam,
     ]);
 
     expect($report->fresh()->status)->toBe(ReportStatus::Pending);
+});
+
+test('still resolves a soft deleted listing as its target', function () {
+    $pet    = Pet::factory()->create();
+    $report = Report::factory()->forReportable($pet)->resolved()->create();
+    $pet->delete();
+
+    expect($report->fresh()->reportable)->not->toBeNull()
+        ->and($report->fresh()->reportable->is($pet))->toBeTrue();
 });

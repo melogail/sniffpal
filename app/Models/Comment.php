@@ -136,14 +136,12 @@ class Comment extends Model implements Likeable, Reportable
      * method: "who is told when this is liked" and "who may not report this"
      * happen to be the same person today, and a model that merged them would
      * have no way to say so when they diverge.
-     *
-     * @return Collection<int, User>
      */
-    public function reportSubjects(): Collection
+    public function reportSubject(): ?User
     {
         $this->loadMissing('user');
 
-        return collect([$this->user])->filter()->values();
+        return $this->user;
     }
 
     /**

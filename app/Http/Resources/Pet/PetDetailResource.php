@@ -136,6 +136,7 @@ class PetDetailResource extends JsonResource
             'breed'               => PetBreedOptionResource::make($this->whenLoaded('breed')),
             'user'                => PetOwnerResource::make($this->whenLoaded('user')),
             'is_owner'            => $isOwner,
+            'has_reported'        => (bool) ($this->has_reported ?? false),
 
             'location'            => [
                 'city'            => $this->city,

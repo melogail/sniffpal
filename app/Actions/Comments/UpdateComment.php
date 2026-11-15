@@ -28,7 +28,10 @@ use Illuminate\Pipeline\Pipeline;
  */
 class UpdateComment
 {
-    public function __construct(private readonly Pipeline $pipeline) {}
+    public function __construct(
+        private readonly Pipeline $pipeline,
+        private readonly BroadcastCommentThreadChange $broadcastChange,
+    ) {}
 
     public function handle(Comment $comment, string $content): Comment
     {
@@ -42,12 +45,16 @@ class UpdateComment
             mask: (string) config('bad-words.mask', '****'),
         );
 
-        return $this->pipeline
+        $comment     = $this->pipeline
             ->send($context)
             ->through([
                 CleanContent::class,
                 PersistContent::class,
             ])
             ->then(fn (ReviseCommentContext $completed): Comment => $completed->comment);
+
+        $this->broadcastChange->handle($comment, 'updated');
+
+        return $comment;
     }
 }

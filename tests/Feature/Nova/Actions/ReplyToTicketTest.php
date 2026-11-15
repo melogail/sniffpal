@@ -50,7 +50,7 @@ test('replying to a member ticket appends the admin message, marks it answered a
         function (TicketRepliedNotification $notification, array $channels) use ($ticket): bool {
             $payload = $notification->toArray($ticket->user);
 
-            return $channels === ['database', 'mail']
+            return $channels === ['database', 'broadcast', 'mail']
                 && $payload['message_key'] === 'notifications.ticket_answered'
                 && $payload['message_replace'] === ['subject' => 'Missing breed']
                 && $payload['url'] === route('tickets.show', $ticket);

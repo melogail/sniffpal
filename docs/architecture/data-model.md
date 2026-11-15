@@ -38,7 +38,7 @@ ContactMessage                   guests' one-off messages from the Support page
 | `likes` | Polymorphic `likeable` (pet, comment, user). |
 | `saves` | User ↔ pet bookmarks. |
 | `reviews` | Polymorphic `reviewable` (user profile), rating + sanitised comment. |
-| `reports` | Polymorphic `reportable` (user, comment, review), `category`, `reason`, `status`. |
+| `reports` | Polymorphic `reportable` (pet, user, comment, review), `subject_user_id`, `reason`, `status`, `resolution`, `moderator_note`, `resolved_by`, `resolved_at`. |
 | `conversations` | `type` (direct), `last_message_at`, soft deletes. |
 | `conversation_user` | Pivot with a unique (conversation, user) index, read cursors. |
 | `messages` | `content`, `type` (text), `status` (sent, …), `pinned_by`/`pinned_at`, `edited_at`. |
@@ -64,8 +64,8 @@ Morph columns store **aliases** from the morph map (`pet`, `user`, `comment`, `r
 | `Commentable` | pet |
 | `Reviewable` | user |
 | `Reportable` | user, comment, review |
-| `ReportCategory` | abuse, bug, copyright, technical, feedback, other |
-| `ReportReason` | per-category reasons |
+| `ReportReason` | per-target reasons (`ReportReason::forTarget()`) |
+| `ReportResolution` | warned, content_removed, content_purged, account_deactivated |
 | `ReportStatus` | pending, reviewed, resolved, rejected |
 | `ConversationType` | direct |
 | `MessageType` | text |

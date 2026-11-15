@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
  * report was filed.
  *
  * Here the question is asked of the target itself
- * (App\Contracts\Reportable::reportSubjects()), and a target that cannot answer
+ * (App\Contracts\Reportable::reportSubject()), and a target that cannot answer
  * it raises ReportingNotSupported instead of being waved through — so the check
  * covers every case on App\Enums\Reportable by construction rather than by a
  * list somebody has to remember to extend.

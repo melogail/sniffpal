@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\ReportCategory;
 use App\Enums\ReportReason;
+use App\Enums\ReportResolution;
 use App\Enums\ReportStatus;
 use Database\Factories\ReportFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -25,21 +25,25 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property int $user_id
+ * @property int|null $subject_user_id
  * @property string $reportable_type
  * @property int $reportable_id
- * @property ReportCategory $category
  * @property ReportReason $reason
  * @property string|null $description
  * @property ReportStatus $status
+ * @property ReportResolution|null $resolution
+ * @property string|null $moderator_note
+ * @property int|null $resolved_by
+ * @property Carbon|null $resolved_at
  * @property array<string, mixed>|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 #[Fillable([
     'user_id',
+    'subject_user_id',
     'reportable_type',
     'reportable_id',
-    'category',
     'reason',
     'description',
     'metadata',
@@ -72,21 +76,24 @@ class Report extends Model
     protected function casts(): array
     {
         return [
-            'category' => ReportCategory::class,
-            'reason'   => ReportReason::class,
-            'status'   => ReportStatus::class,
-            'metadata' => 'array',
+            'reason'      => ReportReason::class,
+            'status'      => ReportStatus::class,
+            'resolution'  => ReportResolution::class,
+            'resolved_at' => 'datetime',
+            'metadata'    => 'array',
         ];
     }
 
     /**
-     * The reported model (a comment or a review).
+     * The reported model. `withTrashed()` only applies to soft-deleting targets
+     * (listings): a listing removed by a decision must still be reachable from
+     * the report that removed it.
      *
      * @return MorphTo<Model, $this>
      */
     public function reportable(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo()->withTrashed();
     }
 
     /**
@@ -97,6 +104,42 @@ class Report extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * The user accountable for the reported content (or the reported profile).
+     * Filled at submit time so it survives the target being deleted.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'subject_user_id');
+    }
+
+    /**
+     * The moderator who made the decision.
+     *
+     * @return BelongsTo<Admin, $this>
+     */
+    public function resolvedBy(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'resolved_by');
+    }
+
+    /**
+     * Resolved reports held against the given user: the strike count.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function upheldAgainst(Builder $query, User $subject, ?Carbon $since = null): Builder
+    {
+        return $query
+            ->where('subject_user_id', $subject->getKey())
+            ->where('status', ReportStatus::Resolved)
+            ->when($since, fn (Builder $query, Carbon $since): Builder => $query->where('resolved_at', '>=', $since));
     }
 
     /**

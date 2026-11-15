@@ -4,6 +4,7 @@ use App\Enums\PetStatus;
 use App\Models\Breed;
 use App\Models\Category;
 use App\Models\Pet;
+use App\Models\Report;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -154,6 +155,22 @@ describe('show', function () {
         $this->get(route('pets.show', $pet))->assertOk();
 
         expect($pet->fresh()->views)->toBe(5);
+    });
+
+    test('returns 404 for a listing whose owner is deactivated', function () {
+        $pet = Pet::factory()->for(User::factory()->inactive())->create();
+
+        $this->get(route('pets.show', $pet))->assertNotFound();
+    });
+
+    test('ships whether the viewer has already reported the listing', function () {
+        $viewer = User::factory()->create();
+        $pet    = Pet::factory()->create();
+        Report::factory()->for($viewer)->forReportable($pet)->create();
+
+        $this->actingAs($viewer)
+            ->get(route('pets.show', $pet))
+            ->assertInertia(fn (AssertableInertia $page) => $page->where('pet.has_reported', true));
     });
 
     test('returns 404 for a soft deleted listing', function () {

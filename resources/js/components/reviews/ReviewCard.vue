@@ -11,20 +11,13 @@ import { useLocale } from '@/composables/useLocale';
 import { formatRelative } from '@/lib/datetime';
 import { show as showProfile } from '@/routes/profile';
 import { destroy as destroyReview } from '@/routes/reviews';
-import type {
-    ReportCategory,
-    ReportReason,
-    Review,
-    ReviewBounds,
-    SelectOption,
-} from '@/types';
+import type { ReportReasonsByType, Review, ReviewBounds } from '@/types';
 
-const { review, reportCategories, reportReasons } = defineProps<{
+const { review, reportReasons } = defineProps<{
     review: Review;
     /** The page's `reviewBounds` prop — the stars read their scale from it. */
     bounds: ReviewBounds;
-    reportCategories: SelectOption<ReportCategory>[];
-    reportReasons: SelectOption<ReportReason>[];
+    reportReasons: ReportReasonsByType;
 }>();
 
 const { tag } = useLocale();
@@ -95,7 +88,6 @@ const writtenAt = computed(() => formatRelative(review.created_at, tag.value));
                     v-if="!review.is_author"
                     reportable-type="review"
                     :reportable-id="review.id"
-                    :categories="reportCategories"
                     :reasons="reportReasons"
                     :reported="review.has_reported"
                 />

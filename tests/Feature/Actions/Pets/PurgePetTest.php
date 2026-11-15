@@ -252,3 +252,16 @@ test('purges a listing that was already retired', function () {
         ->and(Pet::withTrashed()->whereKey($listing->getKey())->exists())->toBeFalse()
         ->and(strandedListingRows())->toBe([]);
 });
+
+test('removes pending reports on the listing itself and keeps resolved ones as the record', function () {
+    $pet     = Pet::factory()->create();
+    $pending = Report::factory()->forReportable($pet)->create();
+    $decided = Report::factory()->forReportable($pet)->resolved()->create();
+
+    app(PurgePet::class)->handle($pet);
+
+    $this->assertDatabaseMissing('pets', ['id' => $pet->getKey()]);
+    $this->assertModelMissing($pending);
+    $this->assertModelExists($decided);
+    expect($decided->fresh()->subject_user_id)->toBe($pet->user_id);
+});

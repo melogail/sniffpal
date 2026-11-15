@@ -13,13 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { provideMutationSurface } from '@/composables/useMutationSurface';
 import { useTranslations } from '@/composables/useTranslations';
-import type {
-    Comment,
-    CommentableType,
-    ReportCategory,
-    ReportReason,
-    SelectOption,
-} from '@/types';
+import type { Comment, CommentableType, ReportReasonsByType } from '@/types';
 
 /**
  * A commentable's discussion in a modal — legacy's `web/CommentsDialog`.
@@ -134,8 +128,7 @@ const { comments = [], subject } = defineProps<{
     canInteract: boolean;
     /** `petconnect.comments.max_length`, when the page was shipped it. */
     maxLength?: number | null;
-    reportCategories?: SelectOption<ReportCategory>[];
-    reportReasons?: SelectOption<ReportReason>[];
+    reportReasons?: ReportReasonsByType;
 }>();
 
 /**
@@ -191,7 +184,6 @@ provideMutationSurface({
                     :commentable-id="commentableId"
                     :max-length="maxLength"
                     :can-interact="canInteract"
-                    :report-categories="reportCategories"
                     :report-reasons="reportReasons"
                     @posted="emit('posted')"
                     @deleted="emit('deleted', $event)"

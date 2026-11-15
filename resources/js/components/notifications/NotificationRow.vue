@@ -6,14 +6,15 @@ import {
     LifeBuoy,
     Mail,
     MessageSquare,
+    ShieldAlert,
     Star,
-} from '@lucide/vue';
-import { computed, type Component } from 'vue';
-import { notificationMessage } from '@/components/notifications/message';
-import { useLocale } from '@/composables/useLocale';
-import { useTranslations } from '@/composables/useTranslations';
-import { formatRelative } from '@/lib/datetime';
-import type { InboxNotification } from '@/types';
+} from "@lucide/vue";
+import { computed, type Component } from "vue";
+import { notificationMessage } from "@/components/notifications/message";
+import { useLocale } from "@/composables/useLocale";
+import { useTranslations } from "@/composables/useTranslations";
+import { formatRelative } from "@/lib/datetime";
+import type { InboxNotification } from "@/types";
 
 /**
  * What one notification *looks* like — type glyph, sentence, timestamp, unread
@@ -89,12 +90,20 @@ const ICONS: Record<string, Component> = {
     review: Star,
     message: Mail,
     report: Flag,
+    report_resolved: Flag,
+    moderation: ShieldAlert,
     ticket: LifeBuoy,
 };
 
 const icon = computed<Component>(() => ICONS[notification.type] ?? Bell);
 
 const message = computed(() => notificationMessage(notification, t));
+/** A moderator's note travels with moderation notices only; shown under the sentence. */
+const note = computed(() =>
+    typeof notification.data.note === "string" && notification.data.note !== ""
+        ? notification.data.note
+        : null,
+);
 
 const timestamp = computed(() =>
     formatRelative(notification.created_at, tag.value),
@@ -116,6 +125,9 @@ const timestamp = computed(() =>
                 :class="{ 'font-semibold': !notification.read }"
             >
                 {{ message }}
+            </p>
+            <p v-if="note" class="text-muted-foreground mt-0.5 text-xs">
+                {{ note }}
             </p>
             <div class="mt-1 flex items-center justify-between gap-2">
                 <time
