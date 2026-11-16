@@ -22,8 +22,9 @@
         "laravel/socialite": "^5.31",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "spatie/laravel-medialibrary": "^11.23.5",
-        "sniffpal/ticket-thread": "@dev"
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "sniffpal/ticket-thread": "@dev",
+        "spatie/laravel-medialibrary": "^11.23.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
