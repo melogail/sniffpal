@@ -158,16 +158,19 @@ class UpdateProfile
 
     /**
      * @param  array<string, mixed>  $attributes  Only the keys the request sent.
+     * @param  bool  $removeImage  Delete the current avatar when no new one is uploaded.
      */
     public function handle(
         User $user,
         array $attributes,
         ?UploadedFile $image = null,
+        bool $removeImage = false,
     ): User {
         $context = new UpdateProfileContext(
             user: $user,
             attributes: $attributes,
             image: $image,
+            removeImage: $removeImage,
         );
 
         return DB::transaction(fn (): User => $this->pipeline

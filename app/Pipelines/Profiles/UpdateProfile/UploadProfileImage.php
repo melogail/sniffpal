@@ -38,7 +38,7 @@ class UploadProfileImage
 {
     public function handle(UpdateProfileContext $context, Closure $next): mixed
     {
-        if (! $context->hasImage()) {
+        if (! $context->hasImage() && ! $context->removeImage) {
             return $next($context);
         }
 
@@ -51,6 +51,11 @@ class UploadProfileImage
             ->all();
 
         $context->setPreviousMediaIds($previousIds);
+
+        // A bare removal snapshots the ids for ClearPreviousProfileImage and uploads nothing.
+        if (! $context->hasImage()) {
+            return $next($context);
+        }
 
         $image       = $context->image;
 

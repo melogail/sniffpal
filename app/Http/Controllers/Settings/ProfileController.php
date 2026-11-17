@@ -116,6 +116,7 @@ class ProfileController extends Controller
             user: $user,
             attributes: $request->profileAttributes(),
             image: $request->uploadedImage(),
+            removeImage: $request->removesImage(),
         );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);

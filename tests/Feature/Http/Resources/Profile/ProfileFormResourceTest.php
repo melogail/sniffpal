@@ -32,7 +32,7 @@ const PROFILE_FORM_READ_ONLY_KEYS  = ['id', 'avatar', 'is_verified'];
  *
  * @var list<string>
  */
-const PROFILE_FORM_WRITE_ONLY_KEYS = ['image'];
+const PROFILE_FORM_WRITE_ONLY_KEYS = ['image', 'remove_image'];
 
 /**
  * The rules the settings form actually validates against, asked of the real

@@ -29,9 +29,8 @@ import type { HomeFeedFilters, PetCategoryOption } from '@/types';
  * `filters`, not this map, so such an id still counts towards the badge while
  * nothing in the tree can show or clear it. That is a limit of the two-key
  * query, not of any function below, and it is unreachable with the seeded
- * taxonomy: `database/data/categories.json` + `breeds.json` give all seven
- * categories breeds, counted 2026-09-03 as dogs 20, cats 18, birds 10, fish 10,
- * rabbits 8, small-pets 8, reptiles 8.
+ * taxonomy: `database/data/categories.json` + `breeds.json` give both
+ * categories breeds, counted 2026-11-17 as dogs 20, cats 18.
  */
 export type CategorySelection = Record<number, number[]>;
 

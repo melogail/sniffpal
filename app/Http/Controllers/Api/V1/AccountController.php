@@ -45,6 +45,7 @@ class AccountController extends Controller
             user: $user,
             attributes: $request->profileAttributes(),
             image: $request->uploadedImage(),
+            removeImage: $request->removesImage(),
         );
 
         return AccountResource::make($updated->loadMissing('media'));

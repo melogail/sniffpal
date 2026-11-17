@@ -32,7 +32,7 @@ ContactMessage                   guests' one-off messages from the Support page
 | `users` | `is_active`, `locale`, `bio`, media directory name, 2FA columns. No soft deletes; see cascade rules in [Backend layers](/architecture/backend#deletion-and-cascades). |
 | `admins`, `admin_password_reset_tokens` | Staff accounts for the `admin` guard. |
 | `categories` | `name`, `name_ar`, `slug`, `description`, `description_ar`. 7 seeded. |
-| `breeds` | Per category, bilingual names. 82 seeded from `database/data/breeds.json`. |
+| `breeds` | Per category, bilingual names. 38 seeded from `database/data/breeds.json`. |
 | `pets` | 41 columns: identity (`name`, `slug`, `birth_date`, `gender`, `color`, `weight`), litter counts (`quantity`, `male_count`, `female_count`), `listing_type`, `price`, `status`, `views`, location (`address`, `detailed_address`, `city`, `state`, `postal_code`, `country`, `latitude`, `longitude`), health (`health_status`, `vaccinated`, `spayed_neutered`, `special_needs`, `last_vet_visit`, `vaccinations`, `medications`, `allergies` JSON, `vet_name`, `vet_phone`), `traits` and `additional_info` JSON, soft deletes. Lat/long indexed for radius search. |
 | `comments` | Polymorphic `commentable` (pet), parent id for replies. |
 | `likes` | Polymorphic `likeable` (pet, comment, user). |

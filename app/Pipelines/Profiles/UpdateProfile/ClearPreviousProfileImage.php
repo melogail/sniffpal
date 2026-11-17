@@ -9,7 +9,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 /**
  * Remove the avatar the new one replaced — after the transaction commits.
  *
- * Runs only when UploadProfileImage actually attached something. That guard is
+ * Runs only when UploadProfileImage actually attached something, or when the
+ * save asked for a bare removal (`removeImage`) and it snapshotted the ids
+ * without uploading. For the replace case that guard is
  * the whole point of splitting this from the upload: the legacy service cleared
  * the collection *before* uploading, so a failed upload destroyed the existing
  * avatar and left the account with none. Here a failure never reaches this
@@ -57,7 +59,8 @@ class ClearPreviousProfileImage
 {
     public function handle(UpdateProfileContext $context, Closure $next): mixed
     {
-        if ($context->uploadedMedia() === null || $context->previousMediaIds() === []) {
+        // Ids are only snapshotted after a successful upload or on an explicit removal.
+        if ($context->previousMediaIds() === []) {
             return $next($context);
         }
 

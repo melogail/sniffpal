@@ -28,7 +28,7 @@ Then seed a realistic dataset:
 php artisan migrate:fresh --seed
 ```
 
-`DatabaseSeeder` seeds an admin, categories (7) and breeds (82) from `database/data/*.json`, Egyptian cities, users, pets, comments, likes, saves, reviews, reports, conversations and messages.
+`DatabaseSeeder` seeds an admin, categories (2) and breeds (38) from `database/data/*.json`, Egyptian cities, users, pets, comments, likes, saves, reviews, reports, conversations and messages.
 
 ## Running locally
 

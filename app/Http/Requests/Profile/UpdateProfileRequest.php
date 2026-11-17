@@ -48,7 +48,7 @@ class UpdateProfileRequest extends FormRequest
      *
      * @var list<string>
      */
-    protected const NON_ATTRIBUTE_KEYS = ['image'];
+    protected const NON_ATTRIBUTE_KEYS = ['image', 'remove_image'];
 
     /**
      * @return array<string, array<int, ValidationRule|array<mixed>|string>>
@@ -84,5 +84,13 @@ class UpdateProfileRequest extends FormRequest
         $file = $this->file('image');
 
         return $file instanceof UploadedFile ? $file : null;
+    }
+
+    /**
+     * Whether the form asked for the current avatar to be removed.
+     */
+    public function removesImage(): bool
+    {
+        return $this->boolean('remove_image');
     }
 }

@@ -207,6 +207,25 @@ test('the avatar is uploaded through the settings form', function () {
     Storage::disk(config('media-library.disk_name'))->assertExists($avatar->getPathRelativeToRoot());
 });
 
+test('the avatar is removed through the settings form', function () {
+    Storage::fake(config('media-library.disk_name'));
+    $user     = User::factory()->create();
+    $existing = $user->addMedia(UploadedFile::fake()->image('avatar.jpg'))->toMediaCollection('users');
+    $path     = $existing->getPathRelativeToRoot();
+
+    $this->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name'         => $user->name,
+            'email'        => $user->email,
+            'remove_image' => true,
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    $this->assertModelMissing($existing);
+    Storage::disk(config('media-library.disk_name'))->assertMissing($path);
+});
+
 test('a file that is not an image is rejected and nothing is attached', function () {
     Storage::fake(config('media-library.disk_name'));
     $user = User::factory()->create();

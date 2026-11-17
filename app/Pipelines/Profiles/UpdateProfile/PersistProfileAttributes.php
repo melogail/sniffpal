@@ -58,7 +58,7 @@ class PersistProfileAttributes
      *
      * @var list<string>
      */
-    protected const NON_ATTRIBUTE_KEYS = ['image'];
+    protected const NON_ATTRIBUTE_KEYS = ['image', 'remove_image'];
 
     public function handle(UpdateProfileContext $context, Closure $next): mixed
     {

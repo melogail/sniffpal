@@ -115,6 +115,7 @@ trait ProfileValidationRules
             'timezone'         => $this->timezoneRules(),
             'locale'           => $this->localeRules(),
             'image'            => $this->avatarRules(),
+            'remove_image'     => ['sometimes', 'boolean'],
         ];
     }
 

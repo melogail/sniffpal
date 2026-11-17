@@ -115,6 +115,19 @@ describe('the avatar', function () {
         $this->assertDatabaseEmpty('media');
         expect($user->fresh()->name)->toBe('Renamed');
     });
+
+    test('removes the avatar and its file when asked to, with no upload', function () {
+        Storage::fake(config('media-library.disk_name'));
+        $user         = User::factory()->create();
+        $existing     = attachAvatar($user);
+        $existingPath = $existing->getPathRelativeToRoot();
+
+        app(UpdateProfile::class)->handle($user, [], removeImage: true);
+
+        $this->assertModelMissing($existing);
+        Storage::disk(config('media-library.disk_name'))->assertMissing($existingPath);
+        expect($user->fresh()->load('media')->getMedia('users'))->toBeEmpty();
+    });
 });
 
 describe('the attribute bag', function () {

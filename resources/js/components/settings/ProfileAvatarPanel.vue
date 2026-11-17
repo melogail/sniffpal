@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from "@inertiajs/vue3";
-import { Camera, Upload } from "@lucide/vue";
+import { Camera, Trash2, Upload } from "@lucide/vue";
 import { computed, ref } from "vue";
 import InputError from "@/components/InputError.vue";
 import SaveButton from "@/components/settings/SaveButton.vue";
@@ -20,6 +20,8 @@ import type { ProfileFormData } from "@/types";
 const { profile } = defineProps<{ profile: ProfileFormData }>();
 
 const form = useForm<{ image: File | null }>({ image: null });
+
+const removeForm = useForm<{ remove_image: boolean }>({ remove_image: true });
 
 const preview = ref<string | null>(null);
 
@@ -56,6 +58,12 @@ function submit(): void {
         preserveScroll: true,
         onSuccess: cancel,
     });
+}
+
+function remove(): void {
+    removeForm
+        .transform((data) => ({ ...profileIdentity(profile), ...data }))
+        .submit(updateProfile(), { preserveScroll: true });
 }
 </script>
 
@@ -136,16 +144,27 @@ function submit(): void {
                             Cancel
                         </Button>
                     </template>
-                    <Button
-                        v-else
-                        as="label"
-                        for="avatar"
-                        variant="outline"
-                        class="cursor-pointer"
-                    >
-                        <Upload class="size-4" aria-hidden="true" />
-                        Choose a photo
-                    </Button>
+                    <template v-else>
+                        <Button
+                            as="label"
+                            for="avatar"
+                            variant="outline"
+                            class="cursor-pointer"
+                        >
+                            <Upload class="size-4" aria-hidden="true" />
+                            Choose a photo
+                        </Button>
+                        <Button
+                            v-if="profile.avatar"
+                            type="button"
+                            variant="ghost"
+                            :disabled="removeForm.processing"
+                            @click="remove"
+                        >
+                            <Trash2 class="size-4" aria-hidden="true" />
+                            Remove photo
+                        </Button>
+                    </template>
                 </div>
             </div>
         </form>

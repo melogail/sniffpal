@@ -94,6 +94,7 @@ class UpdateProfileContext
         public readonly User $user,
         public readonly array $attributes,
         public readonly ?UploadedFile $image = null,
+        public readonly bool $removeImage = false,
     ) {}
 
     /**
