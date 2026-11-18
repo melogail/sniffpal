@@ -101,13 +101,14 @@ test('refuses the viewHorizon gate to a guest', function () {
 });
 
 /**
- * The local-environment bypass is Horizon's, not ours:
- * `HorizonApplicationServiceProvider::authorization()` registers
- * `Gate::check(...) || app()->environment('local')`. The suite runs as
- * `testing` (phpunit.xml), which is why the refusals above are observable at
- * all — on a developer's `local` box Horizon is open to everyone, guests
- * included, and that is deliberately left alone.
+ * Horizon's own `authorization()` would also admit anyone in the `local`
+ * environment. `HorizonServiceProvider::authorization()` drops that bypass,
+ * so a developer's box refuses guests the same way production does.
  */
-test('relies on the gate rather than the environment bypass in this suite', function () {
-    expect(app()->environment('local'))->toBeFalse();
+test('does not open the dashboard to guests in the local environment', function () {
+    app()->detectEnvironment(fn (): string => 'local');
+
+    expect(app()->environment('local'))->toBeTrue();
+
+    $this->get('/horizon')->assertForbidden();
 });

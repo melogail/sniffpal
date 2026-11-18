@@ -22,9 +22,22 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     }
 
     /**
+     * Register the Horizon authorization callback.
+     *
+     * The parent also admits anyone in the `local` environment; that bypass is
+     * dropped so the gate below is the only thing deciding, in every environment.
+     */
+    protected function authorization(): void
+    {
+        $this->gate();
+
+        Horizon::auth(fn ($request): bool => Gate::check('viewHorizon', [$request->user()]));
+    }
+
+    /**
      * Register the Horizon gate.
      *
-     * This gate determines who can access Horizon in non-local environments.
+     * This gate determines who can access Horizon in every environment.
      *
      * The subject Horizon passes in is resolved from the default guard, so it is
      * null for an admin; the answer must come from the `admin` guard's session
