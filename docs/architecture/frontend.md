@@ -78,3 +78,15 @@ npm run types:check  # vue-tsc
 ```
 
 A "Unable to locate file in Vite manifest" error means the build is stale: run `npm run build` or start the dev server.
+
+### SSR in production
+
+SSR is on (`config/inertia.php`, `ssr.enabled`). In development the Vite dev server renders pages itself, so `composer run dev` is enough. In production Laravel posts each page to a separate Node process on `http://127.0.0.1:13714`; if that process is down or the bundle is missing, Inertia silently falls back to client-side rendering, so a broken SSR setup looks like a working site with a blank first paint.
+
+Three things keep it running:
+
+1. **Build the SSR bundle on every deploy.** `npm run build:ssr` writes `bootstrap/ssr/app.js` (git-ignored). `composer run setup` already does this.
+2. **Keep the Node process alive.** `deploy/supervisor/inertia-ssr.conf` is a supervisor program for `php artisan inertia:start-ssr`; copy it into `conf.d`, fix the paths and user, then `supervisorctl reread && supervisorctl update`. Node 22 must be on the server.
+3. **Restart it after every deploy.** The running process holds the previous bundle in memory, so after `build:ssr` run `php artisan inertia:stop-ssr`; supervisor starts a fresh one on the new bundle.
+
+Check with `php artisan inertia:check-ssr`, or look for `data-server-rendered` in the HTML of any page.
