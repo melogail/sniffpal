@@ -20,7 +20,7 @@
 export type InputValue = string | number;
 
 /** An input's value as the string every string operation assumes it is. */
-export function inputText(value: InputValue): string {
+function inputText(value: InputValue): string {
     return typeof value === 'string' ? value : String(value);
 }
 

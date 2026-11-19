@@ -197,7 +197,7 @@ export function safeSet(key: string, value: string): void {
 }
 
 /** Remove, or silently do not. Same reasoning as `safeSet`. */
-export function safeRemove(key: string): void {
+function safeRemove(key: string): void {
     try {
         sessionStore()?.removeItem(key);
     } catch {
