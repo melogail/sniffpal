@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { useEchoNotification } from '@laravel/echo-vue';
+import '@/lib/echo';
 import { Bell } from '@lucide/vue';
 import { computed, onMounted, ref } from 'vue';
 import { toast } from 'vue-sonner';
@@ -158,7 +159,7 @@ onMounted(() => {
  */
 const viewerId = viewer.value?.id;
 
-if (viewerId && canRead.value) {
+if (!import.meta.env.SSR && viewerId && canRead.value) {
     useEchoNotification<NotificationMessage>(
         `App.Models.User.${viewerId}`,
         (notification) => {
@@ -280,31 +281,8 @@ const triggerLabel = computed(() =>
             class="flex w-full flex-col gap-0 p-0 sm:max-w-md"
         >
             <SheetHeader class="border-border border-b px-6 py-4 text-start">
-                <!--
-                    `pr-6` is the one physical-direction utility in a header
-                    that is otherwise logical (`px-6`, `text-start`), and it is
-                    deliberate: it reserves room for `ui/sheet`'s close button,
-                    which `SheetContent` pins at physical `top-4 right-4` in
-                    **both** directions. The reservation has to use the
-                    coordinate system of the thing it reserves against, not the
-                    one the text reads in — a logical property is not
-                    automatically right next to a physically-pinned element.
-                    Stacked on the header's own `px-6` this clears the 16px
-                    glyph at `right-4` with 48px, the same gap
-                    `PetFilterSheet` reserves with a physical `pr-12` over its
-                    `p-4` header; the two spellings differ only because the
-                    base padding does.
-
-                    `ui/sheet` is shared, so the button is not ours to move.
-                    This was a logical `pe-6`, which agrees with the physical
-                    pin in LTR and flips away from it in RTL — where
-                    `sheetSide` puts the sheet on the left, the title starts at
-                    the right and ran under the X. A symmetric `px-6` also
-                    clears the button, but by indenting 24px on the side the
-                    button is never on, which is a new regression for an old
-                    one.
-                -->
-                <div class="space-y-1 pr-6">
+                                <!-- `pe-6` clears `ui/sheet`'s close button, pinned at `end-4`. -->
+                <div class="space-y-1 pe-6">
                     <SheetTitle>
                         {{ t('notifications.notifications') }}
                     </SheetTitle>

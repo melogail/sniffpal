@@ -16,7 +16,7 @@ JSON API for the Flutter app (`~/mobile-apps/sniffpal`). Mirrors the web feature
 - Public: `GET categories`, `GET options`, `GET pets`, `GET pets/{pet}`, `GET profiles/{user}`, `GET profiles/{user}/pets`, `GET profiles/{user}/reviews`, `GET comments/{type}/{id}`, `GET comments/{comment}/replies`, `GET reviews/{type}/{id}`.
 - Auth: `POST auth/register|login|logout|forgot-password|social/{provider}|email/verification-notification`.
 - `auth:sanctum`: `GET|PATCH|DELETE me`, `GET me/badges`, `PUT me/password`, notifications (index, read, read-all, destroy-all), conversations (index, store, show, messages index/store, read), messages (update, destroy, pin), likes (`pets/{pet}/like`, `comments/{comment}/like`, `profiles/{user}/like`), comments store/update/destroy, reviews store/update/destroy, reports store.
-- `auth:sanctum` + `verified`: `POST pets`, `PUT|DELETE pets/{pet}`, `PATCH pets/{pet}/status`.
+- `auth:sanctum` + `verified` (one group from `routes/api.php` line ~215): pets store/update/destroy/status, every like, comments, reviews, reports, conversations and messages, `PUT me/password`, `DELETE me`. Only `me`, `me/badges`, notifications and tickets are reachable unverified.
 - Support: public `POST contact`; `auth:sanctum` `GET|POST me/tickets`, `GET me/tickets/{ticket}`, `POST me/tickets/{ticket}/reply|close` (see [support-tickets.md](support-tickets.md), [contact-form.md](contact-form.md)). `GET options` also carries `ticket_categories` and `bounds.support`.
 
 ## Frontend
@@ -30,4 +30,6 @@ Same named throttles as the web routes (see [rate-limiting.md](rate-limiting.md)
 
 ## Open work
 - No API route for saves (see [saves.md](saves.md)).
+- No channel authorisation for the app: `/broadcasting/auth` carries the `web` middleware only, so a bearer client cannot subscribe to `App.Models.User.{id}`. Deferred by decision (2026-11-19).
+- `POST auth/social/{provider}` was removed with social login (2026-11-19).
 - Endpoint reference for app developers lives in `docs/api/endpoints.md`; regenerate it when routes change.

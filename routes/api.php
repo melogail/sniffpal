@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\LogoutController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
-use App\Http\Controllers\Api\V1\Auth\SocialLoginController;
 use App\Http\Controllers\Api\V1\BadgeController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CommentController;
@@ -124,15 +123,6 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::post('login', [LoginController::class, 'store'])
             ->middleware('throttle:login')
             ->name('login');
-
-        /*
-         * The token half of the browser's `social.*` routes: the app runs the
-         * provider SDK itself and posts the access token. Same enum binding,
-         * same `social-logins` bucket, same Action behind it.
-         */
-        Route::post('social/{provider}', [SocialLoginController::class, 'store'])
-            ->middleware('throttle:social-logins')
-            ->name('social');
 
         Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
             ->middleware('throttle:password-reset-links')

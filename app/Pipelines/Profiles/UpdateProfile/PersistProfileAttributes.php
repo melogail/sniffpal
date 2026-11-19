@@ -72,6 +72,10 @@ class PersistProfileAttributes
 
         $user->save();
 
+        if ($user->wasChanged('email')) {
+            $user->sendEmailVerificationNotification();
+        }
+
         return $next($context);
     }
 }

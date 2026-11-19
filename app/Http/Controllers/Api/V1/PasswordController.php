@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Actions\Auth\RevokeAccessTokens;
 use App\Actions\Profiles\UpdatePassword;
 use App\Concerns\ResolvesRequestUser;
 use App\Http\Controllers\Controller;
@@ -25,12 +24,10 @@ class PasswordController extends Controller
     public function update(
         PasswordUpdateRequest $request,
         UpdatePassword $updatePassword,
-        RevokeAccessTokens $revokeAccessTokens,
     ): Response {
         $user = $this->actor($request);
 
-        $updatePassword->handle($user, $request->newPassword());
-        $revokeAccessTokens->handleOthers($user);
+        $updatePassword->handle($user, $request->newPassword(), $user->currentAccessToken());
 
         return response()->noContent();
     }

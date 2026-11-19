@@ -114,7 +114,7 @@ class EnsureAccountIsActive
             return $next($request);
         }
 
-        $this->revokeAccessTokens($user);
+        $user->tokens()->delete();
 
         Auth::guard('web')->logout();
 
@@ -130,21 +130,5 @@ class EnsureAccountIsActive
         }
 
         return redirect()->route('login')->with('status', $message);
-    }
-
-    /**
-     * A deactivated account loses every token it holds, not only this response.
-     *
-     * `Auth::guard('web')->logout()` below is a no-op for a bearer token: the
-     * sanctum guard has no session to clear, so without this the same token
-     * would be refused with a 403 on every request forever rather than
-     * revoked once. Every token goes, not just the one on this request: a
-     * deactivated account has "no usable sign-in" (.ai/rules/app.md), and a
-     * second phone still holding a live token would be exactly that. On the
-     * web group the account holds no tokens and this deletes nothing.
-     */
-    protected function revokeAccessTokens(User $user): void
-    {
-        $user->tokens()->delete();
     }
 }

@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
             $table->string('type')->default('direct');
+            // `min:max` of the two participant ids on a direct thread, so two
+            // simultaneous first messages cannot create two threads.
+            $table->string('pair_key')->nullable()->unique();
             $table->timestamp('last_message_at')->nullable();
             $table->timestamps();
             $table->softDeletes();

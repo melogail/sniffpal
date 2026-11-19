@@ -3,6 +3,9 @@
 ## Purpose
 Users flag content; moderators decide in Nova; both sides are told the outcome. Today only comments and reviews are reportable and a decision is a bare status change. This plan extends reporting to listings and profiles and turns "Change Status" into "Resolve", which performs the decision and records it.
 
+## Review (2026-11-19)
+Fixed the same day: bulk `ResolveReport` decides each target once; a strike is one upheld target however many reported it (`User::strikeCount()`), shown as "N (M in last 90 days)" on the User and Report detail; the Warn note is `required_if`; "Reports Against" reads `User::reportsAgainst()` (`subject_user_id`); `reports.user_id` is nullable and nulls on reporter deletion; the unique index on (user_id, reportable_type, reportable_id) is a plain index and the duplicate guard checks pending reports only, so a member can report the same target again after a decision. The pipeline directory is `Pipelines/Reports/Resolve/`.
+
 ## Status (2026-11-01)
 Every step of the delivery order below is implemented, including the Flutter app (`~/mobile-apps/sniffpal`: report sheet without category, reasons keyed by target, report buttons on listing and profile). Deactivated members are hidden from the feed, listing show, profile show and the comment and review loaders (`User::active()` scope). A soft-deleted listing still resolves from its report (`Report::reportable()` is `withTrashed()`). Not done, by decision: Nova `dependsOn` narrowing of the decision select (the Action refuses a bad fit instead), and `moderator_note` is `strip_tags` + trim rather than the comment sanitizer.
 

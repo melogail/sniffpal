@@ -31,7 +31,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * The comment is reloaded with the relations its API Resource walks — the
  * author and their avatar media — because the controller serialises the return
  * value straight back, and Model::preventLazyLoading() would otherwise fire on
- * a freshly created model the moment CommentAuthorResource asked for it.
+ * a freshly created model the moment UserSummaryResource asked for it.
  */
 class PersistComment
 {

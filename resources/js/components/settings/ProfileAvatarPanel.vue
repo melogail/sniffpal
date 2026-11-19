@@ -6,6 +6,7 @@ import InputError from "@/components/InputError.vue";
 import SaveButton from "@/components/settings/SaveButton.vue";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/UserAvatar.vue";
+import { useTranslations } from "@/composables/useTranslations";
 import { profileIdentity } from "@/lib/profileForm";
 import { update as updateProfile } from "@/routes/profile";
 import type { ProfileFormData } from "@/types";
@@ -24,6 +25,8 @@ const form = useForm<{ image: File | null }>({ image: null });
 const removeForm = useForm<{ remove_image: boolean }>({ remove_image: true });
 
 const preview = ref<string | null>(null);
+const { t } = useTranslations();
+
 
 const shownAvatar = computed(() => preview.value ?? profile.avatar);
 
@@ -95,7 +98,7 @@ function remove(): void {
                 >
                     <Camera class="size-4" aria-hidden="true" />
                 </span>
-                <span class="sr-only">Change photo</span>
+                <span class="sr-only">{{ t('profile.change_photo') }}</span>
                 <!--
                     A native input: the ui `Input` binds `v-model`, which
                     Vue refuses on a file input.
@@ -122,7 +125,7 @@ function remove(): void {
                     <template v-else>{{ profile.email }}</template>
                 </p>
                 <p class="text-soft-foreground pt-2 text-xs leading-relaxed">
-                    A square image works best. JPG, PNG, GIF or WEBP.
+                    {{ t('settings.photo_hint') }}
                 </p>
                 <InputError :message="form.errors.image" />
 
@@ -133,7 +136,7 @@ function remove(): void {
                         <SaveButton
                             :processing="form.processing"
                             :recently-successful="form.recentlySuccessful"
-                            label="Save photo"
+                            :label="t('settings.save_photo')"
                         />
                         <Button
                             type="button"
@@ -141,7 +144,7 @@ function remove(): void {
                             :disabled="form.processing"
                             @click="cancel"
                         >
-                            Cancel
+                            {{ t('common.cancel') }}
                         </Button>
                     </template>
                     <template v-else>
@@ -152,7 +155,7 @@ function remove(): void {
                             class="cursor-pointer"
                         >
                             <Upload class="size-4" aria-hidden="true" />
-                            Choose a photo
+                            {{ t('settings.choose_photo') }}
                         </Button>
                         <Button
                             v-if="profile.avatar"
@@ -162,7 +165,7 @@ function remove(): void {
                             @click="remove"
                         >
                             <Trash2 class="size-4" aria-hidden="true" />
-                            Remove photo
+                            {{ t('settings.remove_photo') }}
                         </Button>
                     </template>
                 </div>

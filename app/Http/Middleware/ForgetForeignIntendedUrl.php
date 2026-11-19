@@ -12,8 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * `SESSION_DOMAIN` is the parent domain so one admin session reaches Nova and
  * the docs host, which means the guest redirect on `nova.<host>` stores its
- * `url.intended` in the same session the public site reads. Every Fortify,
- * passkey and social-login response then does `redirect()->intended()`, and
+ * `url.intended` in the same session the public site reads. Every Fortify
+ * and passkey response then does `redirect()->intended()`, and
  * for an Inertia XHR a 302 to another origin is a CORS failure the client
  * reports as a network error: the member is logged in, the form looks dead.
  *

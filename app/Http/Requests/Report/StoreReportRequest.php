@@ -38,10 +38,8 @@ use Illuminate\Foundation\Http\FormRequest;
  *    `auth` middleware. Authorization is ReportPolicy::create, called with
  *    $this->authorize() in ReportController, per .ai/rules/controllers.md.
  *
- * `category` was not validated at all in legacy — CreateReport read it off an
- * unvalidated key and fell back to `ReportCategory::other` — so a typo became a
- * silently miscategorised report instead of a 422. Both enums are validated
- * here and handed to the Action as cases rather than strings.
+ * `reason` is validated here as an enum case and handed to the Action as a case
+ * rather than a string, so a typo is a 422 instead of a miscategorised report.
  *
  * `status` is accepted under no name: it is a moderator decision and is outside
  * Report's #[Fillable]. See .ai/rules/models.md.

@@ -94,23 +94,16 @@ const { t } = useTranslations();
 
             <div class="space-y-3">
                 <HelpFaq :question="t('help.faq_add_pet')">
-                    Start from
-                    <Link :href="createPet()" class="underline">
-                        Publish a listing</Link
-                    >. The form is eight short steps — the basics, where the pet
-                    is, photos, health, personality, anything extra, veterinary
-                    details, and a review of the lot. You will be asked to sign
-                    in first if you have not already. Nothing is saved until you
-                    submit on the last step, and you can move between steps
-                    freely before then.
+                    {{ t('help.faq_add_pet_before') }}
+                    <Link :href="createPet()" class="underline">{{
+                        t('help.publish_listing')
+                    }}</Link>{{ t('help.faq_add_pet_after') }}
                 </HelpFaq>
 
                 <HelpFaq :question="t('help.faq_update_pet')">
-                    Open the listing and choose <strong>Edit</strong>. You will
-                    see the same eight steps with everything already filled in.
-                    Saving replaces the whole listing, so leave the fields you
-                    are not changing exactly as they are — including the cover
-                    photo, which stays as it is unless you pick a new one.
+                    {{ t('help.faq_update_pet_before') }}
+                    <strong>{{ t('common.edit') }}</strong
+                    >{{ t('help.faq_update_pet_after') }}
                 </HelpFaq>
             </div>
         </section>

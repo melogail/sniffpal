@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
 import { useEchoPublic } from '@laravel/echo-vue';
+import '@/lib/echo';
 import { computed, ref } from 'vue';
 import CommentBody from '@/components/comments/CommentBody.vue';
 import CommentComposer from '@/components/comments/CommentComposer.vue';
@@ -176,15 +177,18 @@ function loadMore(): Promise<void> {
  * (`@laravel/echo-vue` refcounts it) and keeps only the events about itself.
  * shortcut: a reload while "show replies" is fetching is dropped, reopen to catch up.
  */
-useEchoPublic<CommentThreadChanged>(
-    `comments.${commentableType}.${commentableId}`,
-    '.CommentThreadChanged',
-    (change) => {
-        if (change.parent_id === comment.id && !loading.value) {
-            void requestReplies(1, true);
-        }
-    },
-);
+// Echo subscribes at setup; the SSR server must not open a socket.
+if (!import.meta.env.SSR) {
+    useEchoPublic<CommentThreadChanged>(
+        `comments.${commentableType}.${commentableId}`,
+        '.CommentThreadChanged',
+        (change) => {
+            if (change.parent_id === comment.id && !loading.value) {
+                void requestReplies(1, true);
+            }
+        },
+    );
+}
 </script>
 
 <template>

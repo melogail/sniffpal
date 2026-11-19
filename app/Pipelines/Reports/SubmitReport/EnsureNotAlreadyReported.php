@@ -32,6 +32,7 @@ class EnsureNotAlreadyReported
         $alreadyReported = $context->reportableAsTarget()
             ->reports()
             ->where('user_id', $context->reporter->getKey())
+            ->pending()
             ->exists();
 
         if ($alreadyReported) {

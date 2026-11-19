@@ -65,11 +65,23 @@ class ResolveReport extends Action
             /** @var Admin $moderator */
             $moderator             = request()->user('admin');
 
-            $closed                = DB::transaction(fn (): int => $models->sum(
-                fn (Report $report): int => app(ResolveReportAction::class)
-                    ->handle($report->fresh(), $moderator, $status, $resolution, is_string($note) ? $note : null, $notify)
-                    ->count(),
-            ));
+            // A decision closes the sibling reports too, so a sibling further down the
+            // selection is already decided and must not be re-applied or re-notified.
+            $closed                = DB::transaction(function () use ($models, $moderator, $status, $resolution, $note, $notify): int {
+                $decided = collect();
+
+                foreach ($models as $report) {
+                    if ($decided->contains($report->getKey())) {
+                        continue;
+                    }
+
+                    $decided = $decided->merge(app(ResolveReportAction::class)
+                        ->handle($report->fresh(), $moderator, $status, $resolution, is_string($note) ? $note : null, $notify)
+                        ->modelKeys());
+                }
+
+                return $decided->unique()->count();
+            });
 
             return ActionResponse::message(sprintf(
                 '%d report(s) marked as %s%s.',
@@ -113,7 +125,7 @@ class ResolveReport extends Action
                 ->help('First upheld report: warn. Second: remove. Third in 90 days, or any scam / welfare / prohibited-animal case: deactivate. "Remove" applies to listings, comments and reviews; "Purge" to listings only.'),
 
             Textarea::make('Moderator note', 'note')
-                ->rules('nullable', 'string', 'max:1000')
+                ->rules('required_if:decision,'.ReportResolution::Warned->value, 'nullable', 'string', 'max:1000')
                 ->help('Shown to the member when warning or removing content. Required for a warning.'),
 
             Boolean::make('Notify the reporter', 'notify_reporter')

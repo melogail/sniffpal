@@ -10,7 +10,7 @@ Categories (7) and breeds (82) that classify every listing, plus the enum option
 - `app/Actions/Pets/ListPetCategories.php` returns the category → breed tree.
 - `app/Actions/Options/BuildClientOptions.php` returns listing_types, statuses, genders, health_statuses, report_categories, report_reasons, bounds (filters, photos, comments, reviews, messages, profiles) and locales.
 - Enum `options()` comes from `App\Concerns\HasOptions`; labels implement `HasLabel`.
-- Controllers: `Api/V1/CategoryController`, `Api/V1/OptionController`. On the web the same data is shared through Inertia props (`HandleInertiaRequests`) and deferred `categories` on Home.
+- Controllers: `Api/V1/CategoryController`, `Api/V1/OptionController`. On the web each controller passes the options it needs as page props (`HandleInertiaRequests` shares none of them); Home defers `categories`.
 - Image validation for taxonomy images: `TaxonomyImageRules`.
 
 ## Routes

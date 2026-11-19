@@ -1,29 +1,10 @@
 # Social login
 
-## Purpose
-Sign in or register with Google or Facebook, on the web (redirect flow) and from the mobile app (token exchange).
+## Status
+Removed from the codebase on 2026-11-19 by decision (Mohamed): Socialite, the `SocialProvider` enum, `social_accounts`, `ResolveSocialUser`, both controllers, the `social-logins` limiter, the login/register buttons and their tests are gone. The Flutter app's social sign-in call has no endpoint until this returns.
 
-## Data
-`social_accounts` (user_id, provider, provider_id). Providers: `SocialProvider` enum (google, facebook). Credentials in `config/services.php` from `GOOGLE_*` / `FACEBOOK_*` env.
-
-## Backend
-- `app/Actions/Auth/ResolveSocialUser.php` finds the social account, else matches by email, else registers a new user through `RegisterUser`.
-- Web: `app/Http/Controllers/Web/SocialAuthController.php` (redirect + callback).
-- API: `app/Http/Controllers/Api/V1/Auth/SocialLoginController.php` takes a provider access token, validated by `SocialLoginRequest`, returns a Sanctum token.
-
-## Routes
-- `GET auth/{provider}/redirect` (social.redirect), `GET auth/{provider}/callback` (social.callback).
-- `POST api/v1/auth/social/{provider}` (api.v1.auth.social).
-
-## Frontend
-Buttons on `pages/auth/Login.vue` and `Register.vue`.
-
-## Guards
-Throttle `social-logins` (10/min, 60/h per caller). Provider must be a valid `SocialProvider` case.
-
-## Tests
-`tests/Feature/Auth/` and `tests/Feature/Http/Controllers/Api/V1/` (Socialite fakes).
-
-## Open work
-- Set real OAuth client IDs and redirect URIs for the production domain before launch.
-- Flutter app side of social login is still open (see memory note on the mobile app).
+## When it returns
+- Verify the provider token's audience before resolving a user (Google tokeninfo `aud`, Facebook `debug_token` `app_id`); linking by email without that check is an account takeover.
+- Refuse email linking when the provider reports the email unverified.
+- Re-read the three settled decisions in `.ai/rules/actions.md` (random password, callback is the one GET that writes, link by verified email).
+- Re-add the `social-logins` limiter (10/min, 60/h per IP) and the Wayfinder routes.

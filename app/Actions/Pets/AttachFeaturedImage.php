@@ -15,16 +15,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  */
 class AttachFeaturedImage
 {
-    public function __construct(private readonly ResolveMediaOwnerDirectory $resolveOwnerDirectory) {}
-
     public function handle(Pet $pet, UploadedFile $image): Media
     {
         return $pet->addMedia($image)
             ->usingFileName($image->hashName())
-            ->withCustomProperties([
-                Pet::FEATURED_PROPERTY => true,
-                ...$this->resolveOwnerDirectory->handle($pet),
-            ])
+            ->withCustomProperties([Pet::FEATURED_PROPERTY => true])
             ->toMediaCollection(Pet::PHOTO_COLLECTION);
     }
 }

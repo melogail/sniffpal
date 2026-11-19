@@ -81,7 +81,8 @@ class HomeFeedFilters
      */
     public function hasAgeRange(): bool
     {
-        return $this->ageMin !== null || $this->ageMax !== null;
+        // The sheet always sends 0..ceiling; that is "no age filter", not "born on a known date".
+        return $this->effectiveAgeMin() > 0.0 || $this->effectiveAgeMax() < $this->ageCeiling;
     }
 
     /**

@@ -9,11 +9,12 @@ Session auth for the web app and token auth for the API, both driven by Laravel 
 ## Backend
 - `config/fortify.php` enables registration, resetPasswords, emailVerification, twoFactorAuthentication, passkeys.
 - `app/Actions/Fortify/CreateNewUser.php`, `ResetUserPassword.php`; `app/Actions/Users/RegisterUser.php` is the shared registration action used by web and API.
-- `app/Actions/Auth/`: AuthenticateWithPassword, VerifyTwoFactorCode, IssueAccessToken, RevokeAccessTokens, ResolveSocialUser.
+- `app/Actions/Auth/`: AuthenticateWithPassword, VerifyTwoFactorCode, IssueAccessToken, RevokeAccessTokens.
 - `app/Providers/FortifyServiceProvider.php` wires views to the Inertia pages and binds the actions.
 - Notifications: `VerifyEmailNotification` (mail).
+- Password reset and password change revoke every Sanctum token (the API change keeps the token that made the request); tokens expire after a year and `sanctum:prune-expired` runs daily.
 - Middleware: `EnsureAccountIsActive` (blocks `is_active = false`), `ForgetForeignIntendedUrl`, `ThrottleAuthRoutes`, `UseSanctumGuard`.
-- Form requests: `app/Http/Requests/Auth/{LoginRequest,RegisterRequest,PasswordResetLinkRequest,SocialLoginRequest}`, `Settings/{PasswordUpdateRequest,TwoFactorAuthenticationRequest}`; shared rules in `App\Concerns\PasswordValidationRules`.
+- Form requests: `app/Http/Requests/Auth/{LoginRequest,RegisterRequest,PasswordResetLinkRequest}`, `Settings/{PasswordUpdateRequest,TwoFactorAuthenticationRequest}`; shared rules in `App\Concerns\PasswordValidationRules`.
 
 ## Routes
 - Web: Fortify's standard routes (`/login`, `/register`, `/forgot-password`, `/reset-password`, `/email/verify`, `/two-factor-challenge`, `/user/confirm-password`, 2FA and passkey management) plus `GET .well-known/passkey-endpoints`.

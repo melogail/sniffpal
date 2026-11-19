@@ -3,6 +3,7 @@
 use App\Actions\Reports\CreateReport;
 use App\Enums\Reportable;
 use App\Enums\ReportReason;
+use App\Enums\ReportStatus;
 use App\Exceptions\Reports\AlreadyReported;
 use App\Exceptions\Reports\CannotReportOwnContent;
 use App\Exceptions\Reports\ReportingNotSupported;
@@ -14,7 +15,6 @@ use App\Models\Report;
 use App\Models\Review;
 use App\Models\User;
 use App\Notifications\ReportFiledNotification;
-use App\Pipelines\Reports\SubmitReport\PersistReport;
 use App\Pipelines\Reports\SubmitReport\SubmitReportContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -112,31 +112,6 @@ test('lets a second reporter file against the same target', function (Reportable
 
     expect(Report::query()->count())->toBe(2);
 })->with(Reportable::cases());
-
-/**
- * The guard step answers before the insert, but the unique index is the
- * guarantee. Bypassing the step leaves the index as the only thing between two
- * writes, and PersistReport has to turn its refusal into the same error rather
- * than a 500 — the race two clients hit when they submit at once.
- */
-test('turns the unique index violation into the same refusal when the guard step is bypassed', function () {
-    $reporter = User::factory()->create();
-    $target   = Review::factory()->create();
-    Report::factory()->for($reporter)->forReportable($target)->create();
-
-    $context  = new SubmitReportContext(
-        reporter: $reporter,
-        reportableType: Reportable::Review,
-        reportableId: $target->getKey(),
-        reason: ReportReason::Spam,
-    );
-    $context->setReportable($target);
-
-    expect(fn () => app(PersistReport::class)->handle($context, fn ($passed) => $passed))
-        ->toThrow(AlreadyReported::class);
-
-    expect(Report::query()->count())->toBe(1);
-});
 
 test('raises a model not found exception for a target that does not exist and writes nothing', function (Reportable $type) {
     expect(fn () => fileReport(User::factory()->create(), $type, 9999))
@@ -238,4 +213,16 @@ describe('notifying the moderators', function () {
 
         Log::shouldNotHaveReceived('warning');
     });
+});
+
+test('lets a reporter file again once the earlier report was decided', function () {
+    $reporter = User::factory()->create();
+    $target   = reportableAuthoredBy(Reportable::Pet, User::factory()->create());
+    $first    = fileReport($reporter, Reportable::Pet, $target->getKey());
+    $first->forceFill(['status' => ReportStatus::Rejected])->save();
+
+    $second   = fileReport($reporter, Reportable::Pet, $target->getKey());
+
+    expect($second->getKey())->not->toBe($first->getKey())
+        ->and($second->status)->toBe(ReportStatus::Pending);
 });

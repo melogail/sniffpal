@@ -35,7 +35,7 @@ return new class extends Migration
                 'name'       => $ticket->name,
                 'email'      => $ticket->email,
                 'subject'    => $ticket->subject,
-                'message'    => $opening?->body ?? '',
+                'message'    => $opening->body ?? '',
                 'created_at' => $ticket->created_at,
                 'updated_at' => $ticket->updated_at,
             ]);

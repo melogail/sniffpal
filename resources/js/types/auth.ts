@@ -38,20 +38,6 @@ export type Auth = {
     user: User;
 };
 
-/**
- * The backing values of App\Enums\SocialProvider.
- */
-export type SocialProvider = 'google' | 'facebook';
-
-/**
- * One row of `SocialProvider::configuredOptions()` — only the providers the
- * server holds credentials for reach the login and register pages.
- */
-export type SocialProviderOption = {
-    value: SocialProvider;
-    label: string;
-};
-
 export type Passkey = {
     id: number;
     name: string;

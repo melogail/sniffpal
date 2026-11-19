@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Storage;
 const PROFILE_ACTION_QUERY_COST = 12;
 
 /**
- * Give a user the avatar ProfileResource and ReviewAuthorResource read with
+ * Give a user the avatar ProfileResource and UserSummaryResource read with
  * getFirstMediaUrl().
  *
  * The owner directory is copied onto the media row exactly as

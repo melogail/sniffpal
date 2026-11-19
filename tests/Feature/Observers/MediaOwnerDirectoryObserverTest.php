@@ -93,8 +93,8 @@ test('stamps the owner directory on an avatar uploaded through Nova', function (
 
 /**
  * The uploader that already supplies the directory — UpdateProfile's
- * UploadProfileImage and Actions\Pets\ResolveMediaOwnerDirectory — keeps what it
- * sent. The hook fills a gap; it does not adjudicate.
+ * UploadProfileImage — keeps what it sent. The hook fills a gap; it does not
+ * adjudicate.
  */
 test('keeps an owner directory the uploader supplied', function () {
     $owner = User::factory()->create();

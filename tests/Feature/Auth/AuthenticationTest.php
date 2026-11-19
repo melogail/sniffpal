@@ -101,3 +101,10 @@ test('users are rate limited', function () {
 
     $response->assertTooManyRequests();
 });
+
+test('an array email is a validation error, not a 500 from the login limiter', function () {
+    $this->from(route('login'))
+        ->post(route('login'), ['email' => ['not-a-string'], 'password' => 'password'])
+        ->assertRedirect(route('login'))
+        ->assertSessionHasErrors('email');
+});

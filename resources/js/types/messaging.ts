@@ -1,8 +1,9 @@
 import type { UserSummary } from './users';
 
-export type MessageType = 'text' | 'image' | 'file';
-export type MessageStatus = 'sent' | 'delivered' | 'read';
-export type ConversationType = 'private' | 'group';
+// Mirrors App\Enums\{MessageType,MessageStatus,ConversationType}: one case each today.
+export type MessageType = 'text';
+export type MessageStatus = 'sent';
+export type ConversationType = 'direct';
 
 /**
  * One message — `App\Http\Resources\Message\MessageResource`.

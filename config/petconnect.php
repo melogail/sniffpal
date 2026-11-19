@@ -177,8 +177,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | `max_description_length` is the ceiling on the free-text description a
-    | reporter may attach. The category and the reason are closed enums
-    | (ReportCategory, ReportReason) and carry no configuration.
+    | reporter may attach. The reason is a closed enum (ReportReason) and
+    | carries no configuration.
     |
     | The reportable type is not configurable either: App\Enums\Reportable is
     | the whitelist and it is bound at the router, which is what stops a

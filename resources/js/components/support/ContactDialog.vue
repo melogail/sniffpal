@@ -30,7 +30,7 @@ import { store as storeContact } from '@/routes/contact';
  * decides which of the two to mount from `auth.user`.
  *
  * The composer bound is the config default: this mounts on
- * `Route::inertia('support')`, which carries no props (see `lib/support.ts`).
+ * the support page, which only carries `supportEmail`.
  */
 const { t } = useTranslations();
 

@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { useTranslations } from '@/composables/useTranslations';
 
 /** Submit plus the transient "Saved." every settings panel shows. */
 const {
     processing,
     recentlySuccessful,
     disabled = false,
-    label = 'Save',
+    label = undefined,
 } = defineProps<{
     processing: boolean;
     recentlySuccessful: boolean;
     disabled?: boolean;
     label?: string;
 }>();
+const { t } = useTranslations();
+
 </script>
 
 <template>
@@ -24,7 +27,7 @@ const {
             :disabled="processing || disabled"
         >
             <Spinner v-if="processing" />
-            {{ label }}
+            {{ label ?? t('common.save') }}
         </Button>
 
         <Transition
@@ -37,7 +40,7 @@ const {
                 v-show="recentlySuccessful"
                 class="text-muted-foreground text-sm"
             >
-                Saved.
+                {{ t('settings.saved') }}
             </p>
         </Transition>
     </div>

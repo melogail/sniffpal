@@ -39,8 +39,7 @@ use Illuminate\Support\Facades\Log;
  * uses, with no second mechanism and no cross-guard leak. Phase 3's Nova
  * `Report` resource is the screen that will triage them; this is the signal
  * that says one is waiting, and it does not depend on that resource existing.
- * Mail is deliberately not a channel here, matching every other notification in
- * the application: there is no queue worker configured yet.
+ * Mail is deliberately not a channel here: the Nova queue is where moderators work.
  *
  * ## "Every admin" is today's definition of "the moderators"
  *

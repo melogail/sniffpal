@@ -23,5 +23,5 @@ Nova resources use `ebess/advanced-nova-media-library` fields for pet, category,
 `tests/Feature/MediaLibrary/`, `tests/Feature/Observers/`.
 
 ## Open work
-- Disk is local; pick S3-compatible storage and a CDN before deploying.
+- `league/flysystem-aws-s3-v3` is installed and the `s3` disk is public with `throw => true`; set `MEDIA_DISK=s3` and the `AWS_*` keys (or a CDN `AWS_URL`) at deploy time.
 - No image moderation (nudity/violence) on upload.

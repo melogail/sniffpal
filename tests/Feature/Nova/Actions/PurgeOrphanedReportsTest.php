@@ -53,7 +53,7 @@ test('refuses the whole selection when one report still points at a live target,
         ])
         ->assertOk()
         ->assertJsonPath('danger', sprintf(
-            'Nothing was deleted. Report #%d still points at a comment or review that exists, so it is evidence rather than an orphan. Open it and decide with Change Status instead.',
+            'Nothing was deleted. Report #%d still points at content that exists, so it is evidence rather than an orphan. Open it and decide with Resolve Report instead.',
             $targeted->getKey(),
         ));
 

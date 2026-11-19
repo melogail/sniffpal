@@ -33,13 +33,10 @@ use Illuminate\Validation\Rule;
  * `reportable_type` to a class name would match zero rows and validate nothing.
  * See .ai/rules/app.md on keeping morph existence checks out of Form Requests.
  *
- * ## `category` and `reason` are closed enums
+ * ## `reason` is a closed enum
  *
- * Both were `['required', 'string']` in legacy (`category` was not validated at
- * all — CreateReport read it off an unvalidated key and fell back to
- * `ReportCategory::other`), so a report could be filed under a category the
- * moderation screen has no column for. `Rule::enum()` makes the cast on the
- * model total.
+ * It was `['required', 'string']` in legacy, so a report could carry any text.
+ * `Rule::enum()` makes the cast on the model total.
  *
  * `status` is not accepted from the request under any name: it is a moderator
  * decision, it is outside Report's #[Fillable], and .ai/rules/models.md is

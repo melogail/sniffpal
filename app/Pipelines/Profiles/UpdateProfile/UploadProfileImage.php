@@ -23,9 +23,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * MediaPathGenerator builds `media/{owner directory}/user/{id}/{media id}/`
  * from the media row alone, and falls back to a database lookup per generated
  * URL when the `owner_directory` custom property is missing. For a user the
- * owner *is* the model, so the value is read straight off `$user` — no
- * relation, no Action, unlike Actions\Pets\ResolveMediaOwnerDirectory which
- * has to reach through `pet->user`. See .ai/rules/media-library.md.
+ * owner *is* the model, so the value is read straight off `$user`; pet photos
+ * leave it to MediaOwnerDirectoryObserver. See .ai/rules/media-library.md.
  *
  * `hashName()` rather than the legacy `Str::ulid()`: the generated path already
  * ends in the media id, so two uploads of the same file cannot collide, and a

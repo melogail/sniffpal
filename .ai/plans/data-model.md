@@ -7,7 +7,7 @@ Single reference for every Eloquent model in `app/Models`. Feature plans link he
 
 | Model | Table | Key columns (fillable) | Relations | Traits / notes |
 | --- | --- | --- | --- | --- |
-| User | users | name, username, bio, email, password, phone, show_phone, whatsapp_enabled, country, state, city, address, lat, lng, timezone, locale. Non-fillable: is_active, email_verified_at, 2FA columns | pets, comments, reports, saves, givenReviews, socialAccounts, conversations (many-to-many via conversation_user) | HasApiTokens, HasLikes, HasReviews, InteractsWithMedia (avatar collection `users`), Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable. Route key = username. Appends `location`. UserObserver assigns a media directory name on creating |
+| User | users | name, username, bio, email, password, phone, show_phone, whatsapp_enabled, country, state, city, address, lat, lng, timezone, locale. Non-fillable: is_active, email_verified_at, 2FA columns | pets, comments, reports, saves, givenReviews, conversations (many-to-many via conversation_user) | HasApiTokens, HasLikes, HasReviews, InteractsWithMedia (avatar collection `users`), Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable. Route key = username. Appends `location`. UserObserver assigns a media directory name on creating |
 | Admin | admins | name, email, password | – | Separate guard for Nova. Own password reset table |
 | Category | categories | name, name_ar, slug, description, description_ar | breeds, pets | Media collection `categories` with `thumb`/`display` conversions |
 | Breed | breeds | category_id, name, name_ar, slug, description, description_ar | category, pets | Media collection `breeds` |
@@ -16,11 +16,10 @@ Single reference for every Eloquent model in `app/Models`. Feature plans link he
 | Like | likes | user_id, likeable_type, likeable_id | likeable (pet, comment, user), user | LikeObserver notifies on created |
 | Save | saves | user_id, saveable_type, saveable_id | saveable, user | No controller or route uses it yet |
 | Review | reviews | user_id, rate, comment, reviewable_type, reviewable_id | reviewable (morph: user), user; morphMany reports | HasReport |
-| Report | reports | user_id, reportable_type, reportable_id, category, reason, description, metadata (json) | reportable (comment, review), user | Scopes: withStatus, pending. Status set by Nova |
+| Report | reports | user_id (reporter, nullable, nulls when the reporter deletes their account), subject_user_id (accountable member), reportable_type, reportable_id, reason, description, metadata (json). Non-fillable: status, resolution, moderator_note, resolved_by, resolved_at | reportable (comment, review, pet, user; withTrashed), user, subject | Scopes: pending, upheldAgainst. Decided through `Actions\Reports\ResolveReport` from Nova |
 | Conversation | conversations | type, last_message_at | users (pivot conversation_user), messages, lastMessage | SoftDeletes. Scopes: direct, forParticipant, betweenParticipants. Helpers: hasParticipant, acceptsMessagesFrom, markAsReadFor, otherParticipant, isUnreadFor |
 | ConversationUser | conversation_user | conversation_id, user_id, last_read_at | – | Pivot model |
 | Message | messages | conversation_id, sender_id, content, type | conversation, sender, pinnedBy | SoftDeletes. Appends is_pinned, is_edited. MessageObserver bumps conversation.last_message_at |
-| SocialAccount | social_accounts | provider, provider_id | user | One row per provider login |
 | Ticket | tickets | user_id (nullable), name, email, category, subject; status, last_activity_at, closed_at | user, messages | Scope open. isClosed() |
 | TicketMessage | ticket_messages | ticket_id, author_type, author_id, body | ticket, author (morph: User or Admin) | isFromSupport() |
 | ContactMessage | contact_messages | name, email, subject, message | – | Read in Nova only |
@@ -33,11 +32,10 @@ Framework tables: cache, jobs, media (Spatie), notifications, passkeys, personal
 - PetGender: male, female, mixed (mixed is for litters)
 - HealthStatus: healthy, minor_issues, chronic_condition
 - ConversationType: direct · MessageType: text · MessageStatus: sent
-- Commentable: pet · Reviewable: user · Reportable: comment, review
-- ReportCategory: abuse, bug, copyright, technical, feedback, other
-- ReportReason: spam, hate_speech, false_information, violation, inappropriate_content, other
+- Commentable: pet · Reviewable: user · Reportable: comment, review, pet, user
+- ReportReason (subset per target via `forTarget()`): spam, harassment, hate_speech, false_information, inappropriate_content, scam_or_fraud, animal_welfare, prohibited_animal, misleading_listing, duplicate_listing, no_longer_available, impersonation, fake_review, other
+- ReportResolution: warned, content_removed, content_purged, account_deactivated
 - ReportStatus: pending, reviewed, resolved, rejected
-- SocialProvider: google, facebook
 - TicketCategory: technical_issue, account_issue, listing_issue, missing_category, missing_breed, feedback, other
 - TicketStatus: open, answered, closed
 
@@ -51,6 +49,5 @@ All enums expose `options()` through `App\Concerns\HasOptions` for the client (s
 `database/seeders` seeds admins, categories, breeds (`database/data/categories.json`, `breeds.json`), users, pets (locations from `locations.json`, `streets.json`), comments, likes, saves, reviews, reports, conversations, messages.
 
 ## Open work
-- Pets and users are not reportable; only comments and reviews are. Decide whether listings need a report path before launch.
 - Save model has no write path (see [saves.md](saves.md)).
 - Longer schema narrative lives in `docs/architecture/data-model.md`; keep the two in sync.

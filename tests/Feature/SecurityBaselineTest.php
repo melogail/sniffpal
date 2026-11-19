@@ -28,7 +28,6 @@ const PUBLIC_API_WRITES = [
     'api.v1.auth.login',
     'api.v1.auth.register',
     'api.v1.auth.password.email',
-    'api.v1.auth.social',
     'api.v1.contact.store',
 ];
 

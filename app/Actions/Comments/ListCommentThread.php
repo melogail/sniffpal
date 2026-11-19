@@ -9,7 +9,6 @@ use App\Exceptions\Comments\CommentingNotSupported;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -97,7 +96,7 @@ class ListCommentThread
                     /** @var HasMany<Comment, Comment> $replies Narrowed inline: with() only accepts a bare Relation closure, and the scopes need the related model. */
                     $replies
                         ->with('user.media')
-                        ->whereHas('user', fn (Builder $users) => $users->active())
+                        ->whereHas('user', User::activeOnly(...))
                         ->withCount(['likes', 'replies'])
                         ->withLikedBy($viewer)
                         ->withReportedBy($viewer)
@@ -105,7 +104,7 @@ class ListCommentThread
                         ->limit($replyPreview);
                 },
             ])
-            ->whereHas('user', fn (Builder $users) => $users->active())
+            ->whereHas('user', User::activeOnly(...))
             ->withCount(['likes', 'replies'])
             ->withLikedBy($viewer)
             ->withReportedBy($viewer)

@@ -3,7 +3,6 @@
 namespace App\Pipelines\Pets\Update;
 
 use Closure;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Write the changed listing row inside a transaction.
@@ -25,7 +24,7 @@ class PersistPet
     {
         $pet = $context->pet();
 
-        DB::transaction(fn (): bool => $pet->update($context->attributes()));
+        $pet->update($context->attributes());
 
         return $next($context);
     }

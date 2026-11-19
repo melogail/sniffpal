@@ -45,8 +45,7 @@ class Category extends Model implements HasMedia
     {
         $this->addMediaCollection('categories')
             ->singleFile()
-            ->acceptsMimeTypes(ConvertibleImageTypes::MIME_TYPES)
-            ->useDisk(config('media-library.disk_name'));
+            ->acceptsMimeTypes(ConvertibleImageTypes::MIME_TYPES);
     }
 
     /**

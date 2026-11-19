@@ -337,15 +337,16 @@ test('rejects a radius outside the configured window', function (float $radius) 
 ]);
 
 /**
- * `Rule::exists` on both taxonomy filters, so the filter sheet cannot be turned
- * into a probe: an id that names no row is a validation error rather than an
- * empty feed, and an empty feed is the answer that would distinguish an id that
- * exists from one that does not.
+ * No `Rule::exists` on the taxonomy filters: it cost one query per id on every
+ * scroll page and protected nothing, since the whole taxonomy is public. An id
+ * that names no row simply matches no listing.
  */
-test('rejects a taxonomy id that names no row', function (string $key) {
-    $this->from(route('home'))
-        ->get(route('home', [$key => [99999]]))
-        ->assertInvalid(["{$key}.0"]);
+test('an unknown taxonomy id yields an empty feed', function (string $key) {
+    Pet::factory()->available()->create();
+
+    $this->get(route('home', [$key => [99999]]))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page->has('pets.data', 0));
 })->with([
     'category' => ['category_ids'],
     'breed'    => ['breed_ids'],

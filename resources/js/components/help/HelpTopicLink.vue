@@ -16,7 +16,7 @@ defineProps<{
     icon: Component;
     title: string;
     description: string;
-    /** A Wayfinder route definition, same as `NavItem['href']`. */
+    /** A Wayfinder route definition. */
     href: NonNullable<InertiaLinkProps['href']>;
 }>();
 </script>

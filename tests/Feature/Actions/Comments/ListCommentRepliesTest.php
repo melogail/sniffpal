@@ -42,7 +42,7 @@ const REPLIES_ACTION_QUERY_COST = 4;
 const REPLIES_ROUTE_QUERY_COST  = 6;
 
 /**
- * Give a user the avatar CommentAuthorResource reads with getFirstMediaUrl().
+ * Give a user the avatar UserSummaryResource reads with getFirstMediaUrl().
  *
  * The owner directory is stamped on the media row as the upload pipeline does,
  * so MediaPathGenerator never falls back to looking the owner up — that
@@ -58,7 +58,7 @@ function attachReplyAuthorAvatar(User $user): void
 
 /**
  * Answer a comment with replies, each written by an author of its own carrying
- * the avatar CommentAuthorResource reads.
+ * the avatar UserSummaryResource reads.
  */
 function seedRepliesOnComment(Comment $parent, int $replies): void
 {

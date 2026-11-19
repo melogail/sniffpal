@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslations } from '@/composables/useTranslations';
 import { store as storeReview } from '@/routes/reviews';
 import type { ReviewBounds, ReviewableType } from '@/types';
 
@@ -30,6 +31,8 @@ const { reviewableType, reviewableId, bounds } = defineProps<{
 }>();
 
 const rate = ref(bounds.max_rate);
+const { t } = useTranslations();
+
 </script>
 
 <template>
@@ -48,7 +51,7 @@ const rate = ref(bounds.max_rate);
         <InputError :message="errors.review" />
 
         <div class="grid gap-2">
-            <Label>Your rating</Label>
+            <Label>{{ t('reviews.your_rating') }}</Label>
             <RatingInput
                 v-model="rate"
                 :min="bounds.min_rate"
@@ -59,20 +62,22 @@ const rate = ref(bounds.max_rate);
         </div>
 
         <div class="grid gap-2">
-            <Label for="review-comment">Comment (optional)</Label>
+            <Label for="review-comment">{{
+                t('reviews.comment_optional')
+            }}</Label>
             <Textarea
                 id="review-comment"
                 name="comment"
                 rows="3"
                 :maxlength="bounds.max_comment_length"
-                placeholder="What was it like dealing with this member?"
+                :placeholder="t('reviews.comment_placeholder')"
             />
             <InputError :message="errors.comment" />
         </div>
 
         <Button type="submit" :disabled="processing">
             <Spinner v-if="processing" />
-            Post review
+            {{ t('reviews.post_review') }}
         </Button>
     </Form>
 </template>

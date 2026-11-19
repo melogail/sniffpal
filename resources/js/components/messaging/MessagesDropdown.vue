@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { useEchoNotification } from '@laravel/echo-vue';
+import '@/lib/echo';
 import { MessageSquareMore } from '@lucide/vue';
 import { computed, onMounted, ref } from 'vue';
 import MessagePreviewRow from '@/components/messaging/MessagePreviewRow.vue';
@@ -158,7 +159,7 @@ onMounted(() => {
  * since nothing else on that channel changes this menu. Subscribed only
  * behind `canRead`, like the mount fetch above.
  */
-if (viewerId.value && canRead.value) {
+if (!import.meta.env.SSR && viewerId.value && canRead.value) {
     useEchoNotification(
         `App.Models.User.${viewerId.value}`,
         () => void load(),

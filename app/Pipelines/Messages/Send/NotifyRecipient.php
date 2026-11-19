@@ -25,9 +25,6 @@ use Closure;
  * bounded by the `messages` rate limiter rather than by a rule inside the flow.
  * If that volume ever becomes the problem, collapsing belongs in the inbox
  * query, not here.
- *
- * Not queued, matching every other notification in the app — there is no queue
- * worker configured yet and the sync driver would only pretend.
  */
 class NotifyRecipient
 {

@@ -8,7 +8,6 @@ import NewTicketDialog from '@/components/support/NewTicketDialog.vue';
 import SupportChannel from '@/components/support/SupportChannel.vue';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/composables/useTranslations';
-import { SUPPORT_EMAIL, SUPPORT_MAILTO } from '@/lib/support';
 import { login } from '@/routes';
 import { index as ticketsIndex } from '@/routes/tickets';
 
@@ -31,10 +30,11 @@ import { index as ticketsIndex } from '@/routes/tickets';
  * this is a public page, so it is guarded at runtime and is the one switch.
  *
  * The address underneath is a plain `mailto:` for anyone who would rather use
- * their own mail client — `SUPPORT_EMAIL` in `lib/support.ts`, not a prop; see
- * that file for why a `Route::inertia()` route cannot carry one. Every
- * `support.*` key goes through `t()`.
+ * their own mail client — the `supportEmail` prop, `config('mail.from.address')`
+ * read per request in routes/web.php. Every `support.*` key goes through `t()`.
  */
+const { supportEmail } = defineProps<{ supportEmail: string }>();
+
 const page = usePage();
 const { t } = useTranslations();
 
@@ -95,10 +95,10 @@ const isSignedIn = computed(() => Boolean(page.props.auth.user));
 
                 <p class="text-muted-foreground px-1 text-xs">
                     <a
-                        :href="SUPPORT_MAILTO"
+                        :href="`mailto:${supportEmail}`"
                         class="hover:text-foreground underline-offset-4 hover:underline"
                     >
-                        {{ SUPPORT_EMAIL }}
+                        {{ supportEmail }}
                     </a>
                 </p>
             </div>

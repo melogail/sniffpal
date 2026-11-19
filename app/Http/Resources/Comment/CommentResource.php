@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Comment;
 
+use App\Http\Resources\User\UserSummaryResource;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -67,7 +68,7 @@ class CommentResource extends JsonResource
             'content'       => $this->content,
             'parent_id'     => $this->parent_id,
 
-            'author'        => CommentAuthorResource::make($this->whenLoaded('user')),
+            'author'        => UserSummaryResource::make($this->whenLoaded('user')),
             'is_author'     => $request->user()?->getKey() === $this->user_id,
 
             'likes_count'   => (int) ($this->likes_count ?? 0),

@@ -25,7 +25,6 @@ use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
-use Laravel\Nova\Tool;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -186,23 +185,5 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Main::make(),
             Moderation::make(),
         ];
-    }
-
-    /**
-     * Get the tools that should be listed in the Nova sidebar.
-     *
-     * @return array<int, Tool>
-     */
-    public function tools(): array
-    {
-        return [];
-    }
-
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        parent::register();
     }
 }

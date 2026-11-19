@@ -2,8 +2,8 @@
 
 namespace App\Pipelines\Pets\BuildHomeFeed;
 
+use App\Models\User;
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
 
 /**
  * The home feed only ever shows listings that are still available; an owner
@@ -15,7 +15,7 @@ class ScopeToAvailablePets
     {
         $context->query
             ->available()
-            ->whereHas('user', fn (Builder $users) => $users->active());
+            ->whereHas('user', User::activeOnly(...));
 
         return $next($context);
     }

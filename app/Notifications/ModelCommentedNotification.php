@@ -30,10 +30,13 @@ class ModelCommentedNotification extends Notification implements ShouldQueueAfte
 {
     use Queueable;
 
+    /** A comment deleted before the worker runs is dropped, not a failed job. */
+    public bool $deleteWhenMissingModels = true;
+
     /**
      * How much of the comment travels in the payload.
      */
-    protected const EXCERPT_LENGTH = 120;
+    protected const EXCERPT_LENGTH       = 120;
 
     public function __construct(
         public Comment $comment,

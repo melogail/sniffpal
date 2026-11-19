@@ -3,8 +3,6 @@
 namespace App\Http\Requests\Pet;
 
 use App\Enums\ListingType;
-use App\Models\Breed;
-use App\Models\Category;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -38,9 +36,9 @@ class ListHomeFeedRequest extends FormRequest
             'radius'          => ['nullable', 'numeric', 'min:'.$this->minRadiusKm(), 'max:'.$this->maxRadiusKm()],
 
             'category_ids'    => ['nullable', 'array', 'max:50'],
-            'category_ids.*'  => ['integer', 'distinct', Rule::exists(Category::class, 'id')],
+            'category_ids.*'  => ['integer', 'distinct'],
             'breed_ids'       => ['nullable', 'array', 'max:50'],
-            'breed_ids.*'     => ['integer', 'distinct', Rule::exists(Breed::class, 'id')],
+            'breed_ids.*'     => ['integer', 'distinct'],
 
             'age_min'         => ['nullable', 'numeric', 'min:0', 'max:'.$this->maxAgeYears()],
             'age_max'         => [

@@ -4,7 +4,6 @@ namespace App\Pipelines\Pets\Create;
 
 use App\Models\Pet;
 use Closure;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Write the listing row inside a transaction.
@@ -17,10 +16,10 @@ class PersistPet
 {
     public function handle(CreatePetContext $context, Closure $next): mixed
     {
-        $pet = DB::transaction(fn (): Pet => Pet::create([
+        $pet = Pet::create([
             ...$context->attributes(),
             'user_id' => $context->owner->getKey(),
-        ]));
+        ]);
 
         $context->setPet($pet);
 

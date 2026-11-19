@@ -7,9 +7,8 @@ import type { UserSummary } from './users';
  * detail page's thread, `comments.index` and `comments.replies` all emit this
  * exact shape, so there is one reader for all four.
  *
- * `author` is `CommentAuthorResource`, which is `UserSummaryResource` under
- * another name, and is **absent — not null —** when the loader did not eager
- * load `user.media`.
+ * `author` is `UserSummaryResource` and is **absent — not null —** when the
+ * loader did not eager load `user.media`.
  *
  * `likes_count`, `is_liked`, `replies_count` and `has_reported` come from
  * subqueries on whatever query loaded the comment and fall back to neutral

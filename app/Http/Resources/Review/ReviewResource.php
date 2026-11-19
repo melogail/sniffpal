@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Review;
 
+use App\Http\Resources\User\UserSummaryResource;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -102,7 +103,7 @@ class ReviewResource extends JsonResource
             'rate'         => $this->rate,
             'comment'      => $this->comment,
 
-            'author'       => ReviewAuthorResource::make($this->whenLoaded('user')),
+            'author'       => UserSummaryResource::make($this->whenLoaded('user')),
             'is_author'    => $viewer?->getKey() === $this->user_id,
 
             'has_reported' => (bool) ($this->has_reported ?? false),

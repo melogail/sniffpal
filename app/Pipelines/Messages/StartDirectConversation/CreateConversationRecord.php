@@ -29,8 +29,11 @@ class CreateConversationRecord
             return $next($context);
         }
 
+        $ids = [$context->initiator->getKey(), $context->recipient->getKey()];
+
         $context->setCreatedConversation(Conversation::create([
-            'type' => ConversationType::Direct,
+            'type'     => ConversationType::Direct,
+            'pair_key' => min($ids).':'.max($ids),
         ]));
 
         return $next($context);

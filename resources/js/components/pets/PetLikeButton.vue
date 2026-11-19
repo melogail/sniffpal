@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import { ThumbsUp } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -68,6 +68,17 @@ const { petSlug, likesCount, isLiked, canLike } = defineProps<{
     /** A signed-in viewer. `false` sends the control to `login` instead. */
     canLike: boolean;
 }>();
+
+/**
+ * A plain `router.post`, not a `<Link>`: the feed's `pets` is an
+ * `Inertia::scroll()` merge prop and the controller answers `back()`, which on
+ * a scrolled feed is `/?page=N`. A full visit there replaces every merged page
+ * with page N alone; `except: ['pets']` keeps the cards on screen and lets the
+ * card's own like state come back with the rest of the props.
+ */
+function toggle(): void {
+    router.post(likePet.url(petSlug), {}, { preserveScroll: true, preserveState: true, except: ['pets'] });
+}
 </script>
 
 <template>
@@ -81,13 +92,11 @@ const { petSlug, likesCount, isLiked, canLike } = defineProps<{
             )
         "
     >
-        <Link
+        <button
             v-if="canLike"
-            :href="likePet(petSlug)"
-            as="button"
-            preserve-scroll
-            preserve-state
+            type="button"
             :aria-pressed="isLiked"
+            @click="toggle"
         >
             <ThumbsUp
                 class="size-4 transition-transform duration-300"
@@ -95,7 +104,7 @@ const { petSlug, likesCount, isLiked, canLike } = defineProps<{
                 aria-hidden="true"
             />
             {{ likesCount }}
-        </Link>
+        </button>
         <Link v-else :href="login()">
             <ThumbsUp class="size-4" aria-hidden="true" />
             {{ likesCount }}

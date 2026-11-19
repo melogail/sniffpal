@@ -11,9 +11,9 @@ use App\Http\Controllers\Web\PetController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\ReportController;
 use App\Http\Controllers\Web\ReviewController;
-use App\Http\Controllers\Web\SocialAuthController;
 use App\Models\Pet;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,36 +32,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
-/*
-|--------------------------------------------------------------------------
-| Social sign-in
-|--------------------------------------------------------------------------
-|
-| "Continue with Google" / "Continue with Facebook". Two GETs because OAuth
-| 2.0 fixes the method: the provider sends the browser back with a top-level
-| redirect, not an Inertia visit, so the "a GET never writes" rule
-| (.ai/rules/controllers.md) is argued and bounded in
-| Web\SocialAuthController's docblock rather than broken by accident. The
-| buttons are plain anchors (SocialLoginButtons.vue), never `<Link>`, so
-| nothing prefetches either URL.
-|
-| `{provider}` binds to App\Enums\SocialProvider: an unknown name is a 404
-| before the controller runs. Both routes are `guest`, like Fortify's login
-| and register, and both spend `social-logins`
-| (RateLimitServiceProvider::configureRateLimiters) — IP-keyed through
-| unauthenticatedCallerKey(), because the callback can create an account and
-| the redirect is where a script would start.
-|
-*/
-
-Route::middleware(['guest', 'throttle:social-logins'])
-    ->prefix('auth')
-    ->name('social.')
-    ->group(function (): void {
-        Route::get('{provider}/redirect', [SocialAuthController::class, 'redirect'])->name('redirect');
-        Route::get('{provider}/callback', [SocialAuthController::class, 'callback'])->name('callback');
-    });
 
 Route::get('pets/{pet}', [PetController::class, 'show'])
     ->where('pet', Pet::ROUTE_KEY_PATTERN)
@@ -92,17 +62,19 @@ Route::get('pets/{pet}', [PetController::class, 'show'])
 | resources/js/pages, beside `Home.vue`, rather than the legacy `Help/Index`
 | — this app does not use a directory per single page.
 |
-| No props. If a real support address or an office-hours line is ever wanted
-| it does **not** go in a third argument here: `Route::inertia()` stores its
-| props as route defaults, which `route:cache` serialises, so a `config()`
-| call at registration time would freeze into the cached route file. That
-| would need a controller, or shared props.
+| `support` carries one prop, the `mailto:` address, read from
+| `config('mail.from.address')` inside a closure so it is evaluated per
+| request. It does **not** go in `Route::inertia()`'s third argument: that
+| stores props as route defaults, which `route:cache` serialises, so a
+| `config()` call at registration time would freeze into the cached file.
 |
 */
 
 Route::inertia('help', 'Help')->name('help');
 Route::inertia('guidelines', 'Guidelines')->name('guidelines');
-Route::inertia('support', 'Support')->name('support');
+Route::get('support', fn () => Inertia::render('Support', [
+    'supportEmail' => config('mail.from.address'),
+]))->name('support');
 
 /*
 | The guest channel: the support page's contact form posts here. Public,
@@ -338,7 +310,7 @@ Route::get('reviews/{reviewable_type}/{reviewable_id}', [ReviewController::class
 | one step looser: 10 a minute and 60 an hour, because a real owner corrects a
 | listing far more often than they publish one while a single request costs
 | exactly what `pets.store` costs — the same four images, the same two
-| conversions each, run synchronously, because no queue worker is deployed.
+| conversions each (`thumb` inline, `display` queued to Horizon).
 |
 | This comment used to argue the opposite: that the route needed no ceiling
 | because ownership (PetPolicy) bounds it to listings that already exist, so a

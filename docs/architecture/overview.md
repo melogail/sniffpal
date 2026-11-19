@@ -17,7 +17,7 @@ Mobile  ──Sanctum──▶ routes/api.php ─┘        │
 | Web UI | inertiajs/inertia-laravel + @inertiajs/vue3 | 3.x |
 | View layer | Vue 3.5, Tailwind CSS 4, reka-ui, shadcn-style components | |
 | Build | Vite 8 through `vite-plus` (`vp`), Wayfinder route generation | |
-| Auth | laravel/fortify 1.39, laravel/passkeys, laravel/socialite 5.31, laravel/sanctum 4.3 | |
+| Auth | laravel/fortify 1.39, laravel/passkeys, laravel/sanctum 4.3 | |
 | Admin | laravel/nova 5.10 + ebess/advanced-nova-media-library 5.2 | |
 | Media | spatie/laravel-medialibrary 11.23 | |
 | Real time | laravel/reverb 1.11, laravel-echo + @laravel/echo-vue | |
@@ -59,7 +59,7 @@ docs/             this VitePress site
 
 - **Thin controllers.** A controller authorises, validates (through a Form Request) and hands off to an Action. Business logic lives in Actions and Pipelines; there is no service or repository layer.
 - **Eloquent, guarded.** `Model::preventLazyLoading()` is on. Query logic belongs in Actions and model scopes.
-- **Enums everywhere.** Listing type, status, health status, gender, report category/reason/status, message type/status, ticket type and social provider are all backed enums with translated labels.
+- **Enums everywhere.** Listing type, status, health status, gender, report reason/resolution/status, message type/status and ticket type are all backed enums with translated labels.
 - **Everything throttled.** Every mutating route names a rate limiter.
 - **Two guards.** Members on `web`/Sanctum, staff on `admin`. They never share a table or a session.
 - **Bilingual by construction.** Every UI string exists in English and Arabic and a test enforces parity.

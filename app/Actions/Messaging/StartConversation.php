@@ -13,6 +13,7 @@ use App\Pipelines\Messages\StartDirectConversation\MarkReadForInitiator;
 use App\Pipelines\Messages\StartDirectConversation\SendInitialMessage;
 use App\Pipelines\Messages\StartDirectConversation\StartDirectConversationContext;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
 
@@ -69,11 +70,27 @@ class StartConversation
      *                                      by that id — deleted or deactivated,
      *                                      indistinguishably.
      */
-    public function handle(User $initiator, int $recipientId, ?string $initialMessage = null): Conversation
+    public function handle(User $initiator, int $recipientId, ?string $initialMessage = null, bool $retrying = false): Conversation
     {
         $recipient = $this->resolveRecipient($recipientId);
 
-        $context   = new StartDirectConversationContext(
+        try {
+            return $this->start($initiator, $recipient, $initialMessage);
+        } catch (UniqueConstraintViolationException $exception) {
+            // The other side opened the same thread between our find and our insert:
+            // run once more, which now finds it and adds the message to it.
+            if ($retrying) {
+                throw $exception;
+            }
+
+            return $this->handle($initiator, $recipientId, $initialMessage, retrying: true);
+        }
+    }
+
+    private function start(User $initiator, User $recipient, ?string $initialMessage): Conversation
+    {
+
+        $context = new StartDirectConversationContext(
             initiator: $initiator,
             recipient: $recipient,
             initialMessageContent: $initialMessage,

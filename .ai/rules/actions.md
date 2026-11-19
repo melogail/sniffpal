@@ -12,7 +12,7 @@ Measured: A reviews B, C reports that review, A's account is deleted — the rev
 
 Rule: never delete a `User` with a bare `$user->delete()`. Go through `Actions\Profiles\DeleteUserAccount`, which collects the affected ids before the cascade can run and clears the polymorphic rows explicitly, all in one transaction. A new polymorphic child of `User` or of anything that cascades from `User` is a new step in that flow. `DeleteReview` and `DeleteComment` cover the single-row path only — do not read them as covering account deletion.
 
-## Social sign-in (Google/Facebook): three settled decisions
+## Social sign-in (Google/Facebook): three settled decisions (feature removed 2026-11-19, kept for its return)
 Shipped 2026-10-11 (recorded by hand: the Boost `record-rule` tool was not connected in that session): laravel/socialite ^5.31, `App\Enums\SocialProvider` (driver names as backing values; `isConfigured()` = `services.{value}` has client_id AND client_secret), `social_accounts` (unique provider+provider_id, cascades from users, no tokens stored), `Actions\Auth\ResolveSocialUser` behind both `Web\SocialAuthController` (session) and `Api\V1\Auth\SocialLoginController` (stateless token exchange). Limiter `social-logins` (10/min, 60/hour, IP-keyed via `unauthenticatedCallerKey()`) on all three routes.
 
 1. **`social.callback` is the ONE GET that writes** (user, link, session). OAuth 2.0 fixes the method and the provider's redirect is a top-level navigation, not an Inertia visit. What keeps it safe is that `SocialLoginButtons.vue` renders plain `<a>` tags, never `<Link>`, so nothing prefetches it. Do not cite this route as precedent for any other writing GET.

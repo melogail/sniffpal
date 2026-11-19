@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import MessagesDropdown from '@/components/messaging/MessagesDropdown.vue';
-import NotificationBell from '@/components/notifications/NotificationBell.vue';
+import { computed, defineAsyncComponent } from 'vue';
 import AppearanceToggle from '@/components/shell/AppearanceToggle.vue';
 import BrandMark from '@/components/shell/BrandMark.vue';
 import LocaleSwitcher from '@/components/shell/LocaleSwitcher.vue';
@@ -147,6 +145,11 @@ const page = usePage();
 const { t } = useTranslations();
 
 const user = computed(() => page.props.auth.user ?? null);
+
+// Signed-in only, so their chunk (and laravel-echo + pusher-js with it) is
+// not part of what a guest downloads for the feed.
+const NotificationBell = defineAsyncComponent(() => import('@/components/notifications/NotificationBell.vue'));
+const MessagesDropdown = defineAsyncComponent(() => import('@/components/messaging/MessagesDropdown.vue'));
 </script>
 
 <template>

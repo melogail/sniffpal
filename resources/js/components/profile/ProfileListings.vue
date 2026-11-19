@@ -3,6 +3,7 @@ import { PawPrint } from '@lucide/vue';
 import EmptyState from '@/components/EmptyState.vue';
 import Pagination from '@/components/Pagination.vue';
 import PetListingCard from '@/components/pets/PetListingCard.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import type { Paginated, PetCard } from '@/types';
 
 /**
@@ -19,6 +20,8 @@ defineProps<{
     listings: Paginated<PetCard>;
     name: string;
 }>();
+const { t } = useTranslations();
+
 </script>
 
 <template>
@@ -26,8 +29,8 @@ defineProps<{
         <EmptyState
             v-if="listings.data.length === 0"
             :icon="PawPrint"
-            title="No listings yet"
-            :description="`${name} has not published a pet.`"
+            :title="t('profile.no_listings')"
+            :description="t('profile.no_listings_hint', { name })"
         />
 
         <template v-else>

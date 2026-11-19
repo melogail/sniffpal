@@ -9,6 +9,7 @@ import {
     watch,
 } from 'vue';
 import { Spinner } from '@/components/ui/spinner';
+import { useTranslations } from '@/composables/useTranslations';
 import {
     externalMapUrl,
     loadMapLibraries,
@@ -51,6 +52,8 @@ const map = shallowRef<google.maps.Map | null>(null);
 const marker = shallowRef<google.maps.Marker | null>(null);
 const failed = ref(false);
 const loading = ref(true);
+const { t } = useTranslations();
+
 
 const hasPin = computed(() => lat !== null && lng !== null);
 
@@ -153,7 +156,7 @@ onBeforeUnmount(() => {
             ref="container"
             class="size-full"
             role="application"
-            aria-label="Listing location"
+            :aria-label="t('pets.listing_location')"
         />
 
         <div
@@ -161,7 +164,7 @@ onBeforeUnmount(() => {
             class="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center gap-2 text-sm"
         >
             <Spinner status class="size-4" />
-            Loading the map…
+            {{ t('pets.loading_map') }}
         </div>
     </div>
 
@@ -179,12 +182,12 @@ onBeforeUnmount(() => {
             rel="noopener noreferrer"
             class="text-primary flex items-center gap-1 text-sm underline"
         >
-            Open in Maps
+            {{ t('pets.open_in_maps') }}
             <ExternalLink class="size-3.5" />
         </a>
     </div>
 
     <p v-else class="text-muted-foreground text-sm">
-        No map pin on this listing.
+        {{ t('pets.no_map_pin') }}
     </p>
 </template>

@@ -2,7 +2,6 @@
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
-import SocialLoginButtons from '@/components/SocialLoginButtons.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +10,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { useTranslations } from '@/composables/useTranslations';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import type { SocialProviderOption } from '@/types/auth';
 
 /**
  * Layout heading and sub-heading, snapshotted once in `setup`. See
@@ -28,14 +26,11 @@ setLayoutProps({
 
 defineProps<{
     passwordRules: string;
-    socialProviders: SocialProviderOption[];
 }>();
 </script>
 
 <template>
     <Head :title="t('auth.sign_up')" />
-
-    <SocialLoginButtons :providers="socialProviders" />
 
     <Form
         v-bind="store.form()"

@@ -17,8 +17,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * — on the public listing page, for every card — and its own docblock says that
  * fallback is not to be relied on.
  *
- * The application's own upload paths set it (UpdateProfile\UploadProfileImage
- * and Actions\Pets\ResolveMediaOwnerDirectory), but *every other* writer has to
+ * UpdateProfile\UploadProfileImage sets it, but *every other* writer has to
  * remember to, and Ebess\AdvancedNovaMediaLibrary\Fields\Media::fillMedia calls
  * `->withCustomProperties($this->customProperties)` with whatever the field was
  * configured with — empty for all four of our media fields. So every avatar or

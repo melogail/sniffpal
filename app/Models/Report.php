@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ReportReason;
 use App\Enums\ReportResolution;
 use App\Enums\ReportStatus;
+use Carbon\CarbonInterface;
 use Database\Factories\ReportFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -24,7 +25,7 @@ use Illuminate\Support\Carbon;
  * Action sets it explicitly.
  *
  * @property int $id
- * @property int $user_id
+ * @property int|null $user_id
  * @property int|null $subject_user_id
  * @property string $reportable_type
  * @property int $reportable_id
@@ -134,22 +135,12 @@ class Report extends Model
      * @return Builder<static>
      */
     #[Scope]
-    protected function upheldAgainst(Builder $query, User $subject, ?Carbon $since = null): Builder
+    protected function upheldAgainst(Builder $query, User $subject, ?CarbonInterface $since = null): Builder
     {
         return $query
             ->where('subject_user_id', $subject->getKey())
             ->where('status', ReportStatus::Resolved)
-            ->when($since, fn (Builder $query, Carbon $since): Builder => $query->where('resolved_at', '>=', $since));
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    #[Scope]
-    protected function withStatus(Builder $query, ReportStatus $status): Builder
-    {
-        return $query->where('status', $status);
+            ->when($since, fn (Builder $query, CarbonInterface $since): Builder => $query->where('resolved_at', '>=', $since));
     }
 
     /**

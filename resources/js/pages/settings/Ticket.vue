@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link, router, usePage } from '@inertiajs/vue3';
 import { useEchoNotification } from '@laravel/echo-vue';
+import '@/lib/echo';
 import { ArrowLeft, CheckCircle2 } from '@lucide/vue';
 import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
@@ -53,7 +54,7 @@ const options = { preserveScroll: true };
  */
 const viewerId = usePage().props.auth.user?.id;
 
-if (viewerId) {
+if (!import.meta.env.SSR && viewerId) {
     useEchoNotification<{ type: string; ticket_id: number }>(
         `App.Models.User.${viewerId}`,
         (notification) => {

@@ -8,7 +8,7 @@ Format every plan follows: **Purpose · Data · Backend · Routes · Frontend ·
 | --- | --- |
 | [data-model.md](data-model.md) | Every Eloquent model, its table, relations, traits and enums |
 | [authentication.md](authentication.md) | Fortify login, register, password reset, email verification, 2FA, passkeys |
-| [social-login.md](social-login.md) | Google / Facebook OAuth via Socialite, web + API |
+| [social-login.md](social-login.md) | Removed 2026-11-19; deferred to a later stage |
 | [api-v1.md](api-v1.md) | Sanctum bearer-token API for the Flutter app |
 | [pet-listings.md](pet-listings.md) | Create, edit, show, delete, purge, status toggle, slugs, photos, views |
 | [home-feed.md](home-feed.md) | Home feed filters, nearby search, infinite scroll |
@@ -29,3 +29,4 @@ Format every plan follows: **Purpose · Data · Backend · Routes · Frontend ·
 | [media-library.md](media-library.md) | Spatie media: collections, conversions, decode checks, paths |
 | [rate-limiting.md](rate-limiting.md) | Every named throttle and what it protects |
 | [nova-admin.md](nova-admin.md) | Nova resources, actions, metrics, dashboards, policies |
+| [business-recommendations.md](business-recommendations.md) | Launch blockers, strategy, metrics and open decisions (review 2026-11-19) |

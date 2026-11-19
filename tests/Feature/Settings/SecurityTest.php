@@ -196,3 +196,18 @@ test('returns 429 on the seventh password change attempt in a minute', function 
 
     expect(Hash::check('password', $user->refresh()->password))->toBeTrue();
 });
+
+test('changing the password from the website revokes every api token', function () {
+    $user = User::factory()->create();
+    $user->createToken('phone');
+
+    $this->actingAs($user)
+        ->from(route('security.edit'))
+        ->put(route('user-password.update'), [
+            'current_password'      => 'password',
+            'password'              => 'new-password',
+            'password_confirmation' => 'new-password',
+        ])->assertSessionHasNoErrors();
+
+    expect($user->tokens()->count())->toBe(0);
+});

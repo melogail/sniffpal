@@ -54,7 +54,7 @@ There is no uncapped mutating route in the application. Named limiters are defin
 | `comments`, `messages`, `reviews`, `reports`, `conversations`, `ticket-messages`, `contact-messages` | Content creation |
 | `pet-listings`, `pet-listing-edits`, `profile-updates` | Anything that stores an image or runs a conversion |
 | `locale-switches` | Public, IP-keyed |
-| `registrations`, `password-reset-links`, `password-resets`, `password-changes`, `password-confirmations`, `verification-notifications`, `social-logins` | Auth flows |
+| `registrations`, `password-reset-links`, `password-resets`, `password-changes`, `password-confirmations`, `verification-notifications` | Auth flows |
 | `account-deletions` | `DELETE settings/profile` |
 
 Rules when adding a route:

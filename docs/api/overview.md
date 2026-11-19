@@ -20,7 +20,6 @@ A JSON API under `/api/v1`, built for the SniffPal Flutter app. It mirrors the w
 ```
 POST /api/v1/auth/register            → { token, user }
 POST /api/v1/auth/login               → { token, user }
-POST /api/v1/auth/social/{provider}   → { token, user }   (google | facebook; provider access token in body)
 POST /api/v1/auth/logout              → revokes the current token
 POST /api/v1/auth/forgot-password
 POST /api/v1/auth/email/verification-notification

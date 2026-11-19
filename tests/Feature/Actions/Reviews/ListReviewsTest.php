@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * What a page of a profile's reviews costs: resolving the target, the
@@ -22,8 +23,10 @@ use Illuminate\Support\Facades\DB;
  */
 const REVIEWS_PAGE_QUERY_COST = 5;
 
+beforeEach(fn () => Storage::fake(config('media-library.disk_name')));
+
 /**
- * Give a user the avatar ReviewAuthorResource reads with getFirstMediaUrl().
+ * Give a user the avatar UserSummaryResource reads with getFirstMediaUrl().
  *
  * The owner directory is stamped on the media row exactly as the upload
  * pipeline does, so MediaPathGenerator never falls back to looking the owner

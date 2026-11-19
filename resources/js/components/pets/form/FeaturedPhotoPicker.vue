@@ -115,7 +115,7 @@ const { t } = useTranslations();
                 type="button"
                 variant="secondary"
                 size="icon"
-                class="absolute top-2 right-2"
+                class="absolute top-2 end-2"
                 :aria-label="t('wizard.remove_cover_photo')"
                 @click="clear"
             >
@@ -128,7 +128,7 @@ const { t } = useTranslations();
                 ref="input"
                 type="file"
                 accept="image/jpeg,image/png,image/gif,image/webp"
-                class="text-muted-foreground file:text-foreground text-sm file:mr-3 file:rounded-md file:border file:bg-transparent file:px-3 file:py-1.5 file:text-sm"
+                class="text-muted-foreground file:text-foreground text-sm file:me-3 file:rounded-md file:border file:bg-transparent file:px-3 file:py-1.5 file:text-sm"
                 :aria-label="t('wizard.cover_photo')"
                 @change="pick"
             />

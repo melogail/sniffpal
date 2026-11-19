@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { fromCoordinateInput } from '@/lib/coordinates';
 import { petFormErrors, type PetFormState } from '@/lib/petForm';
 import { reverseGeocode } from '@/lib/reverseGeocode';
+import { useGeolocation } from '@/composables/useGeolocation';
 import { useTranslations } from '@/composables/useTranslations';
 
 /**
@@ -31,6 +32,7 @@ const { form } = defineProps<{ form: InertiaForm<PetFormState> }>();
 const errors = computed(() => petFormErrors(form.errors));
 
 const { t } = useTranslations();
+const { requestLocation } = useGeolocation();
 
 const locating = ref(false);
 const locateFailed = ref(false);
@@ -64,44 +66,31 @@ function clearPin(): void {
 }
 
 async function useMyLocation(): Promise<void> {
-    if (!navigator.geolocation) {
+    locating.value = true;
+    locateFailed.value = false;
+
+    const found = await requestLocation({ fresh: true });
+
+    if (!found) {
+        locating.value = false;
         locateFailed.value = true;
 
         return;
     }
 
-    locating.value = true;
-    locateFailed.value = false;
+    setPin({ lat: found.latitude, lng: found.longitude });
 
-    navigator.geolocation.getCurrentPosition(
-        async (position) => {
-            setPin({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-            });
+    const place = await reverseGeocode(found.latitude, found.longitude);
 
-            const found = await reverseGeocode(
-                position.coords.latitude,
-                position.coords.longitude,
-            );
+    if (place) {
+        form.location.address = place.address ?? form.location.address;
+        form.location.city = place.city ?? form.location.city;
+        form.location.state = place.state ?? form.location.state;
+        form.location.postalCode = place.postalCode ?? form.location.postalCode;
+        form.location.country = place.country ?? form.location.country;
+    }
 
-            if (found) {
-                form.location.address = found.address ?? form.location.address;
-                form.location.city = found.city ?? form.location.city;
-                form.location.state = found.state ?? form.location.state;
-                form.location.postalCode =
-                    found.postalCode ?? form.location.postalCode;
-                form.location.country = found.country ?? form.location.country;
-            }
-
-            locating.value = false;
-        },
-        () => {
-            locating.value = false;
-            locateFailed.value = true;
-        },
-        { timeout: 10_000 },
-    );
+    locating.value = false;
 }
 </script>
 

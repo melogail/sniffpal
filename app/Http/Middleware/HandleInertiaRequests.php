@@ -68,16 +68,6 @@ class HandleInertiaRequests extends Middleware
     }
 
     /**
-     * Determines the current asset version.
-     *
-     * @see https://inertiajs.com/asset-versioning
-     */
-    public function version(Request $request): ?string
-    {
-        return parent::version($request);
-    }
-
-    /**
      * The language every page needs to render itself.
      *
      * Three static values and no query. `current` is what SetLocale resolved

@@ -47,8 +47,7 @@ class Breed extends Model implements HasMedia
     {
         $this->addMediaCollection('breeds')
             ->singleFile()
-            ->acceptsMimeTypes(ConvertibleImageTypes::MIME_TYPES)
-            ->useDisk(config('media-library.disk_name'));
+            ->acceptsMimeTypes(ConvertibleImageTypes::MIME_TYPES);
     }
 
     public function registerMediaConversions(?Media $media = null): void

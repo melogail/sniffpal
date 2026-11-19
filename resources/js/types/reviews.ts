@@ -4,9 +4,8 @@ import type { UserSummary } from './users';
 /**
  * One review — `App\Http\Resources\Review\ReviewResource`.
  *
- * `author` is `ReviewAuthorResource`, which is `UserSummaryResource` under
- * another name, and is absent (not null) when the loader did not eager load
- * `user.media`.
+ * `author` is `UserSummaryResource` and is absent (not null) when the loader
+ * did not eager load `user.media`.
  */
 export type Review = {
     id: number;

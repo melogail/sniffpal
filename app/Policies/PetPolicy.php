@@ -57,16 +57,6 @@ class PetPolicy
         return $user->isVerified() && $user->getKey() === $pet->user_id;
     }
 
-    public function restore(User $user, Pet $pet): bool
-    {
-        return $user->isVerified() && $user->getKey() === $pet->user_id;
-    }
-
-    public function forceDelete(User $user, Pet $pet): bool
-    {
-        return $user->isVerified() && $user->getKey() === $pet->user_id;
-    }
-
     /**
      * Liking notifies the owner, so it is gated on a verified account.
      */

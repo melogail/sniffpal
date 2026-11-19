@@ -282,7 +282,7 @@ trait ProfileValidationRules
 
         return $required
             ? ['required', 'string', Rule::in($supported)]
-            : ['sometimes', 'nullable', 'string', Rule::in($supported)];
+            : ['sometimes', 'string', Rule::in($supported)];
     }
 
     /**
@@ -323,6 +323,7 @@ trait ProfileValidationRules
             'image',
             ConvertibleImageTypes::mimesRule(),
             'max:'.$this->maxAvatarKilobytes(),
+            Rule::dimensions()->maxWidth(8000)->maxHeight(8000),
         ];
     }
 

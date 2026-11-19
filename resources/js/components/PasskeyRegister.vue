@@ -5,6 +5,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/composables/useTranslations';
 
 const emit = defineEmits<{
     success: [];
@@ -34,6 +35,8 @@ const getDefaultPasskeyName = () => {
 
 const name = ref(getDefaultPasskeyName());
 const showForm = ref(false);
+const { t } = useTranslations();
+
 
 const { register, isLoading, error, isSupported } = usePasskeyRegister({
     onSuccess: () => {
@@ -61,11 +64,11 @@ const handleCancel = () => {
 
 <template>
     <div v-if="!isSupported" class="text-muted-foreground text-sm">
-        Passkeys are not supported in this browser.
+        {{ t('security.passkeys_unsupported') }}
     </div>
 
     <Button v-else-if="!showForm" variant="outline" @click="showForm = true">
-        Add passkey
+        {{ t('security.add_passkey') }}
     </Button>
 
     <form
@@ -74,17 +77,17 @@ const handleCancel = () => {
         class="border-border bg-card shadow-card space-y-4 rounded-[20px] border p-4"
     >
         <div class="grid gap-2">
-            <Label for="passkey-name">Passkey name</Label>
+            <Label for="passkey-name">{{ t('security.passkey_name') }}</Label>
             <Input
                 id="passkey-name"
                 type="text"
                 v-model="name"
-                placeholder="e.g., MacBook Pro, iPhone"
+                :placeholder="t('security.passkey_name_placeholder')"
                 class="mt-1 block w-full"
                 autofocus
             />
             <p class="text-muted-foreground text-xs">
-                A name helps you identify this passkey later.
+                {{ t('security.passkey_name_hint') }}
             </p>
         </div>
 
@@ -92,10 +95,10 @@ const handleCancel = () => {
 
         <div class="flex gap-2">
             <Button type="submit" :disabled="isLoading || !name.trim()">
-                {{ isLoading ? 'Registering...' : 'Register passkey' }}
+                {{ isLoading ? t('security.registering') : t('security.register_passkey') }}
             </Button>
             <Button type="button" variant="ghost" @click="handleCancel">
-                Cancel
+                {{ t('common.cancel') }}
             </Button>
         </div>
     </form>

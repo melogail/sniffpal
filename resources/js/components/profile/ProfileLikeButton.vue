@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { Heart } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/composables/useTranslations';
 import { login } from '@/routes';
 import { like as likeProfile } from '@/routes/profile';
 
@@ -22,6 +23,8 @@ const { userId, isLiked, canLike } = defineProps<{
     /** A signed-in viewer who is not the subject. */
     canLike: boolean;
 }>();
+const { t } = useTranslations();
+
 </script>
 
 <template>
@@ -38,11 +41,11 @@ const { userId, isLiked, canLike } = defineProps<{
             preserve-state
         >
             <Heart class="size-4" :class="isLiked ? 'fill-current' : ''" />
-            {{ isLiked ? 'Liked' : 'Like' }}
+            {{ isLiked ? t('profile.liked') : t('profile.like') }}
         </Link>
         <Link v-else :href="login()">
             <Heart class="size-4" />
-            Like
+            {{ t('profile.like') }}
         </Link>
     </Button>
 </template>

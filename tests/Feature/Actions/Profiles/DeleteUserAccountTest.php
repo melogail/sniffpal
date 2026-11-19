@@ -9,6 +9,7 @@ use App\Models\Pet;
 use App\Models\Report;
 use App\Models\Review;
 use App\Models\Save;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -31,13 +32,15 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @var array<string, array{0: string, 1: string}>
  */
 const MORPH_TABLES = [
-    'likes'         => ['likeable_type', 'likeable_id'],
-    'saves'         => ['saveable_type', 'saveable_id'],
-    'reports'       => ['reportable_type', 'reportable_id'],
-    'reviews'       => ['reviewable_type', 'reviewable_id'],
-    'comments'      => ['commentable_type', 'commentable_id'],
-    'notifications' => ['notifiable_type', 'notifiable_id'],
-    'media'         => ['model_type', 'model_id'],
+    'likes'                  => ['likeable_type', 'likeable_id'],
+    'saves'                  => ['saveable_type', 'saveable_id'],
+    'reports'                => ['reportable_type', 'reportable_id'],
+    'reviews'                => ['reviewable_type', 'reviewable_id'],
+    'comments'               => ['commentable_type', 'commentable_id'],
+    'notifications'          => ['notifiable_type', 'notifiable_id'],
+    'media'                  => ['model_type', 'model_id'],
+    'personal_access_tokens' => ['tokenable_type', 'tokenable_id'],
+    'ticket_messages'        => ['author_type', 'author_id'],
 ];
 
 /**
@@ -338,4 +341,25 @@ test('removes pending reports against the profile and its listings, and keeps re
     $this->assertModelMissing($pendingListing);
     $this->assertModelExists($decided);
     expect($decided->fresh()->subject_user_id)->toBeNull();
+});
+
+test('keeps the upheld reports a deleted member filed against others, without a reporter', function () {
+    $reporter = User::factory()->create();
+    $upheld   = Report::factory()->for($reporter)->forReportable(Pet::factory()->create())->resolved()->create();
+
+    app(DeleteUserAccount::class)->handle($reporter);
+
+    $this->assertModelExists($upheld);
+    expect($upheld->fresh()->user_id)->toBeNull();
+});
+
+test('revokes every api token and removes the support tickets of the account', function () {
+    $user = User::factory()->create();
+    $user->createToken('phone');
+    Ticket::factory()->for($user)->create();
+
+    app(DeleteUserAccount::class)->handle($user);
+
+    $this->assertDatabaseCount('personal_access_tokens', 0);
+    $this->assertDatabaseCount('tickets', 0);
 });

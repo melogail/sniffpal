@@ -8,7 +8,6 @@ use App\Models\Report;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Eloquent\MassAssignmentException;
-use Illuminate\Database\QueryException;
 
 test('stores the comment morph alias rather than a class name', function () {
     $comment = Comment::factory()->create();
@@ -40,17 +39,6 @@ test('resolves the reported review from the stored alias', function () {
 
     expect($reportable)->toBeInstanceOf(Review::class)
         ->and($reportable->is($review))->toBeTrue();
-});
-
-test('rejects a second report by the same user against the same target', function () {
-    $reporter = User::factory()->create();
-    $comment  = Comment::factory()->create();
-    Report::factory()->for($reporter)->forReportable($comment)->create();
-
-    expect(fn () => Report::factory()->for($reporter)->forReportable($comment)->create())
-        ->toThrow(QueryException::class);
-
-    expect(Report::query()->count())->toBe(1);
 });
 
 test('allows a second user to report the same target', function () {

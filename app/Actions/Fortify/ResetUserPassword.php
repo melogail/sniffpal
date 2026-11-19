@@ -25,5 +25,8 @@ class ResetUserPassword implements ResetsUserPasswords
         $user->forceFill([
             'password' => $input['password'],
         ])->save();
+
+        // A reset is what a member does when a device is lost: every bearer token goes with it.
+        $user->tokens()->delete();
     }
 }

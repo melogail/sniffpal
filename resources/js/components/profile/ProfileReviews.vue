@@ -4,6 +4,7 @@ import EmptyState from '@/components/EmptyState.vue';
 import Pagination from '@/components/Pagination.vue';
 import ReviewCard from '@/components/reviews/ReviewCard.vue';
 import ReviewForm from '@/components/reviews/ReviewForm.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import type {
     Paginated,
     ReportReasonsByType,
@@ -27,6 +28,8 @@ defineProps<{
     bounds: ReviewBounds;
     reportReasons: ReportReasonsByType;
 }>();
+const { t } = useTranslations();
+
 </script>
 
 <template>
@@ -41,8 +44,8 @@ defineProps<{
         <EmptyState
             v-if="reviews.data.length === 0"
             :icon="Star"
-            title="No reviews yet"
-            description="Nobody has reviewed this member."
+            :title="t('profile.no_reviews')"
+            :description="t('profile.no_reviews_hint')"
         />
 
         <template v-else>

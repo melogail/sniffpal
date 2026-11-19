@@ -26,8 +26,9 @@ class PetMediaResource extends JsonResource
             'id'       => $this->id,
             'name'     => $this->name,
             'url'      => $this->getUrl(),
-            'thumb'    => $this->getUrl('thumb'),
-            'display'  => $this->getUrl('display'),
+            // Conversions are queued; until Horizon writes them the original is served.
+            'thumb'    => $this->getAvailableUrl(['thumb']),
+            'display'  => $this->getAvailableUrl(['display']),
             'featured' => (bool) $this->getCustomProperty(Pet::FEATURED_PROPERTY, false),
         ];
     }

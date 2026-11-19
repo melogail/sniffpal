@@ -32,7 +32,7 @@ use Inertia\Testing\AssertableInertia;
  *   asserted without the file-existence check that
  *   `inertia.testing.ensure_pages_exist` would otherwise apply.
  */
-test('a guest reads the page and gets no props beyond the shared ones', function (string $route, string $component) {
+test('a guest reads the page and gets no props beyond the shared ones', function (string $route, string $component, array $ownProps) {
     $this->withoutVite();
 
     $response = $this->get(route($route))
@@ -40,8 +40,17 @@ test('a guest reads the page and gets no props beyond the shared ones', function
         ->assertInertia(fn (AssertableInertia $page) => $page->component($component, shouldExist: false));
 
     expect(array_keys($response->inertiaProps()))
-        ->toEqualCanonicalizing(['errors', 'name', 'auth', 'locale', 'translations']);
+        ->toEqualCanonicalizing(['errors', 'name', 'auth', 'locale', 'translations', ...$ownProps]);
 })->with([
-    'help'    => ['help', 'Help'],
-    'support' => ['support', 'Support'],
+    'help'    => ['help', 'Help', []],
+    // The support address comes from config so the client never hard-codes a domain.
+    'support' => ['support', 'Support', ['supportEmail']],
 ]);
+
+test('the support page mails the configured sender address', function () {
+    config(['mail.from.address' => 'help@example.test']);
+
+    $this->withoutVite()
+        ->get(route('support'))
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('supportEmail', 'help@example.test'));
+});

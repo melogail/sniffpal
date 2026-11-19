@@ -79,7 +79,6 @@ class ReportFiledNotification extends Notification implements ShouldQueueAfterCo
      *     reporter_id: int,
      *     reportable_type: string,
      *     reportable_id: int,
-     *     category: string,
      *     reason: string,
      *     status: string,
      *     excerpt: string|null,

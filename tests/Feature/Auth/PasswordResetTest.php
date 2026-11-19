@@ -76,3 +76,25 @@ test('password cannot be reset with invalid token', function () {
 
     $response->assertSessionHasErrors('email');
 });
+
+test('resetting the password revokes every api token', function () {
+    Notification::fake();
+
+    $user = User::factory()->create();
+    $user->createToken('stolen phone');
+
+    $this->post(route('password.email'), ['email' => $user->email]);
+
+    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+        $this->post(route('password.update'), [
+            'token'                 => $notification->token,
+            'email'                 => $user->email,
+            'password'              => 'password',
+            'password_confirmation' => 'password',
+        ])->assertSessionHasNoErrors();
+
+        expect($user->tokens()->count())->toBe(0);
+
+        return true;
+    });
+});

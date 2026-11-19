@@ -4,6 +4,7 @@ namespace App\Concerns;
 
 use App\MediaLibrary\ConvertibleImageTypes;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Validation\Rule;
 
 /**
  * What a category or breed image has to be, in one place.
@@ -34,7 +35,7 @@ trait TaxonomyImageRules
      */
     protected function taxonomyImageFileRules(): array
     {
-        return ['image', ConvertibleImageTypes::mimesRule(), 'max:'.$this->maxTaxonomyImageKilobytes()];
+        return ['image', ConvertibleImageTypes::mimesRule(), 'max:'.$this->maxTaxonomyImageKilobytes(), Rule::dimensions()->maxWidth(8000)->maxHeight(8000)];
     }
 
     /**

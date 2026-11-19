@@ -1,9 +1,13 @@
 <?php
 
+use App\Jobs\DeleteUserAccountJob;
 use App\Models\Review;
 use App\Models\User;
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
 test('profile page is displayed', function () {
@@ -431,4 +435,28 @@ test('privacy flags reject a non-boolean value', function () {
             'show_phone' => 'yes please',
         ])
         ->assertSessionHasErrors('show_phone');
+});
+
+test('deleting the account signs out first and queues the purge', function () {
+    Queue::fake();
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->delete(route('profile.destroy'), ['password' => 'password'])
+        ->assertRedirect(route('home'));
+
+    $this->assertGuest();
+    expect($user->fresh()->is_active)->toBeFalse();
+    Queue::assertPushed(DeleteUserAccountJob::class, fn (DeleteUserAccountJob $job): bool => $job->userId === $user->getKey());
+});
+
+test('changing the email sends a fresh verification mail', function () {
+    Notification::fake();
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->patch(route('profile.update'), ['name' => $user->name, 'email' => 'new@example.com'])
+        ->assertSessionHasNoErrors();
+
+    Notification::assertSentTo($user, VerifyEmailNotification::class);
 });

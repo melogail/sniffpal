@@ -11,7 +11,7 @@ Threaded discussion under a pet listing. Replies nest under a parent comment; co
 - Pipelines (`app/Pipelines/Comments/`): PublishComment (ResolveCommentable → RequireCommentThread → ValidateParentBelongsToCommentable → CleanContent → PersistComment → NotifyCommentable), ReviseComment (CleanContent → PersistContent), DeleteCommentThread (CollectCommentSubtree → DeleteSubtreeLikes → DeleteSubtreeReports → DeleteCommentRoot).
 - Content sanitised by `app/Actions/Content/SanitizeContent.php`.
 - Requests under `app/Http/Requests/Comment/`, rules in `CommentValidationRules`; resources in `app/Http/Resources/Comment/`; `CommentPolicy` (author edits/deletes; listing owner may delete).
-- Notification: `ModelCommentedNotification` (database + broadcast) to the listing owner and thread participants via `commentNotificationRecipients()`.
+- Notification: `ModelCommentedNotification` (database + broadcast) to the listing owner for a root comment and to the parent author for a reply (`NotifyCommentable`); other thread participants are not notified.
 - Realtime: `BroadcastCommentThreadChange` (called by Create/Update/DeleteComment) sends an anonymous `CommentThreadChanged` event (`action`, `comment_id`, `parent_id`, `comments_count`; never content) on the public channel `comments.{type}.{id}`; listeners refetch through the gated endpoints.
 
 ## Routes

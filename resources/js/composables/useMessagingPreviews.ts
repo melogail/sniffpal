@@ -34,12 +34,13 @@ import type { ConversationPreview, ConversationPreviewList } from '@/types';
 | showed up on the next visit, because the next visit recomputed the count.
 |
 | This does not recompute. One fetch per document load and reader, gated on
-| `cachedFor`, means **a message arriving mid-session never appears** — not on
-| the next Inertia visit, not when the menu is opened, not ever, until something
-| forces a full document load. There is no polling, no broadcast and no
-| revalidation on open. The only two things that move the number after the
-| initial fetch are the retry button and `markConversationRead`, and both move
-| it **downwards**.
+| `cachedFor`, means a message arriving mid-session only appears through the
+| `NewMessageNotification` broadcast `MessagesDropdown` listens for (which calls
+| `load()` again). There is no polling and no revalidation on open, so a reader
+| whose socket is down sees nothing new until a full document load. Apart from
+| that broadcast, the only two things that move the number after the initial
+| fetch are the retry button and `markConversationRead`, and both move it
+| **downwards**.
 |
 | So the honest statement of the arrangement is: cheaper than legacy, and less
 | live than legacy. Both halves.

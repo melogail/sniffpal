@@ -31,6 +31,7 @@ use Laravel\Nova\Fields\KeyValue;
 use Laravel\Nova\Fields\MorphTo;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -199,11 +200,11 @@ class Report extends Resource
                 ->nullable()
                 ->help('The member accountable for the reported content. Kept even after the content is deleted.'),
 
-            Number::make('Strikes against subject', fn (): ?int => $this->resource->subject instanceof UserModel
-                ? $this->resource->subject->strikeCount()
+            Text::make('Strikes against subject', fn (): ?string => $this->resource->subject instanceof UserModel
+                ? sprintf('%d (%d in last 90 days)', $this->resource->subject->strikeCount(), $this->resource->subject->strikeCount(now()->subDays(90)))
                 : null)
                 ->onlyOnDetail()
-                ->help('Resolved reports held against this member, all time.'),
+                ->help('Upheld reports held against this member, one per target.'),
 
             Number::make('Other pending reports on this target', fn (): int => ReportModel::query()
                 ->pending()
@@ -214,6 +215,7 @@ class Report extends Resource
                 ->onlyOnDetail(),
 
             BelongsTo::make('Reported By', 'user', User::class)
+                ->nullable()
                 ->exceptOnForms()
                 ->searchable(),
 

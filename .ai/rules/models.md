@@ -61,7 +61,7 @@ Consequences to know: `profile.show` and `profile.like` now 404 (the binding ref
 
 So the line in .ai/rules/app.md — "hidden by a global scope goes in resolveRouteBinding, hidden by state goes in a policy" — is about whether the override can answer *completely*, not about scopes. `is_active` is a column on the row the binding just fetched, so it can. Participation/ownership still cannot and still belong in a policy.
 
-## No queue worker exists: a queued media conversion is never generated
-`QUEUE_CONNECTION=database` and nothing runs `queue:work` — no dev script entry, no supervisor config, no Horizon. A conversion left queued (the package default) is written to `jobs` and never generated; `getFirstMediaUrl()` then silently serves the ORIGINAL upload, so nothing looks broken while a 2 MB avatar ships where a 40 KB crop was intended. `Media::getUrl('display')` does not even fall back — it returns a URL to a file that was never written.
+## A queued media conversion does not exist until Horizon runs it
+Horizon serves the `redis` queue only (config/horizon.php); on `QUEUE_CONNECTION=database` a queued conversion is written to `jobs` and never generated, and even on redis it lands seconds after the request. `getFirstMediaUrl()` silently serves the ORIGINAL upload until then; `Media::getUrl('display')` does not fall back at all — it returns a URL to a file not yet written, which is what `PetMediaResource` and `Pet::featuredPhotoUrl()` emit right after publish.
 
-`User`'s `thumb` and `display` are both `->nonQueued()` for this reason (see that method's docblock). `Pet`, `Category` and `Breed` still queue `display` and still have the silent fallback. Either mark a conversion `nonQueued()` or deploy a worker and document it — do not leave it queued and assume it ran.
+`User`'s `thumb` and `display` are both `->nonQueued()` for this reason (see that method's docblock). `Pet`, `Category` and `Breed` queue `display`: read those URLs with `getAvailableUrl([...])` (falls back to the original) or mark the conversion `nonQueued()`. Do not leave a queued conversion's URL in a response and assume it ran. Updated 2026-11-19.

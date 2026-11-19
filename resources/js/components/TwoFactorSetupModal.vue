@@ -125,7 +125,7 @@ watch(
                             <div
                                 v-for="i in 5"
                                 :key="`col-${i}`"
-                                class="border-border border-r last:border-r-0"
+                                class="border-border border-e last:border-e-0"
                             />
                         </div>
                         <div

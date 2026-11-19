@@ -6,7 +6,7 @@ Two audiences: end users get the in-app Help page with FAQs and quick links; dev
 ## Help centre
 - Page `pages/Help.vue`: intro, quick links (pet profiles, account settings), FAQ accordion (`help.faq_add_pet`, `help.faq_update_pet`), "still need help" linking to Support. Copy in `lang/{en,ar}/help.*`.
 - Route: Inertia page, public.
-- `pages/Support.vue` hosts the contact form ([contact-form.md](contact-form.md)).
+- `pages/Support.vue` hosts the contact form ([contact-form.md](contact-form.md)) and shows the support address from `supportEmail` (`config('mail.from.address')`, passed by the `support` route), so no address is hard-coded on the client.
 
 ## Docs site
 - Source in `docs/` (VitePress): `guide/` (getting started, workflow, testing, docs-site), `architecture/` (overview, backend, frontend, auth, middleware, data-model), `codebase/` (backend, frontend, admin and testing patterns, listing lifecycle), `features/` (listings, messaging, localization, social), `api/` (overview, endpoints).

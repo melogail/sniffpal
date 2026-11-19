@@ -22,5 +22,5 @@ English and Arabic UI with RTL, per-user locale preference, and a translation ca
 `tests/Feature/Actions/Localization/`, `tests/Feature/Http/Middleware/`.
 
 ## Open work
-- `APP_LOCALE` is still `en`; the business plan calls for Arabic as default for the Egyptian launch.
+- `.env.example` now ships `APP_LOCALE=ar` (2026-11-19); the production `.env` must match.
 - Enum labels and notification text must be checked for Arabic completeness whenever a case is added.

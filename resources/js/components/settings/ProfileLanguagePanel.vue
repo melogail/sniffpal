@@ -11,6 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useTranslations } from '@/composables/useTranslations';
 import { changedProfileFields, profileIdentity } from '@/lib/profileForm';
 import { update as updateProfile } from '@/routes/profile';
 import type { ProfileFormData, SelectOption } from '@/types';
@@ -31,6 +32,8 @@ const { profile, locales } = defineProps<{
 const original = { locale: profile.locale };
 
 const form = useForm({ ...original });
+const { t } = useTranslations();
+
 
 function submit(): void {
     form.transform((data) => ({
@@ -42,15 +45,15 @@ function submit(): void {
 
 <template>
     <SettingsPanel
-        title="Language"
-        description="The language SniffPal speaks to you in."
+        :title="t('settings.language')"
+        :description="t('settings.language_description')"
     >
         <form class="space-y-6" @submit.prevent="submit">
             <div class="grid gap-2">
-                <Label for="locale">Language</Label>
+                <Label for="locale">{{ t('settings.language') }}</Label>
                 <Select v-model="form.locale">
                     <SelectTrigger id="locale" class="w-full">
-                        <SelectValue placeholder="Pick a language" />
+                        <SelectValue :placeholder="t('settings.pick_language')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem

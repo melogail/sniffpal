@@ -141,11 +141,9 @@ test('age is null when the birth date is unknown', function () {
 test('a litter sums its sex counts to the quantity', function () {
     $pet = Pet::factory()->litter(2, 3)->create();
 
-    expect($pet->isLitter())->toBeTrue()
-        ->and($pet->quantity)->toBe(5)
+    expect($pet->quantity)->toBe(5)
         ->and($pet->gender->value)->toBe('mixed')
-        ->and($pet->name)->toBeNull()
-        ->and(Pet::factory()->create()->isLitter())->toBeFalse();
+        ->and($pet->name)->toBeNull();
 });
 
 test('rejects a mass assigned view count', function () {

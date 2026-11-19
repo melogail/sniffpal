@@ -138,7 +138,7 @@ class PurgeOrphanedReports extends DestructiveAction
         $one = count($stillTargeted) === 1;
 
         return sprintf(
-            'Nothing was deleted. %s %s still %s a comment or review that exists, so %s evidence rather than %s. Open %s and decide with Change Status instead.',
+            'Nothing was deleted. %s %s still %s content that exists, so %s evidence rather than %s. Open %s and decide with Resolve Report instead.',
             $one ? 'Report' : 'Reports',
             implode(', ', array_map(fn (int $id): string => '#'.$id, $stillTargeted)),
             $one ? 'points at' : 'point at',

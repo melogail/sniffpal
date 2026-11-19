@@ -8,6 +8,7 @@ import ReviewEditDialog from '@/components/reviews/ReviewEditDialog.vue';
 import UserAvatar from '@/components/UserAvatar.vue';
 import { Button } from '@/components/ui/button';
 import { useLocale } from '@/composables/useLocale';
+import { useTranslations } from '@/composables/useTranslations';
 import { formatRelative } from '@/lib/datetime';
 import { show as showProfile } from '@/routes/profile';
 import { destroy as destroyReview } from '@/routes/reviews';
@@ -21,6 +22,8 @@ const { review, reportReasons } = defineProps<{
 }>();
 
 const { tag } = useLocale();
+const { t } = useTranslations();
+
 
 const author = computed(() => review.author);
 const writtenAt = computed(() => formatRelative(review.created_at, tag.value));
@@ -29,7 +32,7 @@ const writtenAt = computed(() => formatRelative(review.created_at, tag.value));
 <template>
     <article class="border-border flex gap-3 border-b py-4 last:border-b-0">
         <UserAvatar
-            :name="author?.name ?? 'Someone'"
+            :name="author?.name ?? t('reviews.someone')"
             :avatar="author?.avatar ?? null"
             class="size-9 shrink-0"
         />
@@ -43,7 +46,9 @@ const writtenAt = computed(() => formatRelative(review.created_at, tag.value));
                 >
                     {{ author.name }}
                 </Link>
-                <span v-else class="font-medium">Someone</span>
+                <span v-else class="font-medium">{{
+                    t('reviews.someone')
+                }}</span>
                 <RatingStars :rate="review.rate" :max="bounds.max_rate" />
                 <span class="text-muted-foreground text-xs">{{
                     writtenAt
@@ -57,7 +62,7 @@ const writtenAt = computed(() => formatRelative(review.created_at, tag.value));
                 {{ review.comment }}
             </p>
             <p v-else class="text-muted-foreground text-sm italic">
-                No written comment.
+                {{ t('reviews.no_comment') }}
             </p>
 
             <div class="flex flex-wrap items-center gap-1">
@@ -80,7 +85,7 @@ const writtenAt = computed(() => formatRelative(review.created_at, tag.value));
                         preserve-scroll
                     >
                         <Trash2 class="size-4" />
-                        Delete
+                        {{ t('common.delete') }}
                     </Link>
                 </Button>
 

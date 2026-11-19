@@ -6,6 +6,7 @@ import SettingsPanel from '@/components/settings/SettingsPanel.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslations } from '@/composables/useTranslations';
 import { changedProfileFields, profileIdentity } from '@/lib/profileForm';
 import { update as updateProfile } from '@/routes/profile';
 import { send as sendVerification } from '@/routes/verification';
@@ -33,6 +34,8 @@ const original = {
 };
 
 const form = useForm({ ...original });
+const { t } = useTranslations();
+
 
 function submit(): void {
     form.transform((data) => ({
@@ -44,70 +47,70 @@ function submit(): void {
 
 <template>
     <SettingsPanel
-        title="Account"
-        description="Your name, handle and how people reach you."
+        :title="t('settings.account')"
+        :description="t('settings.account_description')"
     >
         <form class="space-y-6" @submit.prevent="submit">
             <div class="grid gap-2">
-                <Label for="name">Name</Label>
+                <Label for="name">{{ t('auth.name') }}</Label>
                 <Input
                     id="name"
                     v-model="form.name"
                     required
                     autocomplete="name"
-                    placeholder="Full name"
+                    :placeholder="t('auth.full_name_placeholder')"
                 />
                 <InputError :message="form.errors.name" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+                <Label for="email">{{ t('auth.email_address') }}</Label>
                 <Input
                     id="email"
                     v-model="form.email"
                     type="email"
                     required
                     autocomplete="username"
-                    placeholder="Email address"
+                    :placeholder="t('auth.email_address')"
                 />
                 <InputError :message="form.errors.email" />
             </div>
 
             <div v-if="mustVerifyEmail && !emailVerified" class="space-y-1">
                 <p class="text-muted-foreground text-sm">
-                    Your email address is unverified.
+                    {{ t('settings.email_unverified') }}
                     <Link
                         :href="sendVerification()"
                         as="button"
                         class="text-foreground underline underline-offset-4"
                     >
-                        Re-send the verification email.
+                        {{ t('settings.resend_verification') }}
                     </Link>
                 </p>
                 <p
                     v-if="status === 'verification-link-sent'"
                     class="text-sm font-medium text-emerald-600 dark:text-emerald-400"
                 >
-                    A new verification link has been sent to your email address.
+                    {{ t('auth.verification_link_sent') }}
                 </p>
             </div>
 
             <div class="grid gap-2">
-                <Label for="username">Username</Label>
+                <Label for="username">{{ t('settings.username') }}</Label>
                 <Input
                     id="username"
                     v-model="form.username"
                     autocomplete="off"
-                    placeholder="handle"
+                    :placeholder="t('settings.username_placeholder')"
                 />
                 <p class="text-muted-foreground text-xs">
-                    Letters, numbers, dashes and underscores. 3–50 characters.
+                    {{ t('settings.username_hint') }}
                 </p>
                 <InputError :message="form.errors.username" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="phone">Phone</Label>
+                <Label for="phone">{{ t('profile.phone') }}</Label>
                 <Input
                     id="phone"
                     v-model="form.phone"
@@ -118,12 +121,12 @@ function submit(): void {
             </div>
 
             <div class="grid gap-2">
-                <Label for="bio">Bio</Label>
+                <Label for="bio">{{ t('profile.bio') }}</Label>
                 <Textarea
                     id="bio"
                     v-model="form.bio"
                     rows="4"
-                    placeholder="Tell people a little about yourself."
+                    :placeholder="t('settings.bio_placeholder')"
                 />
                 <InputError :message="form.errors.bio" />
             </div>

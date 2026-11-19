@@ -2,6 +2,7 @@
 
 namespace App\Pipelines\Profiles\DeleteAccount;
 
+use App\Models\Ticket;
 use Closure;
 
 /**
@@ -28,6 +29,10 @@ class DeleteAccountRecord
 {
     public function handle(DeleteAccountContext $context, Closure $next): mixed
     {
+        // No FK reaches either: tokens are a bare morph, tickets null their user_id.
+        $context->user->tokens()->delete();
+        Ticket::query()->where('user_id', $context->user->getKey())->delete();
+
         $context->markDeleted((bool) $context->user->delete());
 
         return $next($context);

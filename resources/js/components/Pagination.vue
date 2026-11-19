@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/composables/useTranslations';
 import type { PaginationLink } from '@/types';
 
 /**
@@ -41,6 +42,8 @@ const {
 }>();
 
 const emit = defineEmits<{ navigate: [url: string] }>();
+const { t } = useTranslations();
+
 
 const ENTITIES: Record<string, string> = {
     '&laquo;': '«',
@@ -79,15 +82,16 @@ function label(raw: string): string {
  * containment failure this is here to avoid. Vue emits no attribute at all for
  * `undefined`, so those controls render byte-identically.
  *
- * English, like this file's existing `aria-label="Pagination"`. The scheduled
- * i18n pass (.ai/rules/lang.md) owns `lang/*.json`; no key was added here.
- * Containment is locale-independent either way — the visible text is a digit
- * string and it is inside `Page 3` whatever word precedes it.
+ * `pagination.page` in the catalogue, like the `<nav>` label. Containment is
+ * locale-independent either way — the visible text is a digit string and it is
+ * inside `Page 3` whatever word precedes it.
  */
 function pageName(raw: string): string | undefined {
     const text = label(raw);
 
-    return /^\d+$/.test(text) ? `Page ${text}` : undefined;
+    return /^\d+$/.test(text)
+        ? t('pagination.page', { number: text })
+        : undefined;
 }
 
 const hasPages = computed(
@@ -99,7 +103,7 @@ const hasPages = computed(
     <nav
         v-if="hasPages"
         class="flex flex-wrap items-center gap-1"
-        aria-label="Pagination"
+        :aria-label="t('pagination.label')"
     >
         <template v-for="(link, index) in links" :key="index">
             <span

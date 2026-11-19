@@ -4,6 +4,7 @@ use App\Actions\Pets\ListHomeFeedPets;
 use App\Enums\ListingType;
 use App\Models\Breed;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Pet;
 use App\Models\User;
 use Illuminate\Database\Events\QueryExecuted;
@@ -203,4 +204,20 @@ test('a listing whose owner is deactivated does not reach the feed', function ()
     Pet::factory()->available()->for(User::factory()->inactive())->create();
 
     expect(feedIds())->toBe([$visible->getKey()]);
+});
+
+test('the default full age range does not hide listings without a birth date', function () {
+    $unknown = Pet::factory()->available()->create(['birth_date' => null]);
+
+    expect(feedIds(['age_min' => 0, 'age_max' => 15]))->toContain($unknown->getKey());
+});
+
+test('the card comment preview leaves out comments by deactivated members', function () {
+    $pet     = Pet::factory()->available()->create();
+    Comment::factory()->for(User::factory()->inactive())->for($pet, 'commentable')->create();
+    $kept    = Comment::factory()->for($pet, 'commentable')->create();
+
+    $preview = app(ListHomeFeedPets::class)->handle()->first()->comments;
+
+    expect($preview->pluck('id')->all())->toBe([$kept->getKey()]);
 });

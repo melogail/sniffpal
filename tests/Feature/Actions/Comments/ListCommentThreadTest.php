@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Storage;
 const THREAD_PAYLOAD_QUERY_COST = 8;
 
 /**
- * Give a user the avatar CommentAuthorResource reads with getFirstMediaUrl().
+ * Give a user the avatar UserSummaryResource reads with getFirstMediaUrl().
  *
  * The owner directory is stamped on the media row exactly as the upload
  * pipeline does, so MediaPathGenerator never falls back to looking the owner

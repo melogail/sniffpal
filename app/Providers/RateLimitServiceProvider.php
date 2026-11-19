@@ -172,8 +172,8 @@ class RateLimitServiceProvider extends ServiceProvider
      * ## Image-conversion writes
      *
      * The three writes whose cost is CPU and disk on a web worker rather than a
-     * row in a table, because `QUEUE_CONNECTION=database` has no worker deployed
-     * and every conversion therefore runs inside the request. A policy cannot
+     * row in a table: the decode check and the `thumb` conversion run inside the
+     * request (`display` is queued to Horizon). A policy cannot
      * bound any of this: owning the row a request rewrites says nothing about
      * how often it may be rewritten.
      *
@@ -188,8 +188,8 @@ class RateLimitServiceProvider extends ServiceProvider
      *   listings a day room to do it.
      * - `pet-listing-edits` guards PUT pets/{pet}, which costs exactly what
      *   `pets.store` costs: the same four images, each stored and put through
-     *   the same two conversions, run **synchronously** because no queue worker
-     *   is deployed. Ownership does not bound that — it bounds how many rows a
+     *   the same decode check and inline `thumb` conversion. Ownership does not
+     *   bound that — it bounds how many rows a
      *   caller can touch, not how much CPU and disk one owned row can be made
      *   to burn, and a single pet absorbs an unbounded re-upload loop. Sized
      *   one step above `pet-listings` at 10 a minute and 60 an hour because a
@@ -368,7 +368,7 @@ class RateLimitServiceProvider extends ServiceProvider
             ->by($this->rateLimitKey($request)));
 
         RateLimiter::for('locale-switches', fn (Request $request): Limit => Limit::perMinute(60)
-            ->by((string) $request->ip()));
+            ->by($this->unauthenticatedCallerKey($request)));
 
         // The guest contact form is a public write, so it is keyed by the
         // machine rather than rateLimitKey(): a guest has no account to count
@@ -420,22 +420,6 @@ class RateLimitServiceProvider extends ServiceProvider
         RateLimiter::for('password-resets', fn (Request $request): array => [
             Limit::perMinute(5)->by('minute:'.$this->unauthenticatedCallerKey($request)),
             Limit::perHour(20)->by('hour:'.$this->unauthenticatedCallerKey($request)),
-        ]);
-
-        /*
-         * `social-logins` guards the OAuth redirect and callback
-         * (routes/web.php `social.*`) and the token exchange
-         * (routes/api.php `auth.social`). All three are `guest` routes and
-         * the callback can register an account, so it is keyed on the IP
-         * through unauthenticatedCallerKey() for the same reason
-         * `registrations` is. Wider than `registrations` because one sign-in
-         * is two requests (redirect + callback) and a declined consent
-         * screen sends the person round again; 60 an hour still stops a
-         * script from minting accounts through a provider.
-         */
-        RateLimiter::for('social-logins', fn (Request $request): array => [
-            Limit::perMinute(10)->by('minute:'.$this->unauthenticatedCallerKey($request)),
-            Limit::perHour(60)->by('hour:'.$this->unauthenticatedCallerKey($request)),
         ]);
 
         /*

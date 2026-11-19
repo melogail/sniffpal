@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useEchoPublic } from '@laravel/echo-vue';
+import '@/lib/echo';
 import { MessageSquare } from '@lucide/vue';
 import { ref } from 'vue';
 import CommentComposer from '@/components/comments/CommentComposer.vue';
@@ -63,13 +64,16 @@ const { t } = useTranslations();
  */
 const liveCount = ref<number | null>(null);
 
-useEchoPublic<CommentThreadChanged>(
-    `comments.${commentableType}.${commentableId}`,
-    '.CommentThreadChanged',
-    (change) => {
-        liveCount.value = change.comments_count;
-    },
-);
+// Echo subscribes at setup; the SSR server must not open a socket.
+if (!import.meta.env.SSR) {
+    useEchoPublic<CommentThreadChanged>(
+        `comments.${commentableType}.${commentableId}`,
+        '.CommentThreadChanged',
+        (change) => {
+            liveCount.value = change.comments_count;
+        },
+    );
+}
 </script>
 
 <template>

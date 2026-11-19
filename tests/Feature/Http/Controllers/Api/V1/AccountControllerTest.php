@@ -75,6 +75,17 @@ describe('me', function () {
     });
 });
 
+describe('locale', function () {
+    test('a null locale is a validation error, not a database error', function () {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $this->patchJson(route('api.v1.me.update'), ['name' => $user->name, 'email' => $user->email, 'locale' => null])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('locale');
+    });
+});
+
 describe('password', function () {
     test('changes the password and revokes every other token', function () {
         $user    = User::factory()->create();

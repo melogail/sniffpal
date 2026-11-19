@@ -54,8 +54,8 @@ use Illuminate\Support\Facades\DB;
  * `users` table would need a global scope, and every one of the eight
  * `cascadeOnDelete` foreign keys pointing at it would keep hard-deleting on the
  * eventual force delete anyway, so it would move the problem rather than solve
- * it. Deletion is immediate rather than queued because the application has no
- * queue worker configured; when it does, this Action is what the job calls.
+ * it. Self-service deletion runs through Jobs\DeleteUserAccountJob; the Nova
+ * action calls this directly inside its own transaction.
  *
  * The legacy destroy was `$user->delete(); auth()->logout();` with a
  * `// TODO::Send an email to verify the account deletion.` above it — no

@@ -9,7 +9,7 @@ Signed-in account management: profile details and avatar, password, 2FA, passkey
 ## Backend
 - Controllers (`app/Http/Controllers/Settings/`): ProfileController (edit, update, destroy), SecurityController (edit, update password), PrivacyController (edit), TicketController (see [support-tickets.md](support-tickets.md)).
 - Actions (`app/Actions/Profiles/`): UpdateProfile, UpdatePassword, ApplyUserLocale, DeleteUserAccount.
-- Pipelines: UpdateProfile (EnsureProfileImageIsDecodable → ClearPreviousProfileImage → UploadProfileImage → PersistProfileAttributes → ApplyLocalePreference); DeleteAccount (CollectAccountContent → DeleteContentComments → DeleteContentLikes → DeleteContentSaves → DeleteContentReports → DeleteReviewsAboutAccount → DeleteAccountNotifications → PurgeOwnedListings → DeleteAccountRecord).
+- Pipelines: UpdateProfile (EnsureProfileImageIsDecodable → UploadProfileImage → ClearPreviousProfileImage → PersistProfileAttributes → ApplyLocalePreference); DeleteAccount (CollectAccountContent → DeleteContentReports → DeleteContentLikes → DeleteContentSaves → DeleteContentComments → DeleteReviewsAboutAccount → DeleteAccountNotifications → PurgeOwnedListings → DeleteAccountRecord). Check the Action for the current order before editing.
 - Requests: `Profile/{UpdateProfileRequest,DeleteProfileRequest,UpdateLocaleRequest}`, `Settings/{PasswordUpdateRequest,TwoFactorAuthenticationRequest}`; rules in `ProfileValidationRules`, `PasswordValidationRules`.
 
 ## Routes (`routes/settings.php`, auth + verified)
@@ -27,3 +27,4 @@ Throttles `profile-updates` (10/min), `password-changes` (6/min), `account-delet
 ## Open work
 - Privacy settings update currently goes through the profile update endpoint; a dedicated request would let the privacy page validate only its own fields.
 - No data export for the account.
+- Self-service deletion revokes tokens and signs out in the controller, then runs `Jobs\DeleteUserAccountJob` (which also removes the member's tickets and tokens); the Nova action still deletes inline.

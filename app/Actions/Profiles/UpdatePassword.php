@@ -4,7 +4,9 @@ namespace App\Actions\Profiles;
 
 use App\Models\User;
 use Illuminate\Auth\Passwords\PasswordBroker;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Password;
+use Laravel\Sanctum\PersonalAccessToken;
 
 /**
  * Change an account's password, and kill anything that could still change it
@@ -76,7 +78,10 @@ class UpdatePassword
      * `Password::broker()` is documented to return — the same unchecked call
      * Fortify's own PasswordController makes against a contract-typed variable.
      */
-    public function handle(User $user, string $password): void
+    /**
+     * @param  PersonalAccessToken|null  $keep  the bearer token that made the request (API path); null signs every device out
+     */
+    public function handle(User $user, string $password, ?PersonalAccessToken $keep = null): void
     {
         $user->forceFill(['password' => $password])->save();
 
@@ -84,5 +89,10 @@ class UpdatePassword
         $broker = Password::broker(config('fortify.passwords'));
 
         $broker->deleteToken($user);
+
+        // Every other device signs out.
+        $user->tokens()
+            ->when($keep, fn (Builder $query, PersonalAccessToken $keep): Builder => $query->whereKeyNot($keep->getKey()))
+            ->delete();
     }
 }

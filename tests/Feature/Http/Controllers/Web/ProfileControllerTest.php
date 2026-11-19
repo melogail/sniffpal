@@ -32,7 +32,7 @@ use Inertia\Testing\AssertableInertia;
 const PROFILE_ROUTE_QUERY_COST = 13;
 
 /**
- * Give a user the avatar ProfileResource and ReviewAuthorResource read with
+ * Give a user the avatar ProfileResource and UserSummaryResource read with
  * getFirstMediaUrl().
  *
  * The owner directory is copied onto the media row exactly as UploadProfileImage

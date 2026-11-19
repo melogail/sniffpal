@@ -26,19 +26,11 @@ Every auth write is throttled (`registrations`, `password-resets`, `password-cha
 
 ## Members: social login
 
-Google and Facebook through Socialite (`SocialProvider` enum, `social_accounts` table, `SocialAuthController` on the web and `SocialLoginController` on the API).
-
-Both entry points share `Actions\Auth\ResolveSocialUser`. Three settled decisions, recorded in `.ai/rules/actions.md`:
-
-1. `social.callback` is the one GET that writes (OAuth fixes the method). It is safe only because the login buttons are plain `<a>` tags that Inertia never prefetches. Do not cite it as precedent.
-2. A social-registered account gets a random 32-character password, not a nullable one, because every settings flow asks for `current_password`. Such a member sets a real password through "Forgot password?".
-3. Accounts are matched and linked by the provider's email, which Google and Facebook only return when verified. A provider that returns no email is refused. New accounts are marked verified immediately.
-
-The redirect registered with the provider console must be exactly `APP_URL + /auth/{provider}/callback`. No provider tokens are stored.
+Removed on 2026-11-19; planned for a later stage. The earlier design (Socialite, `social_accounts`, email linking) is recorded in `.ai/rules/actions.md` and must be re-reviewed for provider-token audience verification before it returns.
 
 ## Members: API tokens
 
-Mobile clients call `POST /api/v1/auth/login` (or `/register`, or `/auth/social/{provider}`) and receive a Sanctum personal access token. `UseSanctumGuard` makes the token's owner the request user on every API route. `DELETE /api/v1/me` and account deactivation revoke tokens.
+Mobile clients call `POST /api/v1/auth/login` (or `/register`) and receive a Sanctum personal access token. `UseSanctumGuard` makes the token's owner the request user on every API route. `DELETE /api/v1/me` and account deactivation revoke tokens.
 
 ## Deactivation
 

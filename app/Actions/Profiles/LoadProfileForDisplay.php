@@ -148,7 +148,7 @@ class LoadProfileForDisplay
     {
         return $profile->reviews()
             ->with('user.media')
-            ->whereHas('user', fn (Builder $users) => $users->active())
+            ->whereHas('user', User::activeOnly(...))
             ->withReportedBy($viewer)
             ->latest('created_at')
             ->latest('id')

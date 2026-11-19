@@ -88,9 +88,10 @@ test('seeds pet statuses and listing types that rehydrate as enum cases', functi
 
 /**
  * The demo dataset must never land on a production database; only the
- * taxonomy and the admin account are seeded there.
+ * taxonomy is seeded there. The first admin is created by `php artisan nova:user`,
+ * never by a seeder with a known password.
  */
-test('seeds only taxonomy and admins in production', function () {
+test('seeds only taxonomy in production', function () {
     // Touch the database first so the lazy migration runs before the environment switch.
     expect(DB::table('pets')->count())->toBe(0);
 
@@ -99,7 +100,7 @@ test('seeds only taxonomy and admins in production', function () {
     $this->artisan('db:seed', ['--force' => true])->assertSuccessful();
 
     expect(DB::table('categories')->count())->toBeGreaterThan(0)
-        ->and(DB::table('admins')->count())->toBeGreaterThan(0)
+        ->and(DB::table('admins')->count())->toBe(0)
         ->and(DB::table('users')->count())->toBe(0)
         ->and(DB::table('pets')->count())->toBe(0);
 });

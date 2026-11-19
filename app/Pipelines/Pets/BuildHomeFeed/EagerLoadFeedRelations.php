@@ -4,6 +4,7 @@ namespace App\Pipelines\Pets\BuildHomeFeed;
 
 use App\Models\Comment;
 use App\Models\Pet;
+use App\Models\User;
 use Closure;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -55,6 +56,7 @@ class EagerLoadFeedRelations
                     /** @var MorphMany<Comment, Pet> $comments Narrowed inline: with() only accepts a bare Relation closure, and the scopes need the related model. */
                     $comments
                         ->whereNull('parent_id')
+                        ->whereHas('user', User::activeOnly(...))
                         ->with('user.media')
                         ->withCount(['likes', 'replies'])
                         ->withLikedBy($viewer)

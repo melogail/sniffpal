@@ -88,7 +88,7 @@ test('removing content deletes the target through the application action and kee
     expect($sibling->fresh()->status)->toBe(ReportStatus::Resolved)
         ->and($sibling->fresh()->resolution)->toBe(ReportResolution::ContentRemoved)
         ->and($other->fresh()->status)->toBe(ReportStatus::Pending)
-        ->and($author->strikeCount())->toBe(2);
+        ->and($author->strikeCount())->toBe(1);
     Notification::assertSentTo($author, ModerationNoticeNotification::class, fn ($notification) => $notification->toArray($author)['message_key'] === 'notifications.moderation_content_removed');
     Notification::assertSentTo($report->user, ReportResolvedNotification::class);
     Notification::assertSentTo($sibling->user, ReportResolvedNotification::class);
@@ -170,4 +170,17 @@ test('still records the decision when the target has already disappeared', funct
 
     expect($report->fresh()->status)->toBe(ReportStatus::Resolved);
     Notification::assertSentTo($report->user, ReportResolvedNotification::class);
+});
+
+test('one upheld target is one strike however many members reported it', function () {
+    $author = User::factory()->create();
+    $target = reportedTarget(Reportable::Pet, $author);
+    $report = Report::factory()->forReportable($target)->create();
+    Report::factory()->forReportable($target)->create();
+
+    decide($report, ReportStatus::Resolved, ReportResolution::ContentRemoved);
+
+    expect($author->strikeCount())->toBe(1)
+        ->and($author->strikeCount(now()->subDays(90)))->toBe(1)
+        ->and($author->reportsAgainst()->count())->toBe(2);
 });

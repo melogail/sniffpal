@@ -1,5 +1,4 @@
 import { createInertiaApp } from '@inertiajs/vue3';
-import { configureEcho } from '@laravel/echo-vue';
 import { ConfigProvider } from 'reka-ui';
 import { createApp, h } from 'vue';
 import { initializeTheme } from '@/composables/useAppearance';
@@ -76,9 +75,8 @@ void createInertiaApp({
 
         app.use(plugin);
 
-        // `el` is typed nullable because the adapter passes `null` on the
-        // server; there is no `resources/js/ssr.ts`, so this entry is only ever
-        // the client one. Returning the app keeps it correct either way.
+        // `el` is null on the SSR server, where this same entry runs
+        // (@inertiajs/vite). Returning the app keeps it correct either way.
         if (el) {
             app.mount(el);
         }
@@ -86,10 +84,6 @@ void createInertiaApp({
         return app;
     },
 });
-
-// Echo reads its Reverb connection from the VITE_REVERB_* env; the socket is
-// only opened by the first component that subscribes...
-configureEcho({ broadcaster: 'reverb' });
 
 // This will set light / dark mode on page load...
 initializeTheme();

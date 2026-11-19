@@ -2,6 +2,7 @@
 import { Head } from "@inertiajs/vue3";
 import Heading from "@/components/Heading.vue";
 import ProfilePrivacyPanel from "@/components/settings/ProfilePrivacyPanel.vue";
+import { useTranslations } from "@/composables/useTranslations";
 import type { ProfileFormData } from "@/types";
 
 /**
@@ -11,17 +12,19 @@ import type { ProfileFormData } from "@/types";
 defineProps<{
     profile: ProfileFormData;
 }>();
+const { t } = useTranslations();
+
 </script>
 
 <template>
     <div class="flex flex-col space-y-12">
-        <Head title="Privacy settings" />
+        <Head :title="t('settings.privacy_title')" />
 
         <!-- The document's h1 is the settings banner in `layouts/settings/Layout.vue`. -->
         <Heading
             variant="small"
-            title="Privacy"
-            description="What other members can see and how they may reach you."
+            :title="t('settings.privacy')"
+            :description="t('settings.privacy_heading_description')"
         />
 
         <ProfilePrivacyPanel :profile="profile" />

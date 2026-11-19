@@ -9,6 +9,7 @@ import ProfileLanguagePanel from "@/components/settings/ProfileLanguagePanel.vue
 import ProfileLocationPanel from "@/components/settings/ProfileLocationPanel.vue";
 import ProfilePrivacyPanel from "@/components/settings/ProfilePrivacyPanel.vue";
 import { Separator } from "@/components/ui/separator";
+import { useTranslations } from "@/composables/useTranslations";
 import type { ProfileFormData, SelectOption } from "@/types";
 
 /**
@@ -37,6 +38,8 @@ defineProps<{
     mustVerifyEmail: boolean;
     status: string | null;
 }>();
+const { t } = useTranslations();
+
 
 /**
  * The IANA list the browser already knows, so the time-zone field can offer
@@ -53,13 +56,13 @@ const timezones = computed<string[]>(() => {
 
 <template>
     <div class="flex flex-col space-y-12">
-        <Head title="Profile settings" />
+        <Head :title="t('settings.profile_title')" />
 
         <!-- The document's h1 is the settings banner in `layouts/settings/Layout.vue`. -->
         <Heading
             variant="small"
-            title="Profile"
-            description="How you appear to other members."
+            :title="t('settings.profile')"
+            :description="t('settings.profile_heading_description')"
         />
 
         <ProfileAvatarPanel :profile="profile" />

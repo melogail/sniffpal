@@ -808,3 +808,15 @@ describe('like', function () {
         $this->actingAs($liker)->post(route('pets.like', $pet))->assertTooManyRequests();
     });
 });
+
+test('rejects a photo wider or taller than the pixel ceiling', function () {
+    Storage::fake(config('media-library.disk_name'));
+    $category = Category::factory()->create();
+
+    $this->actingAs(User::factory()->create())
+        ->from(route('pets.create'))
+        ->post(route('pets.store'), petFormPayload($category, [
+            'featuredImage' => UploadedFile::fake()->image('wide.jpg', 8001, 10),
+        ]))
+        ->assertInvalid(['featuredImage']);
+});

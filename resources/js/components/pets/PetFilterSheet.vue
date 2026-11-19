@@ -346,17 +346,9 @@ function clear(): void {
             class="w-[350px] gap-0 p-0 sm:w-[400px] sm:max-w-[400px]"
             :aria-describedby="undefined"
         >
-            <!--
-                `pr-12` is the one physical-direction utility in a file that is
-                otherwise entirely logical, and it is deliberate rather than an
-                oversight: it reserves room for `ui/sheet`'s close button, which
-                `SheetContent` pins at physical `right-4` in **both**
-                directions. If that button is ever moved to a logical `end-4`,
-                this has to become `pe-12` in the same change or one direction
-                silently loses the gap.
-            -->
+            <!-- `pe-12` clears `ui/sheet`'s close button, pinned at `end-4`. -->
             <SheetHeader
-                class="border-border flex-row items-center justify-between gap-2 border-b p-4 pr-12"
+                class="border-border flex-row items-center justify-between gap-2 border-b p-4 pe-12"
             >
                 <SheetTitle
                     class="flex items-center gap-2 font-serif text-[21px] leading-[1.2] font-medium tracking-[-0.015em]"

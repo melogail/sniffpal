@@ -25,12 +25,13 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property ConversationType $type
+ * @property string|null $pair_key
  * @property Carbon|null $last_message_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  */
-#[Fillable(['type', 'last_message_at'])]
+#[Fillable(['type', 'pair_key', 'last_message_at'])]
 class Conversation extends Model
 {
     /** @use HasFactory<ConversationFactory> */
@@ -165,9 +166,11 @@ class Conversation extends Model
     {
         $this->loadMissing('users');
 
-        return $this->users
-            ->reject(fn (User $participant): bool => $participant->is($sender))
-            ->every(fn (User $participant): bool => $participant->acceptsMessagesFrom($sender));
+        $others = $this->users->reject(fn (User $participant): bool => $participant->is($sender));
+
+        // A thread whose other side deleted their account accepts nothing.
+        return $others->isNotEmpty()
+            && $others->every(fn (User $participant): bool => $participant->acceptsMessagesFrom($sender));
     }
 
     public function markAsReadFor(User $user): void

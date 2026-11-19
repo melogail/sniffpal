@@ -71,7 +71,7 @@ const rating = computed(() =>
                     <BadgeCheck
                         v-if="profile.is_verified"
                         class="text-primary size-5"
-                        aria-label="Verified member"
+                        :aria-label="t('profile.verified_member')"
                     />
                 </div>
                 <p
@@ -91,7 +91,7 @@ const rating = computed(() =>
                 </span>
                 <span class="flex items-center gap-1.5">
                     <CalendarDays class="size-4" />
-                    Joined {{ joinedOn }}
+                    {{ t('profile.joined_on', { date: joinedOn }) }}
                 </span>
                 <a
                     v-if="profile.phone"
@@ -111,9 +111,15 @@ const rating = computed(() =>
             </p>
 
             <dl class="flex flex-wrap gap-6">
-                <ProfileStat label="Listings" :value="profile.pets_count" />
-                <ProfileStat label="Reviews" :value="profile.reviews_count" />
-                <ProfileStat label="Rating" :value="rating">
+                <ProfileStat
+                    :label="t('profile.listings')"
+                    :value="profile.pets_count"
+                />
+                <ProfileStat
+                    :label="t('profile.reviews')"
+                    :value="profile.reviews_count"
+                />
+                <ProfileStat :label="t('reviews.rating')" :value="rating">
                     <RatingStars
                         :rate="profile.reviews_avg_rate"
                         :max="bounds.max_rate"
@@ -127,7 +133,7 @@ const rating = computed(() =>
             <Button v-if="profile.can_update" as-child variant="outline">
                 <Link :href="editProfile()">
                     <Settings class="size-4" />
-                    Edit profile
+                    {{ t('profile.edit_profile') }}
                 </Link>
             </Button>
 

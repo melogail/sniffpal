@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
 import { useEchoPublic } from '@laravel/echo-vue';
+import '@/lib/echo';
 import { MessageSquare } from '@lucide/vue';
 import { computed, onMounted, ref } from 'vue';
 import CommentItem from '@/components/comments/CommentItem.vue';
@@ -314,15 +315,18 @@ onMounted(() => {
  * one `reload()`, the same refresh a local write asks for. Replies are the
  * row's business — `CommentItem` listens on the same channel for its own id.
  */
-useEchoPublic<CommentThreadChanged>(
-    `comments.${commentableType}.${commentableId}`,
-    '.CommentThreadChanged',
-    (change) => {
-        if (change.parent_id === null) {
-            void reload();
-        }
-    },
-);
+// Echo subscribes at setup; the SSR server must not open a socket.
+if (!import.meta.env.SSR) {
+    useEchoPublic<CommentThreadChanged>(
+        `comments.${commentableType}.${commentableId}`,
+        '.CommentThreadChanged',
+        (change) => {
+            if (change.parent_id === null) {
+                void reload();
+            }
+        },
+    );
+}
 
 defineExpose({ reload });
 </script>

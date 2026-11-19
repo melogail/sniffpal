@@ -7,6 +7,9 @@ use App\Models\Comment;
 use App\Models\Pet;
 use App\Models\Report;
 use App\Models\User;
+use App\Notifications\ModerationNoticeNotification;
+use App\Notifications\ReportResolvedNotification;
+use Illuminate\Support\Facades\Notification;
 
 const RESOLVE_REPORT_ACTION = '/nova-api/reports/action?action=resolve-report';
 
@@ -81,4 +84,41 @@ test('lists reports against listings and profiles in the queue', function () {
         ->getJson('/nova-api/reports')
         ->assertOk()
         ->assertJsonCount(2, 'resources');
+});
+
+test('selecting sibling reports decides each target once and notifies the subject once', function () {
+    Notification::fake();
+
+    $admin  = Admin::factory()->create();
+    $owner  = User::factory()->create();
+    $pet    = Pet::factory()->for($owner)->create();
+    $first  = Report::factory()->forReportable($pet)->create();
+    $second = Report::factory()->forReportable($pet)->create();
+
+    $this->actingAs($admin, 'admin')
+        ->postJson(RESOLVE_REPORT_ACTION, [
+            'resources' => [$first->getKey(), $second->getKey()],
+            'decision'  => ReportResolution::ContentRemoved->value,
+        ])
+        ->assertOk()
+        ->assertJsonPath('message', '2 report(s) marked as Resolved (Content Removed).');
+
+    Notification::assertSentToTimes($owner, ModerationNoticeNotification::class, 1);
+    Notification::assertSentToTimes($first->user, ReportResolvedNotification::class, 1);
+    Notification::assertSentToTimes($second->user, ReportResolvedNotification::class, 1);
+});
+
+test('a warning needs a note', function () {
+    $admin  = Admin::factory()->create();
+    $report = Report::factory()->create();
+
+    $this->actingAs($admin, 'admin')
+        ->postJson(RESOLVE_REPORT_ACTION, [
+            'resources' => [$report->getKey()],
+            'decision'  => ReportResolution::Warned->value,
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('note');
+
+    expect($report->fresh()->status)->toBe(ReportStatus::Pending);
 });

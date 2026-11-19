@@ -4,7 +4,7 @@
 A user's public page: avatar, bio, location, verified badge, their listings, reviews, like count and contact buttons.
 
 ## Data
-`users` (username as route key, bio, city/state/country, lat/lng, phone, show_phone, whatsapp_enabled, is_active), media collection `users` (avatar, conversions thumb/display).
+`users` (route key is `id` with `whereNumber`; `username` is a display field. bio, city/state/country, lat/lng, phone, show_phone, whatsapp_enabled, is_active), media collection `users` (avatar, conversions thumb/display).
 
 ## Backend
 - `app/Actions/Profiles/LoadProfileForDisplay.php` loads listings, review summary and like state.
@@ -30,3 +30,4 @@ Nova `User` resource; actions DeactivateUser, ReactivateUser, DeleteUserAccount;
 ## Open work
 - No verified-seller or breeder badge beyond email verification; this was identified as the main trust differentiator.
 - Profile pages have no Open Graph title/description.
+- `User::whatsappUrl()` contains the phone number even when `show_phone` is off; decide whether the toggle should gate it.

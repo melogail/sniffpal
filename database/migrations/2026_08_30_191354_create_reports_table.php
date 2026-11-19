@@ -11,14 +11,15 @@ return new class extends Migration
      *
      * `status` is indexed for the moderation queue: Nova's `ReportStatusFilter`,
      * `Report::pending()` and the `PendingReports` metric all filter on it, and
-     * `user_id` only reaches the queue through the unique index's leading
-     * column, which those queries do not touch.
+     * `user_id` only reaches the queue through the composite index's leading
+     * column, which those queries do not touch. `user_id` is nullable and nulls
+     * on delete so a reporter leaving does not erase strikes against others.
      */
     public function up(): void
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('subject_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('reportable_type');
             $table->unsignedBigInteger('reportable_id');
@@ -36,7 +37,7 @@ return new class extends Migration
             $table->index('resolved_by');
             $table->index(['reportable_type', 'reportable_id', 'status'], 'reports_reportable_status_index');
             $table->index(['subject_user_id', 'status', 'resolved_at'], 'reports_subject_status_resolved_at_index');
-            $table->unique(['user_id', 'reportable_type', 'reportable_id']);
+            $table->index(['user_id', 'reportable_type', 'reportable_id']);
         });
     }
 

@@ -56,7 +56,10 @@ return [
             'url'                     => env('AWS_URL'),
             'endpoint'                => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw'                   => false,
+            // Media URLs are public bucket URLs, and a failed put must surface
+            // as the real SDK error rather than medialibrary's generic one.
+            'visibility'              => 'public',
+            'throw'                   => true,
             'report'                  => false,
         ],
 

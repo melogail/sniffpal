@@ -2,7 +2,6 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import StartConversationButton from '@/components/messaging/StartConversationButton.vue';
-import { countLabel } from '@/components/pets/card/labels';
 import PetCardCommentButton from '@/components/pets/card/PetCardCommentButton.vue';
 import PetCardShareMenu from '@/components/pets/card/PetCardShareMenu.vue';
 import PetLikeButton from '@/components/pets/PetLikeButton.vue';
@@ -120,7 +119,14 @@ const owner = computed(() =>
  * state, so the label stays the same in both.
  */
 const likeLabel = computed(
-    () => `Like ${name.value}, ${countLabel(pet.likes_count, 'like')}`,
+    () =>
+        t('pets.like_name', {
+            name: name.value,
+            count: t(
+                pet.likes_count === 1 ? 'pets.like_count' : 'pets.likes_count',
+                { count: pet.likes_count },
+            ),
+        }),
 );
 
 /**

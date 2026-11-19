@@ -11,6 +11,7 @@ use App\Contracts\Reviewable;
 use App\MediaLibrary\ConvertibleImageTypes;
 use App\Notifications\VerifyEmailNotification;
 use App\Observers\UserObserver;
+use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Translation\HasLocalePreference;
@@ -18,7 +19,6 @@ use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -100,8 +100,8 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
      *
      * `is_active` is deliberately not fillable, so a column default was the
      * only thing setting it — and a column default lands in the row, never on
-     * the instance. Actions\Auth\ResolveSocialUser asks `isActive()` of the
-     * account it just registered, and `bool` returning null is a TypeError.
+     * the instance, so `isActive()` on a freshly registered account returned
+     * null, and `bool` returning null is a TypeError.
      * See .ai/rules/factories.md, "A DB default the model declares
      * non-nullable belongs in $attributes".
      *
@@ -233,8 +233,7 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('users')
-            ->acceptsMimeTypes(ConvertibleImageTypes::MIME_TYPES)
-            ->useDisk(config('media-library.disk_name'));
+            ->acceptsMimeTypes(ConvertibleImageTypes::MIME_TYPES);
     }
 
     /**
@@ -243,10 +242,9 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
      * ## Both are nonQueued, and that is a decision, not an oversight
      *
      * `display` used to be queued (the package default,
-     * `media-library.queue_conversions_by_default`). `QUEUE_CONNECTION` is
-     * `database` and this application ships no worker — no `queue:work` in
-     * composer.json, no supervisor config, no Horizon — so the job was written
-     * to the `jobs` table and never run. Measured on a fresh upload:
+     * `media-library.queue_conversions_by_default`). Before Horizon was
+     * configured nothing ran the queue, so the job was written to the `jobs`
+     * table and never run. Measured on a fresh upload:
      * `generated_conversions` held `{"thumb":true}` and one job sat pending.
      *
      * Nothing looked broken, because `getFirstMediaUrl()` falls back to the
@@ -258,16 +256,16 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
      * a file that was never written.
      *
      * The three ways out were: run a worker, read `thumb` in the profile
-     * resources, or generate `display` inline. A worker is infrastructure this
-     * project does not have and cannot assume; `thumb` is 96px and the profile
-     * header renders larger than that. So it is inline. The upload request
+     * resources, or generate `display` inline. `thumb` is 96px and the profile
+     * header renders larger than that, and an avatar must be right the moment
+     * the page redirects back. So it is inline. The upload request
      * already pays for one nonQueued crop of the same source image, and an
      * avatar is capped at 2 MB, so the second crop is a bounded cost on a rare
      * request rather than a dependency on a process that does not exist.
      *
-     * If a worker is ever deployed, this is the line to revisit — and `Pet`,
-     * `Category` and `Breed` still queue their `display` conversions, so they
-     * have the same silent fallback today.
+     * Horizon now runs the queue (redis only). `Pet`, `Category` and `Breed`
+     * still queue `display`, so their `getUrl('display')` is a 404 until the
+     * job runs; see the architecture review for the getAvailableUrl() fix.
      */
     public function registerMediaConversions(?Media $media = null): void
     {
@@ -322,17 +320,17 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     }
 
     /**
-     * Members who have not been deactivated. Used through `whereHas('user')` so
-     * a deactivated member's listings, comments and reviews leave the public
-     * surfaces with them.
+     * Members who have not been deactivated: `whereHas('user', User::activeOnly(...))`
+     * so a deactivated member's listings, comments and reviews leave the public
+     * surfaces with them. A static constraint rather than a `#[Scope]` because
+     * Larastan types a whereHas closure as `Builder<Model>`, where no scope resolves.
      *
-     * @param  Builder<static>  $query
-     * @return Builder<static>
+     * @param  Builder<self>  $users
+     * @return Builder<self>
      */
-    #[Scope]
-    protected function active(Builder $query): Builder
+    public static function activeOnly(Builder $users): Builder
     {
-        return $query->where('is_active', true);
+        return $users->where('is_active', true);
     }
 
     /**
@@ -423,16 +421,6 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     }
 
     /**
-     * The Google / Facebook identities this account signs in with.
-     *
-     * @return HasMany<SocialAccount, $this>
-     */
-    public function socialAccounts(): HasMany
-    {
-        return $this->hasMany(SocialAccount::class);
-    }
-
-    /**
      * @return HasMany<Pet, $this>
      */
     public function pets(): HasMany
@@ -480,9 +468,24 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     /**
      * Resolved reports held against this member: the strike count.
      */
-    public function strikeCount(?Carbon $since = null): int
+    public function strikeCount(?CarbonInterface $since = null): int
     {
-        return Report::query()->upheldAgainst($this, $since)->count();
+        // One upheld target is one strike, however many members reported it.
+        return Report::query()
+            ->upheldAgainst($this, $since)
+            ->get(['reportable_type', 'reportable_id'])
+            ->unique(fn (Report $report): string => $report->reportable_type.'#'.$report->reportable_id)
+            ->count();
+    }
+
+    /**
+     * Every report whose accountable member is this user, whatever it targeted.
+     *
+     * @return HasMany<Report, $this>
+     */
+    public function reportsAgainst(): HasMany
+    {
+        return $this->hasMany(Report::class, 'subject_user_id');
     }
 
     /**

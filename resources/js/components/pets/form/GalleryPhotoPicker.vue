@@ -150,7 +150,7 @@ const { t } = useTranslations();
                     type="button"
                     variant="secondary"
                     size="icon-sm"
-                    class="absolute top-1.5 right-1.5"
+                    class="absolute top-1.5 end-1.5"
                     :aria-label="
                         t(
                             deletedIds.includes(photo.id)
@@ -178,14 +178,14 @@ const { t } = useTranslations();
                     :alt="file.name"
                     class="bg-muted aspect-square w-full object-cover"
                 />
-                <Badge variant="secondary" class="absolute bottom-1.5 left-1.5">
+                <Badge variant="secondary" class="absolute bottom-1.5 start-1.5">
                     {{ formatBytes(file.size) }}
                 </Badge>
                 <Button
                     type="button"
                     variant="secondary"
                     size="icon-sm"
-                    class="absolute top-1.5 right-1.5"
+                    class="absolute top-1.5 end-1.5"
                     :aria-label="t('wizard.remove_named', { name: file.name })"
                     @click="removeFile(index)"
                 >
@@ -201,7 +201,7 @@ const { t } = useTranslations();
                 multiple
                 :disabled="remaining === 0"
                 accept="image/jpeg,image/png,image/gif,image/webp"
-                class="text-muted-foreground file:text-foreground text-sm file:mr-3 file:rounded-md file:border file:bg-transparent file:px-3 file:py-1.5 file:text-sm disabled:opacity-50"
+                class="text-muted-foreground file:text-foreground text-sm file:me-3 file:rounded-md file:border file:bg-transparent file:px-3 file:py-1.5 file:text-sm disabled:opacity-50"
                 :aria-label="t('wizard.gallery_photos')"
                 @change="pick"
             />

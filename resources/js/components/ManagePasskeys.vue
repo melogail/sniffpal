@@ -5,6 +5,7 @@ import type { Passkey } from '@/types/auth';
 import Heading from '@/components/Heading.vue';
 import PasskeyItem from '@/components/PasskeyItem.vue';
 import PasskeyRegister from '@/components/PasskeyRegister.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import { destroy } from '@/routes/passkey';
 
 export type Props = {
@@ -27,14 +28,16 @@ const handleDelete = (id: number, onError: () => void) => {
 const handleRegisterSuccess = () => {
     router.reload();
 };
+const { t } = useTranslations();
+
 </script>
 
 <template>
     <div v-if="canManagePasskeys" class="space-y-6">
         <Heading
             variant="small"
-            title="Passkeys"
-            description="Manage your passkeys for passwordless sign-in"
+            :title="t('security.passkeys')"
+            :description="t('security.passkeys_description')"
         />
 
         <div class="border-border overflow-hidden rounded-[14px] border">
@@ -53,9 +56,9 @@ const handleRegisterSuccess = () => {
                 >
                     <KeyRound class="h-7 w-7" />
                 </div>
-                <p class="font-medium">No passkeys yet</p>
+                <p class="font-medium">{{ t('security.no_passkeys') }}</p>
                 <p class="text-muted-foreground mt-1 text-sm">
-                    Add a passkey to sign in without a password
+                    {{ t('security.no_passkeys_hint') }}
                 </p>
             </div>
         </div>

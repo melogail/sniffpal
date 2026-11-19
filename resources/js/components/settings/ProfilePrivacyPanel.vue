@@ -5,6 +5,7 @@ import SaveButton from "@/components/settings/SaveButton.vue";
 import SettingsPanel from "@/components/settings/SettingsPanel.vue";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useTranslations } from "@/composables/useTranslations";
 import { changedProfileFields, profileIdentity } from "@/lib/profileForm";
 import { update as updateProfile } from "@/routes/profile";
 import type { ProfileFormData } from "@/types";
@@ -24,6 +25,8 @@ const original = {
 };
 
 const form = useForm({ ...original });
+const { t } = useTranslations();
+
 
 function submit(): void {
     form.transform((data) => ({
@@ -35,8 +38,8 @@ function submit(): void {
 
 <template>
     <SettingsPanel
-        title="Phone number"
-        description="Your number is only ever shown where you allow it."
+        :title="t('profile.phone_number')"
+        :description="t('settings.phone_number_description')"
     >
         <form class="space-y-6" @submit.prevent="submit">
             <div class="flex items-start gap-3">
@@ -47,10 +50,10 @@ function submit(): void {
                 />
                 <div class="grid gap-1">
                     <Label for="show_phone"
-                        >Show my phone number on my profile</Label
+                        >{{ t('settings.show_phone') }}</Label
                     >
                     <p class="text-muted-foreground text-xs">
-                        Anyone who opens your public profile can see it.
+                        {{ t('settings.show_phone_hint') }}
                     </p>
                     <InputError :message="form.errors.show_phone" />
                 </div>
@@ -64,11 +67,10 @@ function submit(): void {
                 />
                 <div class="grid gap-1">
                     <Label for="whatsapp_enabled"
-                        >Let people WhatsApp me from my listings</Label
+                        >{{ t('settings.whatsapp_enabled') }}</Label
                     >
                     <p class="text-muted-foreground text-xs">
-                        Adds a WhatsApp button beside Message on each of your
-                        listings. Needs a phone number.
+                        {{ t('settings.whatsapp_enabled_hint') }}
                     </p>
                     <InputError :message="form.errors.whatsapp_enabled" />
                 </div>

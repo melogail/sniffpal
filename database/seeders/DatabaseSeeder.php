@@ -29,14 +29,16 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             BreedSeeder::class,
-            AdminSeeder::class,
         ]);
 
+        // Production gets taxonomy only: the first admin comes from `nova:user`,
+        // never from AdminSeeder's known password.
         if (app()->isProduction()) {
             return;
         }
 
         $this->call([
+            AdminSeeder::class,
             UserSeeder::class,
             PetSeeder::class,
 

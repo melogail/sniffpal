@@ -8,7 +8,7 @@
 | Composer | 2.x |
 | Node / npm | Node 22, npm 10.9 (pinned in `package.json` `packageManager`) |
 | Database | MySQL locally (`db:table` works against it); the test suite runs on in-memory SQLite |
-| Redis | Optional. Horizon and Reverb are installed; the default `.env.example` uses the `database` queue and `log` broadcaster |
+| Redis | Required. Horizon serves only the `redis` queue and every notification is queued; `.env.example` sets `QUEUE_CONNECTION=redis` and `CACHE_STORE=redis`. The broadcaster defaults to `log` until Reverb is configured |
 
 Nova is a private Composer package. The credentials for `nova.laravel.com` must exist in `~/.config/composer/auth.json` before `composer install` will succeed.
 
@@ -43,7 +43,7 @@ Two hosts are in use on the development machine:
 - `https://sniffpal.test` through Valet. Valet's nginx config already answers `*.sniffpal.test`, which is what the docs subdomain relies on.
 - `http://192.168.1.30:8000` through `artisan serve`, so a phone on the LAN can reach the API while developing the Flutter app.
 
-Set `APP_URL` to whichever one you are using; social login callbacks and generated links depend on it.
+Set `APP_URL` to whichever one you are using; generated links depend on it.
 
 ## Environment variables that matter
 
@@ -54,7 +54,6 @@ Set `APP_URL` to whichever one you are using; social login callbacks and generat
 | `DOCS_DOMAIN` | Host this documentation answers on. Defaults to `docs.` + the `APP_URL` host. |
 | `SESSION_SECURE_COOKIE` | Must be `true` on any HTTPS deployment; `config/session.php` has no default. |
 | `VITE_GOOGLE_MAPS_API_KEY` | Map picker and "near me" features. |
-| `GOOGLE_CLIENT_ID/SECRET`, `FACEBOOK_CLIENT_ID/SECRET` | Socialite. The redirect registered with the provider must be exactly `APP_URL + /auth/{provider}/callback`. |
 | `REVERB_*` | Only needed when `BROADCAST_CONNECTION=reverb`. |
 
 ## Admin access

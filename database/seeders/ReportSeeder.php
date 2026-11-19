@@ -67,14 +67,14 @@ class ReportSeeder extends Seeder
     /**
      * Targets that carry no report yet, capped at what is still missing.
      *
-     * @param  class-string<Comment|Review>  $model
-     * @return Collection<int, Comment|Review>
+     * @param  class-string<Comment|Review|Pet|User>  $model
+     * @return Collection<int, Comment|Review|Pet|User>
      */
     protected function unreported(string $model, int $target): Collection
     {
         $missing = max(0, $target - $model::query()->has('reports')->count());
 
-        /** @var Collection<int, Comment|Review> $targets */
+        /** @var Collection<int, Comment|Review|Pet|User> $targets */
         $targets = $model::query()
             ->doesntHave('reports')
             ->inRandomOrder()

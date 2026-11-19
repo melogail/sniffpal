@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { Head, router, useHttp } from '@inertiajs/vue3';
+import { Head, router, useHttp, usePage } from '@inertiajs/vue3';
+import { useEchoNotification } from '@laravel/echo-vue';
+import '@/lib/echo';
 import { computed, onMounted, ref } from 'vue';
 import ConversationHeader from '@/components/messaging/ConversationHeader.vue';
 import MessageComposer from '@/components/messaging/MessageComposer.vue';
@@ -123,7 +125,7 @@ async function loadOlder(): Promise<void> {
  */
 const { markConversationRead } = useMessagingPreviews();
 
-onMounted(() => {
+function markRead(): void {
     router.post(
         read.url(conversation.id),
         {},
@@ -131,7 +133,30 @@ onMounted(() => {
     );
 
     markConversationRead(conversation.id);
-});
+}
+
+onMounted(markRead);
+
+/**
+ * Realtime: a message for this thread arrives as `NewMessageNotification` on
+ * the reader's private channel; the thread reloads its page and is marked read
+ * again, since the reader is looking at it. Other threads' messages are left
+ * to the header dropdown.
+ */
+const viewerId = computed(() => usePage().props.auth.user?.id ?? null);
+
+// Echo subscribes at setup, so on the SSR server it must not run at all.
+if (!import.meta.env.SSR && viewerId.value) {
+    useEchoNotification<{ conversation_id: number }>(
+        `App.Models.User.${viewerId.value}`,
+        (notification) => {
+            if (notification.conversation_id === conversation.id) {
+                router.reload({ only: ['messages'], onSuccess: markRead });
+            }
+        },
+        'App\\Notifications\\NewMessageNotification',
+    );
+}
 
 const { t } = useTranslations();
 </script>

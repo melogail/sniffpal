@@ -83,7 +83,7 @@ const { t } = useTranslations();
     <figure class="bg-muted relative h-[220px] overflow-hidden">
         <Link
             :href="showPet(petSlug)"
-            :aria-label="`Photo of ${name}`"
+            :aria-label="t('pets.photo_of_name', { name })"
             class="focus-visible:outline-ring flex size-full items-center justify-center focus-visible:outline-2 focus-visible:-outline-offset-2"
         >
             <img

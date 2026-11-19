@@ -8,7 +8,6 @@ use App\Exceptions\Reviews\ReviewingNotSupported;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -47,7 +46,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * two quick submissions — and a sort with ties is not a stable paginator: the
  * same row can appear on two pages or on none.
  *
- * `user.media` is eager loaded because ReviewAuthorResource reads the avatar
+ * `user.media` is eager loaded because UserSummaryResource reads the avatar
  * with getFirstMediaUrl(). Measured on 10 reviews, the three ways to get that
  * wrong behave differently and only one of them is loud:
  *
@@ -98,7 +97,7 @@ class ListReviews
 
         return $reviewable->reviews()
             ->with('user.media')
-            ->whereHas('user', fn (Builder $users) => $users->active())
+            ->whereHas('user', User::activeOnly(...))
             ->withReportedBy($viewer)
             ->latest('created_at')
             ->latest('id')

@@ -8,7 +8,6 @@ Generated from `php artisan route:list --path=api`. Run it for the live list; th
 | --- | --- | --- | --- |
 | POST | `/auth/register` | — | `registrations` |
 | POST | `/auth/login` | — | login throttle |
-| POST | `/auth/social/{provider}` | — | `social-logins` |
 | POST | `/auth/logout` | Auth | — |
 | POST | `/auth/forgot-password` | — | `password-reset-links` |
 | POST | `/auth/email/verification-notification` | Auth | `verification-notifications` |

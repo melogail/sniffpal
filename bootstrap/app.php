@@ -22,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // TLS terminates at the CDN / load balancer; without this every
+        // IP-keyed limiter sees one address and cookies lose `Secure`.
+        $middleware->trustProxies(at: '*');
+
         /*
          * `locale` joins the plaintext cookies for the same reason `appearance`
          * is there: the client reads it to decide the document's `lang` and

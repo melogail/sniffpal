@@ -193,3 +193,12 @@ test('leaves the thread read for the initiator', function () {
 
     expect($reopened->fresh()->isUnreadFor($initiator))->toBeFalse();
 });
+
+test('stamps the pair key so the database can refuse a duplicate thread', function () {
+    $initiator    = User::factory()->create();
+    $recipient    = User::factory()->create();
+
+    $conversation = app(StartConversation::class)->handle($initiator, $recipient->getKey());
+
+    expect($conversation->pair_key)->toBe(min($initiator->getKey(), $recipient->getKey()).':'.max($initiator->getKey(), $recipient->getKey()));
+});

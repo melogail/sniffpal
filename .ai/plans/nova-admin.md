@@ -4,7 +4,7 @@
 Back-office on `nova.<host>` for the `admins` guard: moderate content, manage taxonomy, answer tickets, read contact messages and watch growth metrics.
 
 ## Data
-`admins`, `admin_password_reset_tokens`; `AdminSeeder` creates the first admin.
+`admins`, `admin_password_reset_tokens`; `AdminSeeder` runs only outside production — the first production admin is created with `php artisan nova:user`.
 
 ## Resources (`app/Nova/`)
 Admin, User, Pet, Category, Breed, Comment, Review, Report, Ticket, TicketMessage, ContactMessage. Base class `app/Nova/Resource.php`. Rules: `.ai/rules/nova.md`, `nova-actions.md`, `nova-policies.md`.

@@ -17,7 +17,6 @@ User ─┬─ Pet ─┬─ Category ── Breed
       ├─ Conversation ──< ConversationUser >── User
       │       └─ Message (type, status, pin, edit)
       ├─ Notification (database)
-      ├─ SocialAccount (google | facebook)
       ├─ Passkey, two-factor columns, PersonalAccessToken
       └─ media (avatar, owner directory)
 
@@ -44,7 +43,6 @@ ContactMessage                   guests' one-off messages from the Support page
 | `messages` | `content`, `type` (text), `status` (sent, …), `pinned_by`/`pinned_at`, `edited_at`. |
 | `notifications` | Laravel database notifications, UUID keyed. |
 | `media` | spatie/laravel-medialibrary. |
-| `social_accounts` | Unique (provider, provider_id); no tokens stored. |
 | `passkeys`, `personal_access_tokens` | Passkey credentials; Sanctum tokens. |
 | `tickets` | Support ticket headers: `category`, `status`, `last_activity_at`, `closed_at`. |
 | `ticket_messages` | The thread under a ticket; `author_type` / `author_id` is a `user` or an `admin`, null once that account is deleted. |
@@ -72,7 +70,6 @@ Morph columns store **aliases** from the morph map (`pet`, `user`, `comment`, `r
 | `MessageStatus` | sent, … |
 | `TicketCategory` | technical_issue, account_issue, listing_issue, missing_category, missing_breed, feedback, other |
 | `TicketStatus` | open, answered, closed |
-| `SocialProvider` | google, facebook |
 
 Enum keys are TitleCase; backing values are machine-safe snake_case strings and are what the API returns. Labels come from the translation files, and `/api/v1/options` ships them to the mobile app.
 

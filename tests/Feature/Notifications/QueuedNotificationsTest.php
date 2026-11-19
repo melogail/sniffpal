@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Comment;
+use App\Models\Like;
 use App\Models\Pet;
 use App\Models\User;
 use App\Notifications\ModelCommentedNotification;
@@ -44,4 +46,12 @@ test('liking a listing queues the owner notification instead of sending it inlin
 
     Queue::assertPushed(SendQueuedNotifications::class, fn (SendQueuedNotifications $job): bool => $job->notification instanceof ModelLikedNotification
         && $job->notifiables->contains($owner));
+});
+
+test('like and comment notifications are dropped, not failed, when their model is gone before the worker runs', function () {
+    $liked     = new SendQueuedNotifications(User::factory()->create(), new ModelLikedNotification(Like::factory()->create()));
+    $commented = new SendQueuedNotifications(User::factory()->create(), new ModelCommentedNotification(Comment::factory()->create()));
+
+    expect($liked->deleteWhenMissingModels)->toBeTrue()
+        ->and($commented->deleteWhenMissingModels)->toBeTrue();
 });

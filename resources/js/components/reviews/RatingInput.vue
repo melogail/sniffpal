@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Star } from '@lucide/vue';
 import { computed } from 'vue';
+import { useTranslations } from '@/composables/useTranslations';
 
 /** The star picker a review form binds to. Props in, `update:modelValue` out. */
 const {
@@ -18,6 +19,8 @@ const {
 const emit = defineEmits<{
     'update:modelValue': [value: number];
 }>();
+const { t } = useTranslations();
+
 
 const stars = computed(() =>
     Array.from({ length: max - min + 1 }, (_, index) => min + index),
@@ -25,14 +28,18 @@ const stars = computed(() =>
 </script>
 
 <template>
-    <div class="flex items-center gap-1" role="radiogroup" aria-label="Rating">
+    <div
+        class="flex items-center gap-1"
+        role="radiogroup"
+        :aria-label="t('reviews.rating')"
+    >
         <button
             v-for="star in stars"
             :key="star"
             type="button"
             role="radio"
             :aria-checked="star === modelValue"
-            :aria-label="`${star} of ${max}`"
+            :aria-label="t('reviews.star_of', { star, max })"
             :disabled="disabled"
             class="focus-visible:ring-ring rounded-sm p-0.5 transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             @click="emit('update:modelValue', star)"

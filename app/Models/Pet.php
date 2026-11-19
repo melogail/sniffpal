@@ -205,7 +205,7 @@ class Pet extends Model implements Commentable, HasMedia, Likeable, Reportable
     public function resolveRouteBinding($value, $field = null): ?self
     {
         $pet = $this->resolveRouteBindingQuery($this, $value, $field)
-            ->whereHas('user', fn (Builder $users) => $users->active())
+            ->whereHas('user', User::activeOnly(...))
             ->first();
 
         return $pet instanceof self ? $pet : null;
@@ -230,8 +230,7 @@ class Pet extends Model implements Commentable, HasMedia, Likeable, Reportable
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::PHOTO_COLLECTION)
-            ->acceptsMimeTypes(ConvertibleImageTypes::MIME_TYPES)
-            ->useDisk(config('media-library.disk_name'));
+            ->acceptsMimeTypes(ConvertibleImageTypes::MIME_TYPES);
     }
 
     /**
@@ -275,7 +274,7 @@ class Pet extends Model implements Commentable, HasMedia, Likeable, Reportable
     {
         $photo = $this->featuredPhoto() ?? $this->getFirstMedia(self::PHOTO_COLLECTION);
 
-        return $photo?->getUrl($conversion) ?: null;
+        return $photo?->getAvailableUrl($conversion === '' ? [] : [$conversion]) ?: null;
     }
 
     /**
@@ -323,16 +322,6 @@ class Pet extends Model implements Commentable, HasMedia, Likeable, Reportable
     protected function available(Builder $query): Builder
     {
         return $query->where('status', PetStatus::Available);
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    #[Scope]
-    protected function unavailable(Builder $query): Builder
-    {
-        return $query->where('status', PetStatus::Unavailable);
     }
 
     /**
@@ -476,14 +465,6 @@ class Pet extends Model implements Commentable, HasMedia, Likeable, Reportable
 
             return round($this->birth_date->diffInYears(Carbon::now()), 2);
         });
-    }
-
-    /**
-     * Whether the listing offers more than one animal.
-     */
-    public function isLitter(): bool
-    {
-        return $this->quantity > 1;
     }
 
     /**

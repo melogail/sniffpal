@@ -3,7 +3,6 @@ import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import PasskeyVerify from '@/components/PasskeyVerify.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
-import SocialLoginButtons from '@/components/SocialLoginButtons.vue';
 import StatusMessage from '@/components/StatusMessage.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,6 @@ import { useTranslations } from '@/composables/useTranslations';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-import type { SocialProviderOption } from '@/types/auth';
 
 /**
  * The heading and sub-heading belong to `AuthLayout`, not to this template, so
@@ -55,7 +53,6 @@ setLayoutProps({
 defineProps<{
     status?: string;
     canResetPassword: boolean;
-    socialProviders: SocialProviderOption[];
 }>();
 </script>
 
@@ -63,8 +60,6 @@ defineProps<{
     <Head :title="t('auth.log_in')" />
 
     <StatusMessage :status="status" />
-
-    <SocialLoginButtons :providers="socialProviders" />
 
     <PasskeyVerify
         :label="t('auth.sign_in_with_passkey')"

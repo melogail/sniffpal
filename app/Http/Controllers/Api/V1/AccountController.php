@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\Auth\RevokeAccessTokens;
-use App\Actions\Profiles\DeleteUserAccount;
 use App\Actions\Profiles\UpdateProfile;
 use App\Concerns\ResolvesRequestUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\DeleteProfileRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Http\Resources\User\AccountResource;
+use App\Jobs\DeleteUserAccountJob;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -54,14 +54,16 @@ class AccountController extends Controller
     public function destroy(
         DeleteProfileRequest $request,
         RevokeAccessTokens $revokeAccessTokens,
-        DeleteUserAccount $deleteUserAccount,
     ): Response {
         $user = $this->actor($request);
 
         $this->authorize('delete', $user);
 
         $revokeAccessTokens->handleAll($user);
-        $deleteUserAccount->handle($user);
+        // Closed to sign-in while the purge is queued; the job still finds the row.
+        $user->forceFill(['is_active' => false])->save();
+
+        DeleteUserAccountJob::dispatch($user->getKey());
 
         return response()->noContent();
     }

@@ -7,7 +7,7 @@ In-app inbox plus real-time toasts for likes, comments, reviews, messages and ti
 `notifications` table (Laravel database channel). Broadcast over Reverb private channel `App.Models.User.{id}`.
 
 ## Backend
-- Notification classes (`app/Notifications/`): ModelLikedNotification (db + broadcast), ModelCommentedNotification (db + broadcast), ModelReviewedNotification (db), NewMessageNotification (db + broadcast), ReportFiledNotification (db, to admins), TicketRepliedNotification (db + mail), VerifyEmailNotification (mail). All queued; see architecture review memory for why.
+- Notification classes (`app/Notifications/`): ModelLikedNotification (db + broadcast), ModelCommentedNotification (db + broadcast), ModelReviewedNotification (db), NewMessageNotification (db + broadcast), ReportFiledNotification (db, to admins), ReportResolvedNotification (db, to reporters), ModerationNoticeNotification (db, mail on deactivation; to the subject), TicketRepliedNotification (db + broadcast + mail for members, mail only for guests), VerifyEmailNotification (mail). All queued, so Horizon on the `redis` connection must run; see architecture review memory for why.
 - Actions (`app/Actions/Notifications/`): BuildNotificationInbox, CountUnreadNotifications, MarkNotificationAsRead, MarkAllNotificationsAsRead, DeleteAllNotifications.
 - Resource `app/Http/Resources/Notification/`. Controllers `Web/NotificationController`, `Api/V1/NotificationController`, `Api/V1/BadgeController`.
 
@@ -24,5 +24,5 @@ Throttle `inbox-actions` (60/min). Users only see their own rows.
 `tests/Feature/Notifications/`, `tests/Feature/Http/Controllers/Web/`.
 
 ## Open work
-- No push notifications for the mobile app (FCM/APNs); the app polls `me/badges`.
+- No push notifications for the mobile app (FCM/APNs); the app polls `me/badges`. Mobile real-time channel auth is deferred by decision (2026-11-19).
 - No email digest for unread messages.

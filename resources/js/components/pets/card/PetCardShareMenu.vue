@@ -20,6 +20,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useTranslations } from '@/composables/useTranslations';
 import { show as showPet } from '@/routes/pets';
 
 /**
@@ -73,6 +74,8 @@ const { petSlug, name } = defineProps<{
     petSlug: string;
     name: string;
 }>();
+const { t } = useTranslations();
+
 
 /** This listing's absolute URL. See the note above before changing the base. */
 const petUrl = computed(() => {
@@ -92,7 +95,7 @@ type Destination = {
 
 const destinations = computed<Destination[]>(() => {
     const url = encodeURIComponent(petUrl.value);
-    const text = encodeURIComponent(`Meet ${name} on SniffPal`);
+    const text = encodeURIComponent(t('pets.share_text', { name }));
 
     return [
         {
@@ -131,9 +134,9 @@ const itemClass = 'size-9 justify-center p-0';
 async function copyLink(): Promise<void> {
     try {
         await navigator.clipboard.writeText(petUrl.value);
-        toast.success(`Link to ${name} copied`);
+        toast.success(t('pets.link_copied', { name }));
     } catch {
-        toast.error('Could not copy the link');
+        toast.error(t('pets.copy_link_failed'));
     }
 }
 </script>
@@ -149,7 +152,7 @@ async function copyLink(): Promise<void> {
             <Button
                 variant="ghost"
                 size="icon"
-                :aria-label="`Share ${name}`"
+                :aria-label="t('pets.share_name', { name })"
                 class="text-muted-foreground hover:bg-accent hover:text-primary"
             >
                 <Share2 class="size-4" aria-hidden="true" />
@@ -186,13 +189,13 @@ async function copyLink(): Promise<void> {
                         <TooltipTrigger as-child>
                             <DropdownMenuItem
                                 :class="itemClass"
-                                aria-label="Copy link"
+                                :aria-label="t('pets.copy_link')"
                                 @select="copyLink"
                             >
                                 <Link class="size-4" aria-hidden="true" />
                             </DropdownMenuItem>
                         </TooltipTrigger>
-                        <TooltipContent>Copy link</TooltipContent>
+                        <TooltipContent>{{ t('pets.copy_link') }}</TooltipContent>
                     </Tooltip>
                 </div>
             </TooltipProvider>

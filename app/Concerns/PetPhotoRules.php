@@ -4,6 +4,7 @@ namespace App\Concerns;
 
 use App\MediaLibrary\ConvertibleImageTypes;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Validation\Rule;
 
 /**
  * What an uploaded listing photo has to be, in one place.
@@ -45,7 +46,8 @@ trait PetPhotoRules
      */
     protected function photoFileRules(): array
     {
-        return ['image', ConvertibleImageTypes::mimesRule(), 'max:'.$this->maxImageKilobytes()];
+        // A small, highly compressed PNG can still be 20000 px square and exhaust the worker on decode.
+        return ['image', ConvertibleImageTypes::mimesRule(), 'max:'.$this->maxImageKilobytes(), Rule::dimensions()->maxWidth(8000)->maxHeight(8000)];
     }
 
     /**

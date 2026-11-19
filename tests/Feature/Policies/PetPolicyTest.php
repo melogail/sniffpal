@@ -27,21 +27,21 @@ test('the owner may manage their own listing', function (string $ability) {
     $pet   = Pet::factory()->for($owner)->create();
 
     expect($owner->can($ability, $pet))->toBeTrue();
-})->with(['update', 'delete', 'restore', 'forceDelete']);
+})->with(['update', 'delete']);
 
 test('a user who does not own the listing may not manage it', function (string $ability) {
     $pet      = Pet::factory()->create();
     $stranger = User::factory()->create();
 
     expect($stranger->can($ability, $pet))->toBeFalse();
-})->with(['update', 'delete', 'restore', 'forceDelete']);
+})->with(['update', 'delete']);
 
 test('an unverified owner may not manage their own listing', function (string $ability) {
     $owner = User::factory()->unverified()->create();
     $pet   = Pet::factory()->for($owner)->create();
 
     expect($owner->can($ability, $pet))->toBeFalse();
-})->with(['update', 'delete', 'restore', 'forceDelete']);
+})->with(['update', 'delete']);
 
 test('liking is allowed for any verified user and refused for an unverified one', function () {
     $pet        = Pet::factory()->create();

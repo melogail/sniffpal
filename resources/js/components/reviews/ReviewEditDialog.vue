@@ -17,6 +17,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslations } from '@/composables/useTranslations';
 import { update as updateReview } from '@/routes/reviews';
 import type { Review, ReviewBounds } from '@/types';
 
@@ -34,6 +35,8 @@ const { review, bounds } = defineProps<{
 
 const open = ref(false);
 const rate = ref(review.rate);
+const { t } = useTranslations();
+
 </script>
 
 <template>
@@ -41,15 +44,15 @@ const rate = ref(review.rate);
         <DialogTrigger as-child>
             <Button variant="ghost" size="sm" class="text-muted-foreground">
                 <Pencil class="size-4" />
-                Edit
+                {{ t('common.edit') }}
             </Button>
         </DialogTrigger>
 
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Edit your review</DialogTitle>
+                <DialogTitle>{{ t('reviews.edit_your_review') }}</DialogTitle>
                 <DialogDescription>
-                    Both the rating and the comment are replaced.
+                    {{ t('reviews.edit_replaces') }}
                 </DialogDescription>
             </DialogHeader>
 
@@ -63,7 +66,7 @@ const rate = ref(review.rate);
                 <InputError :message="errors.review" />
 
                 <div class="grid gap-2">
-                    <Label>Rating</Label>
+                    <Label>{{ t('reviews.rating') }}</Label>
                     <RatingInput
                         v-model="rate"
                         :min="bounds.min_rate"
@@ -74,7 +77,9 @@ const rate = ref(review.rate);
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="review-comment-edit">Comment</Label>
+                    <Label for="review-comment-edit">{{
+                        t('reviews.comment')
+                    }}</Label>
                     <Textarea
                         id="review-comment-edit"
                         name="comment"
@@ -88,7 +93,7 @@ const rate = ref(review.rate);
                 <DialogFooter>
                     <Button type="submit" :disabled="processing">
                         <Spinner v-if="processing" />
-                        Save review
+                        {{ t('reviews.save_review') }}
                     </Button>
                 </DialogFooter>
             </Form>

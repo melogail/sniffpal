@@ -22,8 +22,7 @@ import { cn } from "@/lib/utils"
  * as it stands — rendered on `/settings/security` 2026-09-06, its `h3 2FA
  * recovery codes` sits under `h2 Two-factor authentication`, and the page's
  * heading list is byte-identical before and after this change.
- * `layouts/auth/AuthCardLayout` has no importer anywhere in `resources/`, so
- * nothing mounts it and there is no outline to be wrong.
+ * (`layouts/auth/AuthCardLayout`, the other candidate, was removed as unused.)
  *
  * ## Do not hand-write the heading at the call site instead
  *

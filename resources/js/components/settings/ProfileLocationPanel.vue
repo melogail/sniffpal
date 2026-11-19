@@ -5,6 +5,7 @@ import SaveButton from '@/components/settings/SaveButton.vue';
 import SettingsPanel from '@/components/settings/SettingsPanel.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/composables/useTranslations';
 import { fromCoordinateInput, toCoordinateInput } from '@/lib/coordinates';
 import { changedProfileFields, profileIdentity } from '@/lib/profileForm';
 import { update as updateProfile } from '@/routes/profile';
@@ -34,6 +35,8 @@ const original = {
 };
 
 const form = useForm({ ...original });
+const { t } = useTranslations();
+
 
 function submit(): void {
     form.transform((data) => {
@@ -51,12 +54,12 @@ function submit(): void {
 
 <template>
     <SettingsPanel
-        title="Location"
-        description="Used to place your listings on the nearby feed."
+        :title="t('profile.location')"
+        :description="t('settings.location_description')"
     >
         <form class="space-y-6" @submit.prevent="submit">
             <div class="grid gap-2">
-                <Label for="address">Address</Label>
+                <Label for="address">{{ t('settings.address') }}</Label>
                 <Input
                     id="address"
                     v-model="form.address"
@@ -67,7 +70,7 @@ function submit(): void {
 
             <div class="grid gap-4 sm:grid-cols-3">
                 <div class="grid gap-2">
-                    <Label for="city">City</Label>
+                    <Label for="city">{{ t('profile.city') }}</Label>
                     <Input
                         id="city"
                         v-model="form.city"
@@ -76,7 +79,7 @@ function submit(): void {
                     <InputError :message="form.errors.city" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="state">State</Label>
+                    <Label for="state">{{ t('settings.state') }}</Label>
                     <Input
                         id="state"
                         v-model="form.state"
@@ -85,7 +88,7 @@ function submit(): void {
                     <InputError :message="form.errors.state" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="country">Country</Label>
+                    <Label for="country">{{ t('profile.country') }}</Label>
                     <Input
                         id="country"
                         v-model="form.country"
@@ -97,7 +100,7 @@ function submit(): void {
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="grid gap-2">
-                    <Label for="lat">Latitude</Label>
+                    <Label for="lat">{{ t('profile.latitude') }}</Label>
                     <Input
                         id="lat"
                         v-model="form.lat"
@@ -107,7 +110,7 @@ function submit(): void {
                     <InputError :message="form.errors.lat" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="lng">Longitude</Label>
+                    <Label for="lng">{{ t('profile.longitude') }}</Label>
                     <Input
                         id="lng"
                         v-model="form.lng"
@@ -118,12 +121,11 @@ function submit(): void {
                 </div>
             </div>
             <p class="text-muted-foreground -mt-3 text-xs">
-                Latitude and longitude are saved together — clear both to remove
-                your pin.
+                {{ t('settings.coordinates_hint') }}
             </p>
 
             <div class="grid gap-2">
-                <Label for="timezone">Time zone</Label>
+                <Label for="timezone">{{ t('settings.timezone') }}</Label>
                 <Input
                     id="timezone"
                     v-model="form.timezone"

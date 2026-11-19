@@ -19,8 +19,8 @@ class ModelLikedNotification extends Notification implements ShouldQueueAfterCom
 {
     use Queueable;
 
-    // shortcut: a like undone before the worker runs fails the job on the missing
-    // Like model instead of being dropped; revisit if failed_jobs fills with these.
+    /** A like undone before the worker runs is dropped, not a failed job. */
+    public bool $deleteWhenMissingModels = true;
 
     public function __construct(
         public Like $like,
