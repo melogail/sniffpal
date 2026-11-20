@@ -117,7 +117,7 @@ trait PetValidationRules
     protected function basicRules(): array
     {
         return [
-            'name'         => ['present', Rule::requiredIf(fn (): bool => ! $this->isLitterPayload()), 'nullable', 'string', 'max:255'],
+            'name'         => ['present', 'nullable', 'string', 'max:255'],
             'category_id'  => ['required', 'integer', Rule::exists(Category::class, 'id')],
             'breed_id'     => [
                 'present',

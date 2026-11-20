@@ -392,15 +392,17 @@ describe('store', function () {
         ]);
     });
 
-    test('requires a name for a single animal', function () {
+    test('publishes a single animal without a name', function () {
+        Storage::fake(config('media-library.disk_name'));
         $owner    = User::factory()->create();
         $category = Category::factory()->create();
 
-        $this->actingAs($owner)
-            ->post(route('pets.store'), petFormPayload($category, ['name' => null]))
-            ->assertInvalid(['name' => 'required']);
+        $this->actingAs($owner)->post(route('pets.store'), petFormPayload($category, [
+            'featuredImage' => UploadedFile::fake()->image('cover.jpg'),
+            'name'          => null,
+        ]))->assertValid();
 
-        expect(Pet::query()->count())->toBe(0);
+        expect(Pet::query()->sole()->name)->toBeNull();
     });
 
     test('rejects a litter whose sex counts do not add up to the quantity', function () {

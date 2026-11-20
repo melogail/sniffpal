@@ -108,11 +108,7 @@ export function validateBasicStep(state: PetFormState): BasicStepErrors {
 
     const isLitter = isAdoption && quantity !== null && quantity > 1;
 
-    const name = trimmedInput(state.name);
-
-    if (!isLitter && name === '') {
-        errors.name = 'wizard.validation.name_required';
-    } else if (name.length > 255) {
+    if (trimmedInput(state.name).length > 255) {
         errors.name = 'wizard.validation.name_max';
     }
 

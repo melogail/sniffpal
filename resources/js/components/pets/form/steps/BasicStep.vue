@@ -34,8 +34,7 @@ import { useTranslations } from '@/composables/useTranslations';
  *
  * An **adoption** listing may offer more than one animal. Picking adoption
  * reveals the quantity box; a quantity above 1 reveals the male and female
- * counts, makes the name optional (a litter has no single name) and adds
- * `mixed` as a meaningful gender. The backend holds the rules — only adoption
+ * counts and adds `mixed` as a meaningful gender. The backend holds the rules — only adoption
  * may exceed 1, the counts must add up to the quantity, the gender must agree
  * with the counts — and reports them on `quantity` and `gender`; this step
  * only decides what is on screen. Switching away from adoption snaps the
@@ -135,16 +134,10 @@ function pickCategory(value: string): void {
             :label="t('wizard.name')"
             field-id="pet-name"
             :error="errors.name"
-            :required="!isLitter"
-            :hint="isLitter ? t('wizard.optional_for_litter') : undefined"
+            :hint="t('wizard.optional')"
             class="sm:col-span-2"
         >
-            <Input
-                id="pet-name"
-                v-model="form.name"
-                maxlength="255"
-                :required="!isLitter"
-            />
+            <Input id="pet-name" v-model="form.name" maxlength="255" />
         </FormField>
 
         <FormField
