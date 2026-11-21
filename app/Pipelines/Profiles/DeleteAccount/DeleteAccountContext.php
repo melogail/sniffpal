@@ -10,7 +10,7 @@ use LogicException;
  *
  * ## The problem this flow exists to solve
  *
- * `users` has no SoftDeletes, so `$user->delete()` is a hard DELETE, and eight
+ * DeleteAccountRecord ends in `$user->forceDelete()`, a hard DELETE, and eight
  * tables cascade off it in the database: `pets`, `comments` (plus their whole
  * `parent_id` subtree), `reviews` the user wrote, `likes`, `saves` and
  * `reports` the user filed, `conversation_user`, and `messages` they sent.

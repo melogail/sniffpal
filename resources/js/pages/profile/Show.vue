@@ -6,6 +6,7 @@ import ProfileHeader from '@/components/profile/ProfileHeader.vue';
 import ProfileListings from '@/components/profile/ProfileListings.vue';
 import ProfileListingsTable from '@/components/profile/ProfileListingsTable.vue';
 import ProfileReviews from '@/components/profile/ProfileReviews.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import type {
     Paginated,
     PetCard,
@@ -58,6 +59,7 @@ const { profile } = defineProps<{
 }>();
 
 const page = usePage();
+const { t } = useTranslations();
 
 const isGuest = computed(() => !page.props.auth.user);
 const canInteract = computed(() => !isGuest.value && !profile.is_self);
@@ -80,7 +82,7 @@ const canReview = computed(() => canInteract.value && !profile.has_reviewed);
                 <h2
                     class="font-serif text-[26px] leading-[1.15] font-medium tracking-[-0.01em]"
                 >
-                    Listings
+                    {{ t('profile.listings') }}
                     <span class="text-muted-foreground font-normal">
                         ({{ listings.meta.total }})
                     </span>
@@ -97,7 +99,7 @@ const canReview = computed(() => canInteract.value && !profile.has_reviewed);
             <h2
                 class="font-serif text-[26px] leading-[1.15] font-medium tracking-[-0.01em]"
             >
-                Reviews
+                {{ t('profile.reviews') }}
                 <span class="text-muted-foreground font-normal">
                     ({{ reviews.meta.total }})
                 </span>

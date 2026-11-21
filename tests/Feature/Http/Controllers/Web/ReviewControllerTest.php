@@ -437,8 +437,8 @@ describe('destroy', function () {
             ->delete(route('reviews.destroy', $review))
             ->assertRedirect(route('home'));
 
-        $this->assertModelMissing($review);
-        $this->assertModelMissing($report);
+        $this->assertSoftDeleted($review);
+        $this->assertSoftDeleted($report);
     });
 
     /**

@@ -30,6 +30,20 @@ test('uses the cookie a guest carries', function () {
 });
 
 /**
+ * A host-only `locale=en` left over from before SESSION_DOMAIN was set travels
+ * beside the `.sniffpal.test` cookie a later switch wrote, older first; PHP
+ * keeps the first duplicate, which made switching a no-op in that browser.
+ * The newest duplicate is the last one, and that is the one that counts.
+ */
+test('prefers the newest of two locale cookies a browser sends together', function () {
+    $this->withHeader('Cookie', 'locale=en; appearance=light; locale=ar')
+        ->get(route('home'))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('locale.current', 'ar')
+            ->where('locale.direction', 'rtl'));
+});
+
+/**
  * The cookie is the most recent *explicit* act: switching language writes the
  * cookie and the user row together, so the two only disagree when the account
  * has since switched on a device whose cookie says otherwise. Honouring the

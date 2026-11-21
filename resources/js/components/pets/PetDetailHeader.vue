@@ -3,11 +3,7 @@ import { Clock, Eye, MapPin } from '@lucide/vue';
 import { computed } from 'vue';
 import StartConversationButton from '@/components/messaging/StartConversationButton.vue';
 import WhatsAppButton from '@/components/pets/WhatsAppButton.vue';
-import {
-    ageLabel,
-    countLabel,
-    litterLabel,
-} from '@/components/pets/card/labels';
+import { ageLabel, litterLabel } from '@/components/pets/card/labels';
 import PetLikeButton from '@/components/pets/PetLikeButton.vue';
 import PetOwnerActions from '@/components/pets/PetOwnerActions.vue';
 import ReportDialog from '@/components/reports/ReportDialog.vue';
@@ -84,19 +80,16 @@ import type { PetDetail, PetGender, ReportReasonsByType } from '@/types';
  * ## Both action controls are named from here, and by two different techniques
  *
  * `PetLikeButton`'s visible label is the bare count, so unnamed it announces
- * as an unqualified number. The name is built with the feed's own `countLabel`
- * helper over the same two values (`Like ${name}, ${n} likes`), imported from
- * `card/labels` rather than re-written, so the two surfaces cannot phrase or
- * pluralise it differently. It is passed as a **fall-through `aria-label`**,
+ * as an unqualified number. The name is built from the same catalogue keys
+ * the feed card uses (`pets.like_name` over `pets.like_count` /
+ * `pets.likes_count`), so the two surfaces cannot phrase or pluralise it
+ * differently. It is passed as a **fall-through `aria-label`**,
  * which reaches the rendered element because that component's root is `Button`
  * → `Primitive`; its docblock records the SSR render that established it.
  *
- * That name is English while everything visible here goes through `t()`, and
- * it is deliberate rather than an oversight: `card/labels` is English-only
- * pending the scheduled i18n pass (its own docblock says not to add
- * `useTranslations` ahead of that pass), and containment still holds in every
- * locale because the visible text is a digit string — "10" is inside
- * "Like Luna Belle, 10 likes" whatever the locale renders around it.
+ * Containment holds in every locale because the visible text is a digit
+ * string — "10" is inside "Like Luna Belle, 10 likes" and inside its Arabic
+ * rendering alike.
  *
  * `StartConversationButton` takes its name as a **prop**: its root is reka-ui's
  * `DialogRoot`, which drops fall-through attributes in silence, so the
@@ -214,8 +207,14 @@ const statusLabel = computed(() =>
  * like control identically; `aria-pressed` on the control carries the toggle
  * state, so the name does not change with it.
  */
-const likeLabel = computed(
-    () => `Like ${name.value}, ${countLabel(pet.likes_count, 'like')}`,
+const likeLabel = computed(() =>
+    t('pets.like_name', {
+        name: name.value,
+        count: t(
+            pet.likes_count === 1 ? 'pets.like_count' : 'pets.likes_count',
+            { count: pet.likes_count },
+        ),
+    }),
 );
 
 /**

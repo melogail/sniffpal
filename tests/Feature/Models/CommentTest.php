@@ -3,21 +3,31 @@
 use App\Models\Comment;
 use Illuminate\Support\Str;
 
-test('deleting a comment deletes its replies', function () {
+test('soft deleting a comment leaves its replies to the thread pipeline', function () {
     $parent = Comment::factory()->create();
     $reply  = Comment::factory()->reply($parent)->create();
 
     $parent->delete();
 
+    $this->assertSoftDeleted($parent);
+    $this->assertModelExists($reply);
+});
+
+test('force deleting a comment deletes its replies', function () {
+    $parent = Comment::factory()->create();
+    $reply  = Comment::factory()->reply($parent)->create();
+
+    $parent->forceDelete();
+
     $this->assertDatabaseMissing('comments', ['id' => $reply->getKey()]);
 });
 
-test('deleting a comment deletes replies nested below its replies', function () {
+test('force deleting a comment deletes replies nested below its replies', function () {
     $parent      = Comment::factory()->create();
     $reply       = Comment::factory()->reply($parent)->create();
     $nestedReply = Comment::factory()->reply($reply)->create();
 
-    $parent->delete();
+    $parent->forceDelete();
 
     $this->assertDatabaseEmpty('comments');
     $this->assertModelMissing($nestedReply);

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -35,7 +36,7 @@ use Illuminate\Support\Carbon;
 class TicketMessage extends Model
 {
     /** @use HasFactory<TicketMessageFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * @return BelongsTo<Ticket, $this>

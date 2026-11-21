@@ -373,7 +373,7 @@ describe('destroy', function () {
             ->delete(route('comments.destroy', $comment))
             ->assertRedirect(route('home'));
 
-        $this->assertModelMissing($comment);
+        $this->assertSoftDeleted($comment);
     });
 });
 

@@ -31,9 +31,10 @@ class DeleteAccountRecord
     {
         // No FK reaches either: tokens are a bare morph, tickets null their user_id.
         $context->user->tokens()->delete();
-        Ticket::query()->where('user_id', $context->user->getKey())->delete();
+        Ticket::query()->where('user_id', $context->user->getKey())->forceDelete();
 
-        $context->markDeleted((bool) $context->user->delete());
+        // Account deletion is the irreversible purge: forceDelete() lets the FK cascades run as before SoftDeletes.
+        $context->markDeleted((bool) $context->user->forceDelete());
 
         return $next($context);
     }

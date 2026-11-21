@@ -34,7 +34,7 @@ class DeleteListingReports
             ->where('reportable_type', Relation::getMorphAlias(Pet::class))
             ->where('reportable_id', $context->pet->getKey())
             ->pending()
-            ->delete();
+            ->forceDelete();
 
         $commentIds = $context->commentIds();
 
@@ -43,7 +43,7 @@ class DeleteListingReports
                 ->where('reportable_type', Relation::getMorphAlias(Comment::class))
                 ->whereIn('reportable_id', $commentIds)
                 ->pending()
-                ->delete();
+                ->forceDelete();
         }
 
         return $next($context);

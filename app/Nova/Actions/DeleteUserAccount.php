@@ -16,7 +16,7 @@ use Throwable;
 /**
  * Permanently delete member accounts, through the one supported code path.
  *
- * **Never `$user->delete()`.** `users` has no soft deletes and eight foreign
+ * **Never `$user->delete()`.** The purge force-deletes the row, and eight foreign
  * keys cascade off it, and a database cascade fires no Eloquent events: a bare
  * delete strands roughly 227 rows across seven tables — likes, saves, reports,
  * reviews, comments, notifications and media — with the media *files* left on

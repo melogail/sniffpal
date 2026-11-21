@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -39,7 +40,7 @@ use Illuminate\Support\Collection;
 class Comment extends Model implements Likeable, Reportable
 {
     /** @use HasFactory<CommentFactory> */
-    use HasFactory, HasLikes, HasReport;
+    use HasFactory, HasLikes, HasReport, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.

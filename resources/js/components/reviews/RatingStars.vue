@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Star } from '@lucide/vue';
 import { computed } from 'vue';
+import { useTranslations } from '@/composables/useTranslations';
 import { cn } from '@/lib/utils';
 
 /**
@@ -21,6 +22,8 @@ const {
     class?: string;
 }>();
 
+const { t } = useTranslations();
+
 const stars = computed(() =>
     Array.from({ length: max }, (_, index) => index + 1),
 );
@@ -31,7 +34,11 @@ const rounded = computed(() => Math.round(rate ?? 0));
     <div
         :class="cn('flex items-center gap-0.5', className)"
         role="img"
-        :aria-label="rate === null ? 'Not rated' : `${rate} out of ${max}`"
+        :aria-label="
+            rate === null
+                ? t('reviews.not_rated')
+                : t('reviews.star_of', { star: rate, max })
+        "
     >
         <Star
             v-for="star in stars"

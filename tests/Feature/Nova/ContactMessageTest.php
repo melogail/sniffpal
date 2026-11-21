@@ -30,5 +30,5 @@ test('a contact message can be deleted but not edited', function () {
         ->deleteJson('/nova-api/contact-messages', ['resources' => [$message->getKey()]])
         ->assertOk();
 
-    $this->assertModelMissing($message);
+    $this->assertSoftDeleted($message);
 });

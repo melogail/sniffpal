@@ -93,8 +93,8 @@ test('deletes an empty category along with its breeds', function () {
         ->assertOk()
         ->assertJsonPath('message', '1 category deleted, along with its breeds.');
 
-    $this->assertModelMissing($category);
-    $this->assertModelMissing($breed);
+    $this->assertSoftDeleted($category);
+    $this->assertSoftDeleted($breed);
     $this->assertModelExists($survivor);
 });
 

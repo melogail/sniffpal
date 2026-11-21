@@ -20,7 +20,7 @@ function orphanedReport(): Report
 {
     $review = Review::factory()->create();
     $report = Report::factory()->pending()->forReportable($review)->create();
-    $review->delete();
+    $review->forceDelete();
 
     return $report;
 }

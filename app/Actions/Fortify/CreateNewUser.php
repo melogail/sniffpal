@@ -6,6 +6,7 @@ use App\Actions\Users\RegisterUser;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -46,6 +47,10 @@ class CreateNewUser implements CreatesNewUsers
             'name'     => $input['name'],
             'email'    => $input['email'],
             'password' => $input['password'],
+            // SetLocale already resolved the visitor's language from the cookie,
+            // so the account keeps reading in it instead of falling to the `en`
+            // model default (measured 2026-11-21: an Arabic sign-up stayed `en`).
+            'locale'   => App::getLocale(),
         ]);
     }
 }

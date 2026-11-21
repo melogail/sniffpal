@@ -33,7 +33,7 @@ class DeleteReviewsAboutAccount
     {
         Review::query()
             ->whereKey($context->reviewIds())
-            ->delete();
+            ->forceDelete();
 
         return $next($context);
     }

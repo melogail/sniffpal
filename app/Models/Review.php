@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -41,7 +42,7 @@ use Illuminate\Support\Carbon;
 class Review extends Model implements Reportable
 {
     /** @use HasFactory<ReviewFactory> */
-    use HasFactory, HasReport;
+    use HasFactory, HasReport, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.

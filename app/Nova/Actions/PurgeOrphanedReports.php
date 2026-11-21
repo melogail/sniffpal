@@ -87,7 +87,7 @@ class PurgeOrphanedReports extends DestructiveAction
         try {
             DB::transaction(function () use ($models): void {
                 $models->each(function (Report $report): void {
-                    $report->delete();
+                    $report->forceDelete();
                 });
             });
         } catch (Throwable $exception) {

@@ -88,7 +88,7 @@ class SetLocale
 
         $candidates = [
             $request->header(self::HEADER),
-            $request->cookie($this->cookieName()),
+            $this->newestCookie($request),
             $user instanceof User ? $user->locale : null,
             $request->hasSession() ? $request->session()->get($this->cookieName()) : null,
         ];
@@ -100,6 +100,32 @@ class SetLocale
         }
 
         return (string) config('app.locale', 'en');
+    }
+
+    /**
+     * The newest `locale` cookie on the request, not the first.
+     *
+     * A browser sends every cookie whose domain matches, so a host-only
+     * `locale=en` written before SESSION_DOMAIN became `.sniffpal.test` travels
+     * beside the `.sniffpal.test` cookie a later switch wrote — and, being the
+     * older of two same-path cookies, ahead of it (RFC 6265 §5.4):
+     * `locale=en; appearance=light; locale=ar`. PHP keeps the first duplicate,
+     * so `$request->cookie()` answered `en` and every switch looked like a
+     * no-op (measured 2026-11-21). The last duplicate is the newest, and the
+     * newest is the one the reader asked for. Safe to read raw: `locale` is
+     * plain text, in the encryptCookies except-list.
+     */
+    protected function newestCookie(Request $request): ?string
+    {
+        $pattern = '/(?:^|;)\s*'.preg_quote($this->cookieName(), '/').'=([^;]*)/';
+
+        preg_match_all($pattern, (string) $request->headers->get('cookie', ''), $matches);
+
+        $last    = end($matches[1]);
+
+        return $last === false
+            ? $request->cookie($this->cookieName())
+            : urldecode(trim($last));
     }
 
     protected function cookieName(): string

@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -92,7 +93,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class User extends Authenticatable implements HasLocalePreference, HasMedia, Likeable, MustVerifyEmail, PasskeyUser, Reportable, Reviewable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, HasLikes, HasReport, HasReviews, InteractsWithMedia, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+    use HasApiTokens, HasFactory, HasLikes, HasReport, HasReviews, InteractsWithMedia, Notifiable, PasskeyAuthenticatable, SoftDeletes, TwoFactorAuthenticatable;
 
     /**
      * The DB defaults the model declares non-nullable, restated here so a

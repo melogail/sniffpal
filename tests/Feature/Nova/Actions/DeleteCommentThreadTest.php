@@ -31,10 +31,10 @@ test('deletes a comment, its replies and everything filed against them', functio
         ->assertOk()
         ->assertJsonPath('message', '1 comment thread(s) deleted, along with their replies, likes and reports.');
 
-    $this->assertModelMissing($root);
-    $this->assertModelMissing($reply);
+    $this->assertSoftDeleted($root);
+    $this->assertSoftDeleted($reply);
     $this->assertModelMissing($likeOnReply);
-    $this->assertModelMissing($reportOnReply);
+    $this->assertSoftDeleted($reportOnReply);
 
     $this->assertModelExists($sibling);
     $this->assertModelExists($likeOnSibling);

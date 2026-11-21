@@ -717,5 +717,8 @@
     "help.publish_listing": "Publish a listing",
     "help.faq_add_pet_after": ". The form is eight short steps — the basics, where the pet is, photos, health, personality, anything extra, veterinary details, and a review of the lot. You will be asked to sign in first if you have not already. Nothing is saved until you submit on the last step, and you can move between steps freely before then.",
     "help.faq_update_pet_before": "Open the listing and choose",
-    "help.faq_update_pet_after": ". You will see the same eight steps with everything already filled in. Saving replaces the whole listing, so leave the fields you are not changing exactly as they are — including the cover photo, which stays as it is unless you pick a new one."
+    "help.faq_update_pet_after": ". You will see the same eight steps with everything already filled in. Saving replaces the whole listing, so leave the fields you are not changing exactly as they are — including the cover photo, which stays as it is unless you pick a new one.",
+    "comments.like_name": "Like :name's comment, :count",
+    "comments.count_on": ":count comments on :name",
+    "reviews.not_rated": "Not rated"
 }

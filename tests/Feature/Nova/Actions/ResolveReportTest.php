@@ -41,7 +41,7 @@ test('removes a reported comment and reports how many reports the decision close
         ->assertOk()
         ->assertJsonPath('message', '2 report(s) marked as Resolved (Content Removed).');
 
-    $this->assertModelMissing($comment);
+    $this->assertSoftDeleted($comment);
     expect(Report::query()->where('status', ReportStatus::Resolved)->count())->toBe(2);
 });
 

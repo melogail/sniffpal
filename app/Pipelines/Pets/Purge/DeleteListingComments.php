@@ -26,7 +26,7 @@ class DeleteListingComments
         $commentIds = $context->commentIds();
 
         if ($commentIds !== []) {
-            Comment::query()->whereKey($commentIds)->delete();
+            Comment::query()->whereKey($commentIds)->forceDelete();
         }
 
         return $next($context);

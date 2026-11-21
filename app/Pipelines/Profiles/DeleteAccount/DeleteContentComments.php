@@ -37,7 +37,7 @@ class DeleteContentComments
     {
         Comment::query()
             ->whereKey($context->commentIds())
-            ->delete();
+            ->forceDelete();
 
         return $next($context);
     }

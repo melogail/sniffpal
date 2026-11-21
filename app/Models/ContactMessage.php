@@ -6,6 +6,7 @@ use Database\Factories\ContactMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -29,5 +30,5 @@ use Illuminate\Support\Carbon;
 class ContactMessage extends Model
 {
     /** @use HasFactory<ContactMessageFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 }

@@ -94,6 +94,22 @@ test('refuses a second review of the same target by the same author and leaves o
         reviewableId: $subject->getKey(),
         rate: 1,
     ))->toThrow(AlreadyReviewed::class);
+});
+
+test('a review the author deleted does not block reviewing the same person again', function () {
+    $author  = User::factory()->create();
+    $subject = User::factory()->create();
+    Review::factory()->for($author)->forUser($subject)->create()->delete();
+
+    $review  = app(CreateReview::class)->handle(
+        author: $author,
+        reviewableType: Reviewable::User,
+        reviewableId: $subject->getKey(),
+        rate: 2,
+    );
+
+    expect(Review::withTrashed()->where('user_id', $author->getKey())->count())->toBe(1)
+        ->and($review->rate)->toBe(2);
 
     expect(Review::query()->count())->toBe(1);
 });

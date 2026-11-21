@@ -50,8 +50,8 @@ import { like as likePet } from '@/routes/pets';
  *
  * The visible label is the bare count, so **every** caller names it from
  * outside with a fall-through `aria-label` — `PetCardActions` on a feed card
- * and `PetDetailHeader` on the listing page, both building the string with
- * `card/labels`' `countLabel`. Repetition is not the reason: an unqualified
+ * and `PetDetailHeader` on the listing page, both building the string from
+ * the `pets.like_name` catalogue keys. Repetition is not the reason: an unqualified
  * "10" identifies nothing even where the page renders exactly one of these,
  * which is what the detail page announced while it was the caller that omitted
  * the label. That works here — unlike on `StartConversationButton`, see its

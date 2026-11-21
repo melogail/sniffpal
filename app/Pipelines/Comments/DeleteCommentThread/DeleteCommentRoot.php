@@ -2,6 +2,7 @@
 
 namespace App\Pipelines\Comments\DeleteCommentThread;
 
+use App\Models\Comment;
 use Closure;
 
 /**
@@ -22,6 +23,9 @@ class DeleteCommentRoot
     public function handle(DeleteCommentThreadContext $context, Closure $next): mixed
     {
         $context->markDeleted((bool) $context->comment->delete());
+
+        // A soft delete fires no `comments.parent_id` cascade, so the collected replies go explicitly.
+        Comment::query()->whereKey($context->subtreeIds())->delete();
 
         return $next($context);
     }

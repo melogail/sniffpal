@@ -28,8 +28,8 @@ test('deletes a review and the reports filed against it', function () {
         ->assertOk()
         ->assertJsonPath('message', '1 review(s) deleted, along with the reports filed against them.');
 
-    $this->assertModelMissing($review);
-    $this->assertModelMissing($report);
+    $this->assertSoftDeleted($review);
+    $this->assertSoftDeleted($report);
 
     $this->assertModelExists($bystander);
     $this->assertModelExists($bystanderReport);

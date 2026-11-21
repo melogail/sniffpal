@@ -52,8 +52,8 @@ test('lets a category be deleted once its retired listings are purged', function
         ->assertJsonPath('message', '1 category deleted, along with its breeds.');
 
     expect(Pet::withTrashed()->whereKey($retired->getKey())->exists())->toBeFalse();
-    $this->assertModelMissing($category);
-    $this->assertModelMissing($breed);
+    $this->assertSoftDeleted($category);
+    $this->assertSoftDeleted($breed);
 });
 
 test('permanently deletes a listing with its thread, reactions, saves, reports and photos', function () {

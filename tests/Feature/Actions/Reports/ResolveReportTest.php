@@ -84,7 +84,7 @@ test('removing content deletes the target through the application action and kee
     $decided = decide($report, ReportStatus::Resolved, ReportResolution::ContentRemoved);
 
     expect($decided->modelKeys())->toEqualCanonicalizing([$report->getKey(), $sibling->getKey()]);
-    expect($type === Reportable::Pet ? $target->fresh()->trashed() : $target->fresh() === null)->toBeTrue();
+    expect($target->fresh()->trashed())->toBeTrue();
     expect($sibling->fresh()->status)->toBe(ReportStatus::Resolved)
         ->and($sibling->fresh()->resolution)->toBe(ReportResolution::ContentRemoved)
         ->and($other->fresh()->status)->toBe(ReportStatus::Pending)
@@ -164,7 +164,7 @@ test('still records the decision when the target has already disappeared', funct
     Notification::fake();
     $review = Review::factory()->create();
     $report = Report::factory()->forReportable($review)->create();
-    $review->delete();
+    $review->forceDelete();
 
     decide($report, ReportStatus::Resolved, ReportResolution::ContentRemoved);
 

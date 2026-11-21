@@ -47,7 +47,7 @@ That is not cosmetic. A stranded `reports` row sits in the moderation queue with
 
 Rule: never let a cascade be the only thing deleting a row that has polymorphic children. Collect the subtree first, delete each polymorphic child explicitly, then delete the root — all inside one transaction opened by the Action, not by a step. `Pipelines\Comments\DeleteCommentThread` is the worked example; a new polymorphic child of Comment is a new step in that flow, not a branch in an existing one.
 
-If `Comment` ever gains an observer or soft deletes, the cascade must stop being trusted for the descendants' `comments` rows too — it bypasses both. The subtree is already collected, so that is a one-step change.
+`Comment` soft deletes (since 2026-11-21), so `DeleteCommentRoot` soft-deletes the collected subtree explicitly: a soft delete fires no `comments.parent_id` cascade. Purge flows (`Pets\Purge`, `Profiles\DeleteAccount`) use `forceDelete()` so their cascades still run.
 
 ## Deleting medialibrary rows inside a transaction: defer with DB::afterCommit
 `MediaObserver::deleted()` calls `Filesystem::removeAllFiles()` the instant `$media->delete()` returns from the database — not on commit. Deleting a file is not transactional, so any `$media->delete()` inside a `DB::transaction()` that a later step can throw out of leaves a **live media row whose file is gone**: a permanently broken image on a save the user was told had failed.

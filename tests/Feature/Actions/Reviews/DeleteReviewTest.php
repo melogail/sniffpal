@@ -19,8 +19,8 @@ test('removes the review and the reports filed against it', function () {
 
     app(DeleteReview::class)->handle($review);
 
-    $this->assertModelMissing($review);
-    $this->assertModelMissing($report);
+    $this->assertSoftDeleted($review);
+    $this->assertSoftDeleted($report);
 });
 
 test('leaves the reports filed against another review in place', function () {
@@ -44,7 +44,7 @@ test('removes every report filed against the review, not just the first', functi
 
     app(DeleteReview::class)->handle($review);
 
-    $this->assertDatabaseEmpty('reports');
+    expect(Report::query()->count())->toBe(0);
 });
 
 test('keeps a resolved report on the review as the moderation record', function () {
@@ -54,7 +54,7 @@ test('keeps a resolved report on the review as the moderation record', function 
 
     app(DeleteReview::class)->handle($review);
 
-    $this->assertModelMissing($review);
-    $this->assertModelMissing($pending);
+    $this->assertSoftDeleted($review);
+    $this->assertSoftDeleted($pending);
     $this->assertModelExists($decided);
 });

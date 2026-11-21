@@ -11,7 +11,6 @@ import {
 import { computed, ref } from 'vue';
 import CommentDeleteDialog from '@/components/comments/CommentDeleteDialog.vue';
 import CommentEditDialog from '@/components/comments/CommentEditDialog.vue';
-import { countLabel } from '@/components/pets/card/labels';
 import ReportDialog from '@/components/reports/ReportDialog.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -193,8 +192,8 @@ const hasMenu = computed(() => comment.is_author || canReport.value);
  * comments. Before: nine buttons computing to `0 0 0 6 1 3 5 0 0`, each with
  * `pressed: false` intact. After, at the same nine:
  * `Like Mr. Esteban Halvorson's comment, 6 likes`,
- * `Like Evie Reichel's comment, 1 like` — the singular is `countLabel`'s, and
- * it is the case a template ternary gets wrong — and so on, `pressed`
+ * `Like Evie Reichel's comment, 1 like` — the singular is the catalogue's
+ * `pets.like_count`, the case a template ternary gets wrong — and so on, `pressed`
  * unchanged. The pet's own like control one section up already read
  * `Like Ezekiel, 3 likes`, which is the corrected pattern this copies rather
  * than re-invents, and it reads the same in both arms.
@@ -209,23 +208,25 @@ const hasMenu = computed(() => comment.is_author || canReport.value);
  * `Like Ezekiel, 3 likes` and `Next »` are unchanged — so the instrument
  * discriminates rather than reporting green at whatever it is pointed at.
  *
- * `countLabel` is imported from `pets/card/labels` rather than re-written, for
- * the reason that file gives: the plural is decided once so two surfaces cannot
- * phrase "1 comments" differently. It also means this name is **English while
- * everything visible in this component goes through `t()`** — the same
- * deliberate trade `PetDetailHeader` documents, not an oversight. The scheduled
- * i18n pass (.ai/rules/lang.md) owns `lang/*.json` and will need one new key
- * here; no key was added from this side. Containment holds in every locale
- * regardless, because the visible text is a digit string and a digit string is
- * inside the English name whatever the page renders around it.
+ * The name goes through `t()` like everything visible here: `comments.like_name`
+ * wraps the author, and the count reuses `pets.like_count` / `pets.likes_count`
+ * so this button and the pet's own like control pluralise from one place
+ * (an English-only helper did this until 2026-11-21, which left the name
+ * untranslated in Arabic). Containment holds in every locale regardless,
+ * because the visible text is a digit string inside whatever the name renders.
  *
  * The author is named because it is the only thing that tells two of these
  * apart in a button list; `comments.unknown` is the fallback for a deleted
  * account, and it is the one translated fragment in the string.
  */
-const likeLabel = computed(
-    () =>
-        `Like ${author.value?.name ?? t('comments.unknown')}'s comment, ${countLabel(comment.likes_count, 'like')}`,
+const likeLabel = computed(() =>
+    t('comments.like_name', {
+        name: author.value?.name ?? t('comments.unknown'),
+        count: t(
+            comment.likes_count === 1 ? 'pets.like_count' : 'pets.likes_count',
+            { count: comment.likes_count },
+        ),
+    }),
 );
 </script>
 

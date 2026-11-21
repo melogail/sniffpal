@@ -96,6 +96,7 @@ class DeleteCategory extends DestructiveAction
         try {
             DB::transaction(function () use ($models): void {
                 $models->each(function (Category $category): void {
+                    $category->breeds()->delete();
                     $category->delete();
                 });
             });

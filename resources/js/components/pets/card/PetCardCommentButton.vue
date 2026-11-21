@@ -2,8 +2,8 @@
 import { MessageCircle } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import CommentsDialog from '@/components/comments/CommentsDialog.vue';
-import { countLabel } from '@/components/pets/card/labels';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/composables/useTranslations';
 import type { Comment, ReportReasonsByType } from '@/types';
 
 /**
@@ -98,6 +98,8 @@ const { commentsCount, name } = defineProps<{
 }>();
 
 /** Writes made in the open dialog, as a delta on the feed's count. */
+const { t } = useTranslations();
+
 const offset = ref(0);
 
 const commentsShown = computed(() => commentsCount + offset.value);
@@ -110,8 +112,8 @@ function countDeleted(removed: number): void {
     offset.value = Math.max(-commentsCount, offset.value - removed);
 }
 
-const label = computed(
-    () => `${countLabel(commentsShown.value, 'comment')} on ${name}`,
+const label = computed(() =>
+    t('comments.count_on', { count: commentsShown.value, name }),
 );
 </script>
 

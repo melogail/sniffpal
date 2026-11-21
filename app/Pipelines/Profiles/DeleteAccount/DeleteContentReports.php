@@ -40,7 +40,7 @@ class DeleteContentReports
                         ->whereIn('reportable_id', $ids));
                 }
             })
-            ->delete();
+            ->forceDelete();
 
         return $next($context);
     }

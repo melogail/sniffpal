@@ -44,12 +44,12 @@ test('removes the whole subtree together with the likes and reports of every com
     expect($deleted)->toBeTrue();
 
     foreach ([$root, $reply, $grandchild] as $comment) {
-        $this->assertModelMissing($comment);
+        $this->assertSoftDeleted($comment);
         $this->assertDatabaseMissing('likes', [
             'likeable_type' => 'comment',
             'likeable_id'   => $comment->getKey(),
         ]);
-        $this->assertDatabaseMissing('reports', [
+        $this->assertSoftDeleted('reports', [
             'reportable_type' => 'comment',
             'reportable_id'   => $comment->getKey(),
         ]);
@@ -76,7 +76,7 @@ test('leaves a like on another model that happens to share an id with a deleted 
 
     app(DeleteComment::class)->handle($root);
 
-    $this->assertModelMissing($grandchild);
+    $this->assertSoftDeleted($grandchild);
     $this->assertModelExists($petLike);
 });
 
@@ -116,8 +116,8 @@ test('deleting a reply leaves its parent and the parent reactions in place', fun
         'reportable_type' => 'comment',
         'reportable_id'   => $root->getKey(),
     ]);
-    $this->assertModelMissing($reply);
-    $this->assertModelMissing($grandchild);
+    $this->assertSoftDeleted($reply);
+    $this->assertSoftDeleted($grandchild);
 });
 
 test('keeps a resolved report on a deleted comment as the moderation record', function () {
@@ -127,7 +127,7 @@ test('keeps a resolved report on a deleted comment as the moderation record', fu
 
     app(DeleteComment::class)->handle($comment);
 
-    $this->assertModelMissing($comment);
-    $this->assertModelMissing($pending);
+    $this->assertSoftDeleted($comment);
+    $this->assertSoftDeleted($pending);
     $this->assertModelExists($decided);
 });

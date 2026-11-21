@@ -73,6 +73,13 @@ class PersistReview
     {
         $reviewable = $context->reviewable();
 
+        // A trashed earlier review would still trip the unique index.
+        Review::onlyTrashed()
+            ->where('user_id', $context->author->getKey())
+            ->where('reviewable_type', Relation::getMorphAlias($reviewable::class))
+            ->where('reviewable_id', $reviewable->getKey())
+            ->forceDelete();
+
         try {
             $review = Review::create([
                 'user_id'         => $context->author->getKey(),

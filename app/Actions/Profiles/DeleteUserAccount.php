@@ -50,7 +50,7 @@ use Illuminate\Support\Facades\DB;
  *
  * ## Not soft deletes, and not a queue
  *
- * `users` has no SoftDeletes and this phase does not add them: a soft-deleting
+ * `users` soft deletes, but this flow calls `forceDelete()` on purpose: a soft-deleting
  * `users` table would need a global scope, and every one of the eight
  * `cascadeOnDelete` foreign keys pointing at it would keep hard-deleting on the
  * eventual force delete anyway, so it would move the problem rather than solve
