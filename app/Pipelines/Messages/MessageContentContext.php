@@ -25,7 +25,7 @@ namespace App\Pipelines\Messages;
  *
  * ## Behaviour change from the legacy app, stated deliberately
  *
- * Verified in petconnect-old: MessageService::send() and ::update() wrote
+ * Verified in sniffpal-old: MessageService::send() and ::update() wrote
  * `content` straight through the repository, while CommentService ran the
  * submitted text through TrimContentPipeline and FilterBadWordsPipeline. So
  * private messages bypassed the filter comments went through. Running it here

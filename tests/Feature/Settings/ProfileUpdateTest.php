@@ -248,7 +248,7 @@ test('a file that is not an image is rejected and nothing is attached', function
 
 test('an avatar over the configured ceiling is rejected and nothing is attached', function () {
     Storage::fake(config('media-library.disk_name'));
-    config(['petconnect.profiles.max_avatar_kilobytes' => 10]);
+    config(['sniffpal.profiles.max_avatar_kilobytes' => 10]);
     $user = User::factory()->create();
 
     $this->actingAs($user)

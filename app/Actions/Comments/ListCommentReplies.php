@@ -45,7 +45,7 @@ class ListCommentReplies
         ?User $viewer = null,
         ?int $perPage = null,
     ): LengthAwarePaginator {
-        $perPage ??= (int) config('petconnect.comments.replies_per_page', 10);
+        $perPage ??= (int) config('sniffpal.comments.replies_per_page', 10);
 
         return $comment->replies()
             ->with('user.media')

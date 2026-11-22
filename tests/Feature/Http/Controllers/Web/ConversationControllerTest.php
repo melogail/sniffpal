@@ -313,7 +313,7 @@ describe('previews', function () {
      * filter over the list beside it.
      */
     test('counts the whole inbox in the badge rather than the rows it returns', function () {
-        config(['petconnect.messaging.preview_per_page' => 5]);
+        config(['sniffpal.messaging.preview_per_page' => 5]);
         $reader   = User::factory()->create();
         seedMenuThreadsFor($reader, threads: 7);
 
@@ -357,7 +357,7 @@ describe('previews', function () {
      * it true rather than merely undocumented.
      */
     test('publishes no pagination and ignores a page parameter', function () {
-        config(['petconnect.messaging.preview_per_page' => 5]);
+        config(['sniffpal.messaging.preview_per_page' => 5]);
         $reader     = User::factory()->create();
         seedMenuThreadsFor($reader, threads: 7);
 
@@ -389,7 +389,7 @@ describe('show', function () {
 
     /**
      * The composer cannot enforce a ceiling it has not been told: it hardcoded
-     * 5000, which matched `petconnect.messaging.max_length` by coincidence and
+     * 5000, which matched `sniffpal.messaging.max_length` by coincidence and
      * would have drifted the moment either side moved. The bound is read
      * through the same MessageValidationRules accessor StoreMessageRequest's
      * `max:` rule is built from, so moving the config has to move both — which
@@ -397,7 +397,7 @@ describe('show', function () {
      * fail.
      */
     test('ships the length ceiling the composer draws its counter from', function () {
-        config(['petconnect.messaging.max_length' => 140]);
+        config(['sniffpal.messaging.max_length' => 140]);
         $reader         = User::factory()->create();
         [$conversation] = threadWithPeer($reader);
 
@@ -619,7 +619,7 @@ describe('store', function () {
 
     test('rejects an opening message longer than the configured ceiling and opens nothing', function () {
         $recipient = User::factory()->create();
-        $maxLength = config('petconnect.messaging.max_length');
+        $maxLength = config('sniffpal.messaging.max_length');
 
         $this->actingAs(User::factory()->create())
             ->post(route('conversations.store'), [

@@ -47,11 +47,12 @@ class UserSummaryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'       => $this->id,
-            'name'     => $this->name,
-            'username' => $this->username,
-            'location' => $this->location,
-            'avatar'   => $this->getFirstMediaUrl('users', 'thumb') ?: null,
+            'id'                 => $this->id,
+            'name'               => $this->name,
+            'username'           => $this->username,
+            'location'           => $this->location,
+            'is_founding_member' => $this->isFoundingMember(),
+            'avatar'             => $this->getFirstMediaUrl('users', 'thumb') ?: null,
         ];
     }
 }

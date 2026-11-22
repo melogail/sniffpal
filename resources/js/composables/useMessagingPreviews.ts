@@ -142,7 +142,7 @@ function currentViewerId(): number | null {
  *
  * The endpoint returns `{data, meta}` and no `links`, deliberately. There is no
  * page number to hold, no `loadUrl`, and no "load more" to build — the contract
- * is "the newest five" (`petconnect.messaging.preview_per_page`), and the badge
+ * is "the newest five" (`sniffpal.messaging.preview_per_page`), and the badge
  * is `meta.unread_count`, which counts the viewer's whole inbox rather than
  * those five.
  *

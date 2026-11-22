@@ -1,7 +1,7 @@
 {{--
     `lang` and `dir` both come from the `locale` shared prop, which
     Http\Middleware\HandleInertiaRequests derives from App::getLocale() and the
-    `petconnect.locales.rtl` whitelist. Reading the prop rather than recomputing
+    `sniffpal.locales.rtl` whitelist. Reading the prop rather than recomputing
     it here keeps one reader of that whitelist: the SetLocale middleware has
     already resolved cookie -> user -> session -> app.locale by the time this
     renders.
@@ -74,6 +74,18 @@
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
+        </script>
+        @endif
+
+        @if($metaPixelId = config('services.meta_pixel.id'))
+        <script>
+          !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+          n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+          document,'script','https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', '{{ $metaPixelId }}');
+          fbq('track', 'PageView');
         </script>
         @endif
 

@@ -59,14 +59,14 @@ class ListHomeFeedPets
             query: Pet::query(),
             filters: HomeFeedFilters::fromArray(
                 $filters,
-                (float) config('petconnect.filters.max_age_years', 15),
+                (float) config('sniffpal.filters.max_age_years', 15),
             ),
             viewer: $viewer,
             latitude: $latitude,
             longitude: $longitude,
             radiusKm: $radiusKm,
-            perPage: $perPage ?? (int) config('petconnect.pets.feed_per_page', 12),
-            commentPreview: (int) config('petconnect.pets.feed_comment_preview', 3),
+            perPage: $perPage ?? (int) config('sniffpal.pets.feed_per_page', 12),
+            commentPreview: (int) config('sniffpal.pets.feed_comment_preview', 3),
         );
 
         return $this->pipeline

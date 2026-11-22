@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Enums\PetStatus;
 use App\Models\Pet;
+use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class PetObserver
@@ -27,6 +29,34 @@ class PetObserver
         $prefix    = Str::slug($pet->breed->name ?? $pet->category->name ?? '');
 
         $pet->slug = ($prefix === '' ? 'pet' : $prefix).'-'.Str::lower(Str::random(8));
+    }
+
+    /**
+     * The launch offer: the owner's first listing inside the window earns the
+     * founding badge while fewer than `sniffpal.founding.cap` hold it. Never
+     * revoked, so a deleted listing keeps it (plan: launch-prerequisites).
+     */
+    public function created(Pet $pet): void
+    {
+        $owner                     = $pet->user;
+
+        if ($owner === null || $owner->isFoundingMember()) {
+            return;
+        }
+
+        $windowEnd                 = Carbon::parse(config('sniffpal.founding.window_ends_at'), 'Africa/Cairo');
+
+        if (now()->greaterThan($windowEnd)) {
+            return;
+        }
+
+        // shortcut: the count-then-save can overshoot the cap by the number of first listings committed in the same instant; wrap in Cache::lock if an exact cap ever matters.
+        if (User::foundingMembers()->count() >= (int) config('sniffpal.founding.cap')) {
+            return;
+        }
+
+        $owner->founding_member_at = now();
+        $owner->saveQuietly();
     }
 
     public function updated(Pet $pet): void

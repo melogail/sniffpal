@@ -26,16 +26,16 @@ use Illuminate\Support\Str;
  *
  * ## How to run it for real, without dropping the dev database
  *
- *     DB_CONNECTION=mysql DB_DATABASE=petconnect_index_plan vendor/bin/pest --filter=MysqlIndexPlan
+ *     DB_CONNECTION=mysql DB_DATABASE=sniffpal_index_plan vendor/bin/pest --filter=MysqlIndexPlan
  *
  * **Both overrides are mandatory and the database must already exist and must
- * never be `petconnect`.** `LazilyRefreshDatabase` runs `migrate:fresh`, which
+ * never be `sniffpal`.** `LazilyRefreshDatabase` runs `migrate:fresh`, which
  * drops every table it finds. `phpunit.xml`'s `<env>` entries are non-forcing,
  * so `DB_CONNECTION=mysql` on its own falls back to `DB_DATABASE=:memory:` and
  * fails safely — but any invocation that also supplies `DB_DATABASE`, or a
  * shell that exports it, drops whatever it points at. `.ai/rules/migrations.md`
  * records an orchestrator issuing exactly this class of command against the
- * live `petconnect` dev database; read that note before running anything here.
+ * live `sniffpal` dev database; read that note before running anything here.
  *
  * The plans below were measured on **MySQL 8.0.46** (`php artisan db:show` on
  * the dev connection). MariaDB is excluded in `beforeEach()`: its optimiser and
@@ -80,8 +80,8 @@ beforeEach(function (): void {
             'EXPLAIN plans are InnoDB-specific and this suite runs %s (phpunit.xml), while dev and '
             .'production are MySQL 8.0.46. A plan measured on another driver would say nothing about '
             .'the driver the application runs on, so this file only runs when the test connection is '
-            .'MySQL. To run it: DB_CONNECTION=mysql DB_DATABASE=petconnect_index_plan vendor/bin/pest '
-            .'--filter=MysqlIndexPlan — never against the petconnect dev database, migrate:fresh drops it.',
+            .'MySQL. To run it: DB_CONNECTION=mysql DB_DATABASE=sniffpal_index_plan vendor/bin/pest '
+            .'--filter=MysqlIndexPlan — never against the sniffpal dev database, migrate:fresh drops it.',
             $connection->getDriverName(),
         ));
     }

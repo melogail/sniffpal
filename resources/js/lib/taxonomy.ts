@@ -28,7 +28,7 @@ type LocalisedNames = { name: string } & Partial<
  * The lookup is general — `name_${locale}` for whatever `locale.current` says,
  * falling back to `name` — so nothing here hardcodes `'ar'`.
  * .ai/rules/lang.md forbids hardcoding `=== 'ar'` because
- * `petconnect.locales.rtl` is the one authority for *direction*; a suffix
+ * `sniffpal.locales.rtl` is the one authority for *direction*; a suffix
  * lookup asserts neither a direction nor a language list, and a third locale
  * means adding a `name_xx` column and nothing on this side of the wire.
  *

@@ -54,7 +54,7 @@ It is `PetPhotoRules` and not `PetValidationRules` because a controller cannot t
 Rule for the next one: a bound the client has to render goes in an accessor on the trait the `max:`/`min:` rule is built from, never a second `config()` call in the controller.
 
 ## A client that pages a list must be shipped the page size — it cannot infer it
-`petconnect.pets.detail_comment_page_size` (the slice `LoadPetDetail` ships inside `pets.show`) and `petconnect.comments.thread_per_page` (what `comments.index` pages by) are independent env vars. CommentThread.vue assumed they matched, so its first "load more" asked for page 1 — the slice already on screen — deduped to nothing, and the user had to click twice.
+`sniffpal.pets.detail_comment_page_size` (the slice `LoadPetDetail` ships inside `pets.show`) and `sniffpal.comments.thread_per_page` (what `comments.index` pages by) are independent env vars. CommentThread.vue assumed they matched, so its first "load more" asked for page 1 — the slice already on screen — deduped to nothing, and the user had to click twice.
 
 Fix, and the shape for the next one: the page size goes on the bounds prop, read through the same accessor the paginator uses. `CommentValidationRules::threadPerPage()` now backs both `commentBounds.thread_per_page` and `ListCommentThread`'s default `$perPage`, so there is one spelling of the key. A paging size on a `*ValidationRules` trait is deliberate — it is not a rule, but that trait is where the config key lives, and `Actions\Fortify\CreateNewUser` already sets the precedent of an Action taking one. Nothing on it touches a Request, so it is safe off a Form Request.
 

@@ -57,8 +57,8 @@ type BlockedStatus = Extract<GeolocationStatus, 'denied' | 'unsupported'>;
 
 type StoredPermission = { status: BlockedStatus; storedAt: number };
 
-const COORDINATES_KEY = 'petconnect:user-coordinates';
-const PERMISSION_KEY = 'petconnect:geolocation-permission';
+const COORDINATES_KEY = 'sniffpal:user-coordinates';
+const PERMISSION_KEY = 'sniffpal:geolocation-permission';
 
 /** A position is reusable for five minutes; after that, ask again. */
 const COORDINATES_TTL_MS = 5 * 60 * 1000;
@@ -311,12 +311,12 @@ function mapGeolocationError(
  *
  * ## Two caches, two different jobs
  *
- * - **Coordinates**, `petconnect:user-coordinates`, five minutes. A position is
+ * - **Coordinates**, `sniffpal:user-coordinates`, five minutes. A position is
  *   expensive (a GPS fix, and a permission prompt the first time) and does not
  *   move far in five minutes, so a second visit inside the window reuses it and
  *   prompts nobody. Session-scoped, so closing the tab forgets it — a location
  *   is not something to persist past the visit that needed it.
- * - **A refusal**, `petconnect:geolocation-permission`, one hour. This is the
+ * - **A refusal**, `sniffpal:geolocation-permission`, one hour. This is the
  *   one that matters: without it, "ask on mount" means a visitor who said no is
  *   asked again on the next page load, and again after that. Only `denied` and
  *   `unsupported` are memoised. A `timeout` or an unavailable fix is not a

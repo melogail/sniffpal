@@ -107,7 +107,7 @@ trait TicketValidationRules
      */
     public function maxTicketMessageLength(): int
     {
-        return (int) config('petconnect.support.max_message_length', 2000);
+        return (int) config('sniffpal.support.max_message_length', 2000);
     }
 
     /**

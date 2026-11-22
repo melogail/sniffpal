@@ -71,7 +71,7 @@ class BuildNotificationInbox
      */
     public function handle(User $user, ?int $perPage = null): array
     {
-        $perPage ??= (int) config('petconnect.notifications.inbox_per_page', 15);
+        $perPage ??= (int) config('sniffpal.notifications.inbox_per_page', 15);
 
         return [
             'notifications' => $user->notifications()->paginate($perPage),

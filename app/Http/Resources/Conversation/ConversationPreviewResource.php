@@ -39,9 +39,9 @@ use Illuminate\Support\Str;
  * it is the only nested object left. The gap grows with the message, not with
  * the row count:
  * `MessageResource` emits `content` in full against a
- * `petconnect.messaging.max_length` of 5,000, so five long messages are ~25 KB
+ * `sniffpal.messaging.max_length` of 5,000, so five long messages are ~25 KB
  * on every page load, while the snippet is capped at
- * `petconnect.messaging.preview_snippet_length`.
+ * `sniffpal.messaging.preview_snippet_length`.
  *
  * There was never an exposure problem to fix — every key ConversationResource
  * emits already reaches this viewer on the inbox page. This is about bytes on a
@@ -162,13 +162,13 @@ class ConversationPreviewResource extends JsonResource
      * How many characters of the last message the menu is given.
      *
      * A snippet is not a message: the row is one line in a dropdown, so the
-     * bound is a display decision and lives in `config/petconnect.php` beside
+     * bound is a display decision and lives in `config/sniffpal.php` beside
      * `preview_per_page` rather than being derived from
-     * `petconnect.messaging.max_length`, which is a validation ceiling for the
+     * `sniffpal.messaging.max_length`, which is a validation ceiling for the
      * whole correspondence.
      */
     protected function snippetLength(): int
     {
-        return (int) config('petconnect.messaging.preview_snippet_length', 120);
+        return (int) config('sniffpal.messaging.preview_snippet_length', 120);
     }
 }

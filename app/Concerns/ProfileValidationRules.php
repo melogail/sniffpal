@@ -155,7 +155,7 @@ trait ProfileValidationRules
     }
 
     /**
-     * The self-description, bounded by `petconnect.profiles.bio_max_length`
+     * The self-description, bounded by `sniffpal.profiles.bio_max_length`
      * rather than by a literal — the column is `text`, so this config value is
      * the only ceiling there is.
      *
@@ -269,7 +269,7 @@ trait ProfileValidationRules
      * Optional on the profile form, which may not even render a language
      * control; required on Http\Requests\Profile\UpdateLocaleRequest, whose
      * only purpose is to change it. Same whitelist either way —
-     * `petconnect.locales.supported`, which is also what
+     * `sniffpal.locales.supported`, which is also what
      * Actions\Profiles\ApplyUserLocale falls back from and what the SetLocale
      * middleware filters its candidates against.
      *
@@ -278,7 +278,7 @@ trait ProfileValidationRules
     protected function localeRules(bool $required = false): array
     {
         /** @var list<string> $supported */
-        $supported = config('petconnect.locales.supported', ['en']);
+        $supported = config('sniffpal.locales.supported', ['en']);
 
         return $required
             ? ['required', 'string', Rule::in($supported)]
@@ -329,11 +329,11 @@ trait ProfileValidationRules
 
     protected function bioMaxLength(): int
     {
-        return (int) config('petconnect.profiles.bio_max_length', 1000);
+        return (int) config('sniffpal.profiles.bio_max_length', 1000);
     }
 
     protected function maxAvatarKilobytes(): int
     {
-        return (int) config('petconnect.profiles.max_avatar_kilobytes', 2048);
+        return (int) config('sniffpal.profiles.max_avatar_kilobytes', 2048);
     }
 }

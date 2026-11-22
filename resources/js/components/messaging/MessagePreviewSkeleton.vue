@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
  * Laid out to `MessagePreviewRow`'s geometry — 40px avatar, a name line, a
  * snippet line, the same `px-4 py-3` and the same divider — so the panel does
  * not jump when the rows arrive. Three rows, not five: five is what
- * `petconnect.messaging.preview_per_page` returns, but a skeleton taller than
+ * `sniffpal.messaging.preview_per_page` returns, but a skeleton taller than
  * the list it stands in for reads as a longer wait than it is.
  *
  * This is the sibling of `NotificationSkeleton`, which makes the same trade for

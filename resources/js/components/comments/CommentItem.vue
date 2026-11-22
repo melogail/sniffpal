@@ -22,7 +22,7 @@ import type {
 /**
  * A thread root, its reply preview and the composer that adds to it.
  *
- * The page ships at most `petconnect.pets.detail_reply_preview` replies per
+ * The page ships at most `sniffpal.pets.detail_reply_preview` replies per
  * comment while `replies_count` is the true total, so anything beyond the
  * preview is paged in from `comments.replies` — a **JSON** endpoint, not a
  * page, so it goes through `useHttp` rather than a visit. Replies cannot be
@@ -49,7 +49,7 @@ const { comment, commentableType, commentableId } = defineProps<{
     comment: Comment;
     commentableType: CommentableType;
     commentableId: number;
-    /** `petconnect.comments.max_length`, when the page was shipped it. */
+    /** `sniffpal.comments.max_length`, when the page was shipped it. */
     maxLength?: number | null;
     canInteract: boolean;
     reportReasons?: ReportReasonsByType;

@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -124,6 +125,7 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     {
         return [
             'email_verified_at'       => 'datetime',
+            'founding_member_at'      => 'datetime',
             'last_seen_at'            => 'datetime',
             'is_active'               => 'boolean',
             'show_phone'              => 'boolean',
@@ -251,7 +253,7 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
      * Nothing looked broken, because `getFirstMediaUrl()` falls back to the
      * original when the named conversion has not been generated. Profile pages
      * were therefore serving the raw upload — 23 KB in the fixture, but
-     * `petconnect.profiles.max_avatar_kilobytes` allows 2 MB — where a ~40 KB
+     * `sniffpal.profiles.max_avatar_kilobytes` allows 2 MB — where a ~40 KB
      * 512px crop was intended, and `PetMediaResource` calls
      * `Media::getUrl('display')`, which does NOT fall back and would resolve to
      * a file that was never written.
@@ -285,6 +287,22 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     public function isVerified(): bool
     {
         return $this->email_verified_at !== null;
+    }
+
+    /** Holds the launch badge, see `sniffpal.founding` and PetObserver::created. */
+    public function isFoundingMember(): bool
+    {
+        return $this->founding_member_at !== null;
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function foundingMembers(Builder $query): Builder
+    {
+        return $query->whereNotNull('founding_member_at');
     }
 
     /**
@@ -388,7 +406,7 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
         $locale    = (string) ($this->locale ?: $fallback);
 
         /** @var list<string> $supported */
-        $supported = config('petconnect.locales.supported', ['en']);
+        $supported = config('sniffpal.locales.supported', ['en']);
 
         return in_array($locale, $supported, true) ? $locale : $fallback;
     }

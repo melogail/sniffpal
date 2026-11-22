@@ -12,7 +12,7 @@ export type UseLocaleReturn = {
 /**
  * The `locale` shared prop, which `HandleInertiaRequests` puts on every page.
  *
- * `petconnect.locales.rtl` is the one whitelist that decides direction — read
+ * `sniffpal.locales.rtl` is the one whitelist that decides direction — read
  * `isRtl` rather than comparing against `'ar'` anywhere.
  */
 export function useLocale(): UseLocaleReturn {

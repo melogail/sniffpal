@@ -157,11 +157,11 @@ class LoadProfileForDisplay
 
     protected function listingsPerPage(): int
     {
-        return (int) config('petconnect.profiles.listings_per_page', 12);
+        return (int) config('sniffpal.profiles.listings_per_page', 12);
     }
 
     protected function reviewsPerPage(): int
     {
-        return (int) config('petconnect.profiles.reviews_per_page', 10);
+        return (int) config('sniffpal.profiles.reviews_per_page', 10);
     }
 }

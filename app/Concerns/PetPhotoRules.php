@@ -80,7 +80,7 @@ trait PetPhotoRules
      */
     protected function maxGalleryImages(): int
     {
-        return (int) config('petconnect.pets.max_gallery_images', 3);
+        return (int) config('sniffpal.pets.max_gallery_images', 3);
     }
 
     /**
@@ -88,6 +88,6 @@ trait PetPhotoRules
      */
     protected function maxImageKilobytes(): int
     {
-        return (int) config('petconnect.pets.max_image_kilobytes', 512);
+        return (int) config('sniffpal.pets.max_image_kilobytes', 512);
     }
 }

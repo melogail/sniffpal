@@ -60,7 +60,7 @@ use Inertia\Response;
  *
  * ## Why a validation Concern is used by a controller
  *
- * `reviewBounds` ships `petconnect.reviews.min_rate` / `max_rate` /
+ * `reviewBounds` ships `sniffpal.reviews.min_rate` / `max_rate` /
  * `max_comment_length` to the page, because the star widget cannot draw a scale
  * it has not been told the length of and had been hardcoding five. The config
  * comment promises that changing `max_rate` moves the validator and the

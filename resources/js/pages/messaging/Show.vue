@@ -34,7 +34,7 @@ const { conversation, messages } = defineProps<{
     conversation: Conversation;
     messages: Paginated<Message>;
     /**
-     * `petconnect.messaging.max_length`, built from the same accessor the
+     * `sniffpal.messaging.max_length`, built from the same accessor the
      * `max:` rule is built from. The composer reads it instead of a literal.
      */
     messageBounds: MessageBounds;

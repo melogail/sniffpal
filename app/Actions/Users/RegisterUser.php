@@ -71,7 +71,7 @@ class RegisterUser
      */
     public function handle(array $attributes): User
     {
-        $attempts = max(1, (int) config('petconnect.profiles.media_directory_attempts', 3));
+        $attempts = max(1, (int) config('sniffpal.profiles.media_directory_attempts', 3));
 
         for ($attempt = 1; $attempt <= $attempts; $attempt++) {
             try {

@@ -72,7 +72,7 @@ function interpolate(
  *
  * `useLocale()` does, from the `locale` shared prop, and that prop is the
  * authority — `locale.current` for `<html lang>`, `locale.direction` (built
- * from `petconnect.locales.rtl`) for `<html dir>`. Do not infer either from
+ * from `sniffpal.locales.rtl`) for `<html dir>`. Do not infer either from
  * what happens to be in the catalogue: the catalogue is remembered across
  * visits and the locale prop is re-sent on every one, so a derived answer would
  * be the stale one exactly when it mattered. `initializeLocaleDirection()` in

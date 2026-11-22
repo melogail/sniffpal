@@ -234,7 +234,7 @@ describe('taxonomy and options', function () {
     });
 
     test('ships the enum options and validation bounds', function () {
-        config(['petconnect.comments.max_length' => 140]);
+        config(['sniffpal.comments.max_length' => 140]);
 
         $this->getJson(route('api.v1.options'))
             ->assertOk()

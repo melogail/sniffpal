@@ -38,7 +38,7 @@ export type CommentPreview = {
  * carries replies of its own.
  *
  * `replies` is absent where none were loaded: a feed card carries none at all,
- * the detail page carries `petconnect.pets.detail_reply_preview` per comment,
+ * the detail page carries `sniffpal.pets.detail_reply_preview` per comment,
  * and the rest are paged in from `comments.replies`.
  */
 export type Comment = CommentPreview & {

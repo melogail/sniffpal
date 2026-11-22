@@ -117,7 +117,7 @@ test('excludes reviews written about somebody else', function () {
 });
 
 test('pages at the configured size', function () {
-    config(['petconnect.reviews.per_page' => 2]);
+    config(['sniffpal.reviews.per_page' => 2]);
     $subject = User::factory()->create();
     seedReviewsAbout($subject, 3);
 
@@ -162,7 +162,7 @@ test('raises a model not found exception for a target that does not exist', func
 test('costs the same number of queries however many reviews are on the page', function (int $reviews) {
     $subject = User::factory()->create();
     seedReviewsAbout($subject, $reviews);
-    config(['petconnect.reviews.per_page' => $reviews]);
+    config(['sniffpal.reviews.per_page' => $reviews]);
 
     $page    = measureReviewsPage($subject, User::factory()->create());
 

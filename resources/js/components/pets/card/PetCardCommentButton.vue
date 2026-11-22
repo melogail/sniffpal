@@ -45,7 +45,7 @@ import type { Comment, ReportReasonsByType } from '@/types';
  * `comments` is the feed's bounded preview of the newest top-level comments.
  * `EagerLoadFeedRelations` loads them with `user.media`,
  * `withCount(['likes','replies'])`, `withLikedBy`, `withReportedBy` and
- * `latest()`, bounded by `config('petconnect.pets.feed_comment_preview')` —
+ * `latest()`, bounded by `config('sniffpal.pets.feed_comment_preview')` —
  * which `ListHomeFeedPets` carries in as `HomeFeedContext::$commentPreview` —
  * and `PetCardResource` ships them as `comments`. Cite the config key, not the
  * number it currently holds: the bound is `env('PETS_FEED_COMMENT_PREVIEW')`

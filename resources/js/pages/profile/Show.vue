@@ -51,7 +51,7 @@ const { profile } = defineProps<{
     reviews: Paginated<Review>;
     reportReasons: ReportReasonsByType;
     /**
-     * `petconnect.reviews.min_rate` / `max_rate` / `max_comment_length`, built
+     * `sniffpal.reviews.min_rate` / `max_rate` / `max_comment_length`, built
      * from the same accessors the validator's rules are. The star widget used
      * to hardcode five; nothing on this page may again.
      */

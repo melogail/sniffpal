@@ -15,7 +15,7 @@ This used to record a deferral. Phase 2e landed the whole chain it was waiting o
 
 It extends `Illuminate\Auth\Notifications\VerifyEmail` and overrides `toMail()` only. Do not reimplement `verificationUrl()`: it builds the signed, expiring route from `auth.verification.expire` and honours `VerifyEmail::createUrlUsing()`, all of which is security-relevant framework behaviour.
 
-Locale comes from the **notifiable** (`preferredLocale()`), never from `App::getLocale()` — the mail may render long after and elsewhere than the request that triggered it — and every string is translated with the explicit third `$locale` argument rather than by switching the application locale and switching it back. Direction comes from `petconnect.locales.rtl`, so a new RTL language is a config entry.
+Locale comes from the **notifiable** (`preferredLocale()`), never from `App::getLocale()` — the mail may render long after and elsewhere than the request that triggered it — and every string is translated with the explicit third `$locale` argument rather than by switching the application locale and switching it back. Direction comes from `sniffpal.locales.rtl`, so a new RTL language is a config entry.
 
 **`tests/Feature/Auth/VerificationNotificationTest` asserts `VerifyEmailNotification::class` and is green.** It used to assert `VerifyEmail::class` and failed, because `NotificationFake` keys sent notifications by exact class name rather than by `instanceof`, so the subclass did not satisfy it; the tester changed the assertion in the same phase. Keep the exact-class trap in mind for any notification that is subclassed — the fake will not match the parent.
 

@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 /**
  * A rating, read only.
  *
- * `max` is `petconnect.reviews.max_rate`, which now reaches the page as the
+ * `max` is `sniffpal.reviews.max_rate`, which now reaches the page as the
  * `reviewBounds` prop — built from the same accessor the `max:` rule is built
  * from. The default is a floor for a caller that has no bounds to hand, not a
  * licence to keep hardcoding five: pass it down.

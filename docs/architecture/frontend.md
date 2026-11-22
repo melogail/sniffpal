@@ -53,7 +53,7 @@ Run `php artisan wayfinder:generate` after adding routes (the Vite plugin does t
 
 ## Design system: "Aubergine & Lavender"
 
-Defined in `.claude/PETCONNECT-STYLE-GUIDE.md` and implemented as CSS tokens in `resources/css/app.css`.
+Defined in `.claude/SNIFFPAL-STYLE-GUIDE.md` and implemented as CSS tokens in `resources/css/app.css`.
 
 - **One accent.** Violet is the only chromatic colour; `--primary-600` in light mode, `--primary-400` in dark. Gradients are retired.
 - **One solid button per surface.** Primary actions are solid violet; secondaries are a lavender wash.

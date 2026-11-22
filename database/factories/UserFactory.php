@@ -161,4 +161,12 @@ class UserFactory extends Factory
             'is_active' => false,
         ]);
     }
+
+    /** Holds the launch badge, see `sniffpal.founding`. */
+    public function foundingMember(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'founding_member_at' => now(),
+        ]);
+    }
 }

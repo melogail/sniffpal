@@ -18,7 +18,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  *         ->usingFileName($filename)
  *         ->toMediaCollection('users');
  *
- * Verified in petconnect-old/app/Services/ProfileImageService.php. The clear
+ * Verified in sniffpal-old/app/Services/ProfileImageService.php. The clear
  * comes first, so any failure in the upload — an unreadable temp file, a full
  * disk, a conversion that throws, a rejected S3 write — left the account with
  * **no** avatar and nothing to restore: the previous file and its media row

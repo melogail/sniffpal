@@ -20,7 +20,7 @@ import type { Paginated, PetCard } from '@/types';
  * Same paginator as the grid, under the same `listings` page name, so the
  * `Pagination` links stay scoped to that prop and turning a page does not
  * reset the reviews beside it. The page size is
- * `petconnect.profiles.listings_per_page` for both.
+ * `sniffpal.profiles.listings_per_page` for both.
  *
  * `overflow-x-auto` on the wrapper, not on the page: nine columns do not fit a
  * phone, and wide content scrolls inside its own box while the body never

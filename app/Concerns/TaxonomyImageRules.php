@@ -46,11 +46,11 @@ trait TaxonomyImageRules
      * an admin's size limit in the same change would be a second, unannounced
      * behaviour change.
      *
-     * It is a literal rather than a `config('petconnect.taxonomy.*')` read, the
+     * It is a literal rather than a `config('sniffpal.taxonomy.*')` read, the
      * way `maxImageKilobytes()` and `maxAvatarKilobytes()` are: those keys
      * exist, this one does not, and referring to a key that is only ever
      * satisfied by its own default is a phantom every reader has to check.
-     * Adding it is a change to `config/petconnect.php`, which belongs with
+     * Adding it is a change to `config/sniffpal.php`, which belongs with
      * whoever owns that file — this stays the one place the number is written
      * either way.
      */

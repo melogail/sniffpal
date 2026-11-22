@@ -30,7 +30,7 @@ test('renders the subject and the call to action in the recipient own language',
 });
 
 /**
- * `dir` comes from `petconnect.locales.rtl`, so adding an RTL language is a
+ * `dir` comes from `sniffpal.locales.rtl`, so adding an RTL language is a
  * config entry rather than a code change. English must not inherit it.
  */
 test('marks an arabic mail right to left and an english one left to right', function () {
@@ -43,7 +43,7 @@ test('marks an arabic mail right to left and an english one left to right', func
 
 /**
  * `preferredLocale()` filters the stored value against
- * `petconnect.locales.supported`, so a column holding a language that was
+ * `sniffpal.locales.supported`, so a column holding a language that was
  * removed from the whitelist renders in English rather than shipping a mail of
  * raw translation keys.
  */

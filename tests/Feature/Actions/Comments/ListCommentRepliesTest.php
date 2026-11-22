@@ -127,7 +127,7 @@ test('returns the replies of the given comment newest first, and nothing else', 
 });
 
 test('pages the replies by the configured page size', function () {
-    config(['petconnect.comments.replies_per_page' => 2]);
+    config(['sniffpal.comments.replies_per_page' => 2]);
     $parent = Comment::factory()->create();
     Comment::factory()->count(3)->reply($parent)->create();
 
@@ -141,7 +141,7 @@ test('serialises a page of replies in a constant number of queries however many 
     Storage::fake(config('media-library.disk_name'));
     $viewer          = User::factory()->create();
     $parent          = Comment::factory()->create();
-    config(['petconnect.comments.replies_per_page' => 50]);
+    config(['sniffpal.comments.replies_per_page' => 50]);
 
     seedRepliesOnComment($parent, replies: 2);
 
@@ -159,7 +159,7 @@ test('serves a page of replies in a constant number of queries however many repl
     Storage::fake(config('media-library.disk_name'));
     $viewer          = User::factory()->create();
     $parent          = Comment::factory()->create();
-    config(['petconnect.comments.replies_per_page' => 50]);
+    config(['sniffpal.comments.replies_per_page' => 50]);
 
     seedRepliesOnComment($parent, replies: 2);
 

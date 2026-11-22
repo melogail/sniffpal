@@ -14,7 +14,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
  * update forms cannot disagree about how long a comment may be, which is
  * exactly how the legacy pair drifted from their own column.
  *
- * The ceiling comes from `petconnect.comments.max_length` and the column is
+ * The ceiling comes from `sniffpal.comments.max_length` and the column is
  * `text`, so the two agree by construction. The legacy requests hardcoded
  * `max:500` against a `varchar(255)`: a 300-character comment was either
  * truncated or rejected by the driver depending on strict mode, and the
@@ -59,8 +59,8 @@ trait CommentValidationRules
      * `max_length` bounds the composer. `thread_per_page` is the page size
      * `comments.index` answers with, and the client needs it because it cannot
      * infer it: the first slice of roots rides the page payload and is sized by
-     * `petconnect.pets.detail_comment_page_size`, while the endpoint pages by
-     * `petconnect.comments.thread_per_page`, and the two are independent env
+     * `sniffpal.pets.detail_comment_page_size`, while the endpoint pages by
+     * `sniffpal.comments.thread_per_page`, and the two are independent env
      * vars. Without it the thread assumed the slice it already held was page
      * one and asked for page two's worth of duplicates on the first "load
      * more", which deduplicated to nothing and needed a second click before a
@@ -85,7 +85,7 @@ trait CommentValidationRules
      */
     public function maxContentLength(): int
     {
-        return (int) config('petconnect.comments.max_length', 1000);
+        return (int) config('sniffpal.comments.max_length', 1000);
     }
 
     /**
@@ -93,6 +93,6 @@ trait CommentValidationRules
      */
     public function threadPerPage(): int
     {
-        return (int) config('petconnect.comments.thread_per_page', 20);
+        return (int) config('sniffpal.comments.thread_per_page', 20);
     }
 }

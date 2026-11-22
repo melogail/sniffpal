@@ -44,7 +44,7 @@ import type { PetDetail } from '@/types';
  *   now. The value passed here did not change; the reason did.
  * - `class="mb-4"`, because legacy gives this grid `mb-4` where the in-card
  *   blocks get `mb-3` (`PetStats.vue:102` against `PetAbout.vue:28` in
- *   petconnect-old). See `PetSectionHeading` for why that 4px is passed
+ *   sniffpal-old). See `PetSectionHeading` for why that 4px is passed
  *   through instead of being averaged away.
  *
  * The neutering tile's label is `wizard.spayed_neutered` — a key from the pet

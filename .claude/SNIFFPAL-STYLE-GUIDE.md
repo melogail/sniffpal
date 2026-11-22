@@ -1,10 +1,10 @@
-# PetConnect — "Aubergine & Lavender" Style Guide
+# SniffPal — "Aubergine & Lavender" Style Guide
 
-Agent handoff for restyling the PetConnect codebase (Laravel 12 · Inertia · Vue 3 · Tailwind v4 · shadcn-vue) and the companion mobile app.
+Agent handoff for restyling the SniffPal codebase (Laravel 12 · Inertia · Vue 3 · Tailwind v4 · shadcn-vue) and the companion mobile app.
 
 **Scope: visual only.** Keep every layout, component tree, route, copy string, interaction and accessibility contract exactly as it is. Change colours, type, radii, shadows, borders and button treatments. Nothing moves.
 
-**Reference file:** `PetConnect Web Styles.dc.html` → option **2b** (light + dark). It is an HTML design reference, not production code — recreate it inside the existing codebase with its existing patterns (CSS tokens in `resources/css/app.css`, shadcn `Button` variants, Tailwind utilities). Fidelity: **hi-fi** — values below are final.
+**Reference file:** `SniffPal Web Styles.dc.html` → option **2b** (light + dark). It is an HTML design reference, not production code — recreate it inside the existing codebase with its existing patterns (CSS tokens in `resources/css/app.css`, shadcn `Button` variants, Tailwind utilities). Fidelity: **hi-fi** — values below are final.
 
 ---
 
@@ -247,7 +247,7 @@ Destructive `#DC2828`; success `emerald-600`/`emerald-400` only for the "link se
 
 ---
 
-## 8. Mobile app (PetConnect Mobile)
+## 8. Mobile app (SniffPal Mobile)
 
 Same tokens, same families. Platform adjustments:
 
@@ -287,5 +287,5 @@ Dark mode on mobile uses the same `.dark` tokens; do not introduce an OLED pure-
 
 ## 10. Files in this bundle
 
-- `PETCONNECT-STYLE-GUIDE.md` — this document.
-- `PetConnect Web Styles.dc.html` — design reference; option **2b** is the target (light and dark artboards). Ignore 1a–1c, 2a, 2c.
+- `SNIFFPAL-STYLE-GUIDE.md` — this document.
+- `SniffPal Web Styles.dc.html` — design reference; option **2b** is the target (light and dark artboards). Ignore 1a–1c, 2a, 2c.

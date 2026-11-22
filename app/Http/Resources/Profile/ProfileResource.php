@@ -89,6 +89,7 @@ class ProfileResource extends JsonResource
      *     location: string,
      *     avatar: string|null,
      *     is_verified: bool,
+     *     is_founding_member: bool,
      *     is_self: bool,
      *     is_liked: bool,
      *     has_reviewed: bool,
@@ -104,30 +105,31 @@ class ProfileResource extends JsonResource
         $viewer = $request->user();
 
         return [
-            'id'               => $this->id,
-            'name'             => $this->name,
-            'username'         => $this->username,
-            'bio'              => $this->bio,
-            'location'         => $this->location,
-            'phone'            => $this->when($this->show_phone, fn (): ?string => $this->phone),
-            'whatsapp'         => $viewer ? $this->whatsappUrl() : null,
-            'avatar'           => $this->getFirstMediaUrl('users', 'display') ?: null,
+            'id'                 => $this->id,
+            'name'               => $this->name,
+            'username'           => $this->username,
+            'bio'                => $this->bio,
+            'location'           => $this->location,
+            'phone'              => $this->when($this->show_phone, fn (): ?string => $this->phone),
+            'whatsapp'           => $viewer ? $this->whatsappUrl() : null,
+            'avatar'             => $this->getFirstMediaUrl('users', 'display') ?: null,
 
-            'is_verified'      => $this->isVerified(),
-            'is_self'          => $viewer?->getKey() === $this->getKey(),
-            'is_liked'         => (bool) ($this->is_liked ?? false),
-            'has_reviewed'     => (bool) ($this->has_reviewed ?? false),
-            'has_reported'     => (bool) ($this->has_reported ?? false),
+            'is_verified'        => $this->isVerified(),
+            'is_founding_member' => $this->isFoundingMember(),
+            'is_self'            => $viewer?->getKey() === $this->getKey(),
+            'is_liked'           => (bool) ($this->is_liked ?? false),
+            'has_reviewed'       => (bool) ($this->has_reviewed ?? false),
+            'has_reported'       => (bool) ($this->has_reported ?? false),
 
-            'pets_count'       => (int) ($this->pets_count ?? 0),
-            'reviews_count'    => (int) ($this->reviews_count ?? 0),
-            'reviews_avg_rate' => $this->reviews_avg_rate === null
+            'pets_count'         => (int) ($this->pets_count ?? 0),
+            'reviews_count'      => (int) ($this->reviews_count ?? 0),
+            'reviews_avg_rate'   => $this->reviews_avg_rate === null
                 ? null
                 : round((float) $this->reviews_avg_rate, 2),
 
-            'can_update'       => (bool) $viewer?->can('update', $this->resource),
+            'can_update'         => (bool) $viewer?->can('update', $this->resource),
 
-            'created_at'       => $this->created_at,
+            'created_at'         => $this->created_at,
         ];
     }
 }

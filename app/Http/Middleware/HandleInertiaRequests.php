@@ -71,7 +71,7 @@ class HandleInertiaRequests extends Middleware
      * The language every page needs to render itself.
      *
      * Three static values and no query. `current` is what SetLocale resolved
-     * for this request; `direction` comes from `petconnect.locales.rtl`, so the
+     * for this request; `direction` comes from `sniffpal.locales.rtl`, so the
      * client never re-derives it from a hardcoded `=== 'ar'`; `supported` is
      * what the language picker renders.
      *
@@ -98,10 +98,10 @@ class HandleInertiaRequests extends Middleware
         $current   = App::getLocale();
 
         /** @var list<string> $supported */
-        $supported = config('petconnect.locales.supported', ['en']);
+        $supported = config('sniffpal.locales.supported', ['en']);
 
         /** @var list<string> $rtl */
-        $rtl       = config('petconnect.locales.rtl', []);
+        $rtl       = config('sniffpal.locales.rtl', []);
 
         return [
             'current'   => $current,

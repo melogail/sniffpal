@@ -15,7 +15,7 @@ use Illuminate\Validation\Rule;
  * holds its own: the person most likely to break resource↔Form-Request parity
  * is whoever renames a key, and there is only one place to rename it.
  *
- * The ceiling comes from `petconnect.messaging.max_length` against a `text`
+ * The ceiling comes from `sniffpal.messaging.max_length` against a `text`
  * column, so the validator and the column agree by construction.
  *
  * `type` is validated through Rule::enum rather than a hand-written `in:` list,
@@ -73,6 +73,6 @@ trait MessageValidationRules
      */
     public function maxContentLength(): int
     {
-        return (int) config('petconnect.messaging.max_length', 5000);
+        return (int) config('sniffpal.messaging.max_length', 5000);
     }
 }

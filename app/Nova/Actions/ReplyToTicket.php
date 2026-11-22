@@ -83,7 +83,7 @@ class ReplyToTicket extends Action
     {
         return [
             Textarea::make('Reply')
-                ->rules('required', 'string', 'max:'.config('petconnect.support.max_message_length', 2000))
+                ->rules('required', 'string', 'max:'.config('sniffpal.support.max_message_length', 2000))
                 ->help('Appended to the thread and marks the ticket Answered. The member sees it on their ticket page and by email.'),
         ];
     }

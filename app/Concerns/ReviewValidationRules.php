@@ -14,7 +14,7 @@ namespace App\Concerns;
  * integer, that it was inside 1-5, or that it was present — and `rate` is an
  * `unsignedTinyInteger`, which happily stores 0 and 99. A single reviewer could
  * therefore set any average rating on any profile. `min`/`max` here, driven by
- * `petconnect.reviews.min_rate` / `max_rate`, are that missing rule; the
+ * `sniffpal.reviews.min_rate` / `max_rate`, are that missing rule; the
  * frontend draws its star scale from the same two values, so the widget and the
  * validator cannot disagree.
  *
@@ -99,7 +99,7 @@ trait ReviewValidationRules
      */
     public function minRate(): int
     {
-        return (int) config('petconnect.reviews.min_rate', 1);
+        return (int) config('sniffpal.reviews.min_rate', 1);
     }
 
     /**
@@ -107,7 +107,7 @@ trait ReviewValidationRules
      */
     public function maxRate(): int
     {
-        return (int) config('petconnect.reviews.max_rate', 5);
+        return (int) config('sniffpal.reviews.max_rate', 5);
     }
 
     /**
@@ -115,6 +115,6 @@ trait ReviewValidationRules
      */
     public function maxCommentLength(): int
     {
-        return (int) config('petconnect.reviews.max_comment_length', 1000);
+        return (int) config('sniffpal.reviews.max_comment_length', 1000);
     }
 }

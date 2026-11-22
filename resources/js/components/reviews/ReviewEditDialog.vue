@@ -29,7 +29,7 @@ import type { Review, ReviewBounds } from '@/types';
  */
 const { review, bounds } = defineProps<{
     review: Review;
-    /** `petconnect.reviews.*`, shipped as the page's `reviewBounds` prop. */
+    /** `sniffpal.reviews.*`, shipped as the page's `reviewBounds` prop. */
     bounds: ReviewBounds;
 }>();
 

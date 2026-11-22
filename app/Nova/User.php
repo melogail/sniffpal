@@ -62,7 +62,7 @@ use Laravel\Nova\ResourceTool;
  * `nullable|string|max:255` against the trait's `alpha_dash|min:3|max:50`, so a
  * PUT wrote `not a valid handle!!!` into a column the app treats as URL-safe;
  * `locale` was `required|string` against the trait's
- * `Rule::in(config('petconnect.locales.supported'))`, so `klingon` persisted
+ * `Rule::in(config('sniffpal.locales.supported'))`, so `klingon` persisted
  * and User::preferredLocale() silently fell back for that account forever;
  * `bio` was `max:2000` against a configured ceiling of 1000; and the
  * latitude/longitude pair had lost its `required_with`, so half a coordinate
@@ -275,7 +275,7 @@ class User extends Resource
     protected function localeOptions(): array
     {
         /** @var list<string> $supported */
-        $supported = config('petconnect.locales.supported', ['en']);
+        $supported = config('sniffpal.locales.supported', ['en']);
 
         return collect($supported)
             ->mapWithKeys(fn (string $locale): array => [$locale => strtoupper($locale)])

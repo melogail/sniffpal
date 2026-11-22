@@ -1,5 +1,6 @@
 export * from './auth';
 export * from './comments';
+export * from './launch';
 export * from './messaging';
 export * from './notifications';
 export * from './pagination';

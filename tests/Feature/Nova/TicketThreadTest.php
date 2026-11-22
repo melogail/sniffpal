@@ -28,7 +28,7 @@ test('the thread endpoint returns the ticket header, the statuses and the messag
         ->assertJsonPath('messages.0.fromSupport', false)
         ->assertJsonPath('messages.1.fromSupport', true)
         ->assertJsonPath('messages.1.body', 'We fixed it.')
-        ->assertJsonPath('maxMessageLength', (int) config('petconnect.support.max_message_length'));
+        ->assertJsonPath('maxMessageLength', (int) config('sniffpal.support.max_message_length'));
 });
 
 test('a ticket from a deleted account has no member and still names its sender', function () {

@@ -27,8 +27,12 @@ use Tests\TestCase;
  * the bound — by which point the commit that spent it is long gone. The bound
  * this replaces read 12 while the page measured 11, so it had already absorbed
  * one query's worth of drift in exactly that way.
+ *
+ * 11 became 12 on 2026-11-23 for `HomeController::launchProps()`: one COUNT of
+ * founding members for the launch notice, spent knowingly for the launch
+ * window. Drop it back when the notice goes.
  */
-const FEED_QUERY_COST             = 11;
+const FEED_QUERY_COST             = 12;
 
 /**
  * The keys PetCardResource emits behind `whenLoaded()`, which are the reason a
@@ -55,7 +59,7 @@ const FEED_CARD_EAGER_LOADED_KEYS = ['category', 'breed', 'user', 'comments'];
  */
 function countFeedQueries(TestCase $test, int $perPage): int
 {
-    config(['petconnect.pets.feed_per_page' => $perPage]);
+    config(['sniffpal.pets.feed_per_page' => $perPage]);
 
     DB::flushQueryLog();
     DB::enableQueryLog();
@@ -198,12 +202,12 @@ test('the feed costs the same number of queries however many comments its cards 
  */
 test('ships the filter bounds the sheet draws its sliders from', function () {
     config([
-        'petconnect.nearby.default_radius_km' => 25.5,
-        'petconnect.nearby.min_radius_km'     => 3.5,
-        'petconnect.nearby.max_radius_km'     => 80.5,
-        'petconnect.filters.max_age_years'    => 18.5,
-        'petconnect.filters.default_age_min'  => 1.5,
-        'petconnect.filters.default_age_max'  => 9.5,
+        'sniffpal.nearby.default_radius_km' => 25.5,
+        'sniffpal.nearby.min_radius_km'     => 3.5,
+        'sniffpal.nearby.max_radius_km'     => 80.5,
+        'sniffpal.filters.max_age_years'    => 18.5,
+        'sniffpal.filters.default_age_min'  => 1.5,
+        'sniffpal.filters.default_age_max'  => 9.5,
     ]);
 
     $this->get(route('home'))
@@ -324,8 +328,8 @@ test('rejects a coordinate outside the world', function (array $query, string $f
  */
 test('rejects a radius outside the configured window', function (float $radius) {
     config([
-        'petconnect.nearby.min_radius_km' => 5,
-        'petconnect.nearby.max_radius_km' => 50,
+        'sniffpal.nearby.min_radius_km' => 5,
+        'sniffpal.nearby.max_radius_km' => 50,
     ]);
 
     $this->from(route('home'))
@@ -601,4 +605,33 @@ test('a partial feed visit from the filter sheet comes back with the filters it 
         ]);
 
     expect(array_keys($response->json('props')))->toEqualCanonicalizing(['errors', 'pets', 'filters']);
+});
+
+test('the home page carries the launch notice while the founding window is open', function () {
+    config([
+        'sniffpal.founding.cap'                => 100,
+        'sniffpal.founding.window_ends_at'     => '2027-01-31 23:59:59',
+        'sniffpal.founding.facebook_group_url' => 'https://facebook.com/groups/sniffpal',
+    ]);
+    User::factory()->count(2)->foundingMember()->create();
+
+    $this->get(route('home'))->assertInertia(fn ($page) => $page
+        ->where('launch.founding_open', true)
+        ->where('launch.founding_remaining', 98)
+        ->where('launch.facebook_group_url', 'https://facebook.com/groups/sniffpal'));
+});
+
+test('the launch notice closes when the cap is reached', function () {
+    config(['sniffpal.founding.cap' => 1, 'sniffpal.founding.window_ends_at' => '2027-01-31 23:59:59']);
+    User::factory()->foundingMember()->create();
+
+    $this->get(route('home'))->assertInertia(fn ($page) => $page
+        ->where('launch.founding_open', false)
+        ->where('launch.founding_remaining', 0));
+});
+
+test('the launch notice closes when the window has passed', function () {
+    config(['sniffpal.founding.cap' => 100, 'sniffpal.founding.window_ends_at' => '2026-01-01 00:00:00']);
+
+    $this->get(route('home'))->assertInertia(fn ($page) => $page->where('launch.founding_open', false));
 });

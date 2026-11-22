@@ -38,7 +38,7 @@ import type { ConversationPreview } from '@/types';
  *
  * Legacy hardcoded `bg-violet-50` / `dark:bg-violet-900/20` for the unread row,
  * `ring-violet-400` for the unread avatar and `bg-violet-500` for the dot. The
- * "Aubergine & Lavender" guide (`.claude/PETCONNECT-STYLE-GUIDE.md` §5.7) maps
+ * "Aubergine & Lavender" guide (`.claude/SNIFFPAL-STYLE-GUIDE.md` §5.7) maps
  * those onto the semantic tokens rather than onto ramp steps: the unread row is
  * `bg-accent` (the lavender wash, #EEEAFB light / #261D45 dark), the unread
  * avatar ring is `ring-primary` and the dot is `bg-primary`. Everything that

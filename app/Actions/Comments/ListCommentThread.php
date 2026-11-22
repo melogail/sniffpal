@@ -87,7 +87,7 @@ class ListCommentThread
         }
 
         $perPage ??= $this->threadPerPage();
-        $replyPreview ??= (int) config('petconnect.comments.reply_preview', 3);
+        $replyPreview ??= (int) config('sniffpal.comments.reply_preview', 3);
 
         return $commentable->rootComments()
             ->with([

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { BadgeCheck, CalendarDays, MapPin, Phone, Settings } from '@lucide/vue';
+import FoundingMemberBadge from '@/components/FoundingMemberBadge.vue';
 import { computed } from 'vue';
 import StartConversationButton from '@/components/messaging/StartConversationButton.vue';
 import ProfileLikeButton from '@/components/profile/ProfileLikeButton.vue';
@@ -33,7 +34,7 @@ const { profile, canInteract } = defineProps<{
      * opening a thread and liking — need one.
      */
     canInteract: boolean;
-    /** `petconnect.reviews.*`, so the stars draw the real scale. */
+    /** `sniffpal.reviews.*`, so the stars draw the real scale. */
     bounds: ReviewBounds;
     /** The `reportReasons` page prop, keyed by target type. */
     reportReasons: ReportReasonsByType;
@@ -73,6 +74,7 @@ const rating = computed(() =>
                         class="text-primary size-5"
                         :aria-label="t('profile.verified_member')"
                     />
+                    <FoundingMemberBadge v-if="profile.is_founding_member" />
                 </div>
                 <p
                     v-if="profile.username"

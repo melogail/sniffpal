@@ -195,8 +195,8 @@ describe('show', function () {
      */
     test('ships the comment bounds the composer and the thread are drawn from', function () {
         config([
-            'petconnect.comments.max_length'      => 140,
-            'petconnect.comments.thread_per_page' => 3,
+            'sniffpal.comments.max_length'      => 140,
+            'sniffpal.comments.thread_per_page' => 3,
         ]);
         $pet = Pet::factory()->create();
 
@@ -235,7 +235,7 @@ describe('create', function () {
     /**
      * The photo step caps the gallery and compresses each file to fit the
      * per-image ceiling before it is attached, and both numbers were hardcoded
-     * in `pets/Create.vue` against `config/petconnect.php`. The prop is read
+     * in `pets/Create.vue` against `config/sniffpal.php`. The prop is read
      * through the same PetPhotoRules accessors the `max:` rules are built from,
      * so moving the config moves both — which is the whole point, and which
      * only a **non-default** value can show: asserting 3 and 512 here would
@@ -250,8 +250,8 @@ describe('create', function () {
      */
     test('ships the photo ceilings the picker enforces, and enforces the same ones', function () {
         config([
-            'petconnect.pets.max_gallery_images'  => 5,
-            'petconnect.pets.max_image_kilobytes' => 256,
+            'sniffpal.pets.max_gallery_images'  => 5,
+            'sniffpal.pets.max_image_kilobytes' => 256,
         ]);
 
         $this->actingAs(User::factory()->create())
@@ -560,8 +560,8 @@ describe('edit', function () {
      */
     test('ships the same photo ceilings to the edit form', function () {
         config([
-            'petconnect.pets.max_gallery_images'  => 5,
-            'petconnect.pets.max_image_kilobytes' => 256,
+            'sniffpal.pets.max_gallery_images'  => 5,
+            'sniffpal.pets.max_image_kilobytes' => 256,
         ]);
         $owner = User::factory()->create();
         $pet   = Pet::factory()->for($owner)->create();
@@ -710,7 +710,7 @@ describe('update', function () {
 
     test('rejects an edit that would push the gallery past its cap, before anything is written', function () {
         Storage::fake(config('media-library.disk_name'));
-        config(['petconnect.pets.max_gallery_images' => 3]);
+        config(['sniffpal.pets.max_gallery_images' => 3]);
         $owner    = User::factory()->create();
         $category = Category::factory()->create();
         $pet      = Pet::factory()->for($owner)->for($category)->create(['name' => 'Original']);

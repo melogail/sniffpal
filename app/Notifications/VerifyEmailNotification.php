@@ -40,7 +40,7 @@ use Illuminate\Notifications\Messages\MailMessage;
  * Illuminate\Contracts\Translation\HasLocalePreference, and every string below
  * is translated with an explicit `$locale` third argument rather than by
  * switching the application locale and switching it back. The direction is
- * derived from `petconnect.locales.rtl`, so an RTL language added to the config
+ * derived from `sniffpal.locales.rtl`, so an RTL language added to the config
  * needs no change here.
  *
  * `preferredLocale()` is called through the interface, so any notifiable that
@@ -103,7 +103,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
     protected function directionFor(string $locale): string
     {
         /** @var list<string> $rtl */
-        $rtl = config('petconnect.locales.rtl', []);
+        $rtl = config('sniffpal.locales.rtl', []);
 
         return in_array($locale, $rtl, true) ? 'rtl' : 'ltr';
     }

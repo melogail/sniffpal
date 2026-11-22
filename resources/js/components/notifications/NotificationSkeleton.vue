@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
  * Three rows, laid out to `NotificationRow`'s geometry — a 36px disc and two
  * lines of text, the sentence then the timestamp — so the panel does not jump
  * when the real list replaces it. Three because that is roughly a screenful in
- * the sheet; the real page is `petconnect.notifications.inbox_per_page`, and
+ * the sheet; the real page is `sniffpal.notifications.inbox_per_page`, and
  * matching it exactly would mean a skeleton taller than anything it ever stands
  * in for.
  *

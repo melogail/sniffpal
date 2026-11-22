@@ -118,7 +118,7 @@ use Inertia\Response;
  *
  * `show` ships `messageBounds`, because the composer cannot enforce a ceiling
  * it has not been told: it defaulted to a hardcoded 5000 that matched
- * `petconnect.messaging.max_length` by coincidence and would have drifted the
+ * `sniffpal.messaging.max_length` by coincidence and would have drifted the
  * moment either side moved. The bound is read through
  * App\Concerns\MessageValidationRules — the same accessor
  * StoreMessageRequest's `max:` rule is built from — rather than from `config()`

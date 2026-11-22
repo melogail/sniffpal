@@ -236,7 +236,7 @@ test('rejects a report with no reason and writes nothing', function () {
 
 test('rejects a description longer than the configured ceiling and writes nothing', function () {
     $target    = Review::factory()->create();
-    $maxLength = config('petconnect.reports.max_description_length');
+    $maxLength = config('sniffpal.reports.max_description_length');
 
     $this->actingAs(User::factory()->create())
         ->post(route('reports.store', ['reportable_type' => 'review', 'reportable_id' => $target->getKey()]), [

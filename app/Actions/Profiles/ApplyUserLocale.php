@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Session;
  * ## It is defensive about the value on purpose
  *
  * Callers already validate — UpdateLocaleRequest and the profile form's
- * `locale` rule both use `Rule::in(config('petconnect.locales.supported'))` —
+ * `locale` rule both use `Rule::in(config('sniffpal.locales.supported'))` —
  * but this is also called from a pipeline step reading a validated bag, and an
  * unsupported locale reaching App::setLocale() means every `__()` on the page
  * silently returns its key. Falling back to `app.locale` makes the worst case a
@@ -60,7 +60,7 @@ class ApplyUserLocale
         Cookie::queue(Cookie::make(
             $this->cookieName(),
             $locale,
-            (int) config('petconnect.locales.cookie_minutes', 525600),
+            (int) config('sniffpal.locales.cookie_minutes', 525600),
         ));
 
         if ($user !== null && $user->locale !== $locale) {
@@ -76,7 +76,7 @@ class ApplyUserLocale
     protected function supported(string $locale): string
     {
         /** @var list<string> $supported */
-        $supported = config('petconnect.locales.supported', ['en']);
+        $supported = config('sniffpal.locales.supported', ['en']);
 
         return in_array($locale, $supported, true)
             ? $locale
@@ -85,6 +85,6 @@ class ApplyUserLocale
 
     protected function cookieName(): string
     {
-        return (string) config('petconnect.locales.cookie', 'locale');
+        return (string) config('sniffpal.locales.cookie', 'locale');
     }
 }

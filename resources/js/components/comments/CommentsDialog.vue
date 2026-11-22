@@ -42,7 +42,7 @@ import type { Comment, CommentableType, ReportReasonsByType } from '@/types';
  *
  * ## It fetches its own thread
  *
- * A feed card carries at most `petconnect.pets.home_comment_preview` roots and
+ * A feed card carries at most `sniffpal.pets.home_comment_preview` roots and
  * **no replies at all**, so rendering the prop alone would show a truncated
  * discussion with every reply hidden behind a counter. `CommentList` fetches
  * page one from `comments.index` — public, plain JSON — as the dialog opens,
@@ -126,7 +126,7 @@ const { comments = [], subject } = defineProps<{
     /** The card's bounded preview: a seed for the first paint, not the thread. */
     comments?: Comment[];
     canInteract: boolean;
-    /** `petconnect.comments.max_length`, when the page was shipped it. */
+    /** `sniffpal.comments.max_length`, when the page was shipped it. */
     maxLength?: number | null;
     reportReasons?: ReportReasonsByType;
 }>();

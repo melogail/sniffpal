@@ -73,7 +73,7 @@ class TicketThread extends ResourceTool
                 'sentAt'      => $message->created_at?->toDayDateTimeString(),
                 'sentAtHuman' => $message->created_at?->diffForHumans(),
             ])->all(),
-            'maxMessageLength' => (int) config('petconnect.support.max_message_length', 2000),
+            'maxMessageLength' => (int) config('sniffpal.support.max_message_length', 2000),
         ];
     }
 }

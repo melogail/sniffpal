@@ -52,7 +52,7 @@ import { useTranslations } from '@/composables/useTranslations';
  * `EmptyState` call — `notifications.no_notifications_yet` and
  * `notifications.empty_hint` — but deliberately *not* the same icon: this
  * renders legacy's `Bell`, the icon in the empty branch of
- * `petconnect-old`'s `resources/js/components/web/NotificationsSheet.vue`, in
+ * `sniffpal-old`'s `resources/js/components/web/NotificationsSheet.vue`, in
  * place of the `BellOff` the `EmptyState` call passed. The icon is the one
  * thing here that is parity with legacy rather than parity with the code it
  * replaces.

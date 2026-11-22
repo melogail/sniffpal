@@ -10,7 +10,7 @@ import { update as updateLocale } from '@/routes/locale';
  * The language pill in the header.
  *
  * The options come from `locale.supported`, which `HandleInertiaRequests`
- * mirrors from `config('petconnect.locales.supported')` — the one whitelist.
+ * mirrors from `config('sniffpal.locales.supported')` — the one whitelist.
  * Nothing here compares against `'ar'`: direction is `locale.direction`'s job
  * (.ai/rules/lang.md), and the switch itself only ever posts a code the server
  * already told us it accepts.

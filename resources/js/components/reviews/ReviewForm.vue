@@ -23,7 +23,7 @@ const { reviewableType, reviewableId, bounds } = defineProps<{
     reviewableType: ReviewableType;
     reviewableId: number;
     /**
-     * `petconnect.reviews.min_rate` / `max_rate` / `max_comment_length`, from
+     * `sniffpal.reviews.min_rate` / `max_rate` / `max_comment_length`, from
      * the page's `reviewBounds` prop. The star widget cannot draw a scale it
      * has not been told the length of, and used to hardcode five.
      */
