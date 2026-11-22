@@ -50,6 +50,7 @@ class PetObserver
             return;
         }
 
+        // shortcut: the count-then-save can overshoot the cap by the number of first listings committed in the same instant; wrap in Cache::lock if an exact cap ever matters.
         if (User::foundingMembers()->count() >= (int) config('petconnect.founding.cap')) {
             return;
         }

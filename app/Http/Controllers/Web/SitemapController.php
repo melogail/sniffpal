@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Enums\PetStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Pet;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 
@@ -23,8 +21,8 @@ class SitemapController extends Controller
     {
         $xml = Cache::remember('sitemap', 3600, function (): string {
             $pets = Pet::query()
-                ->where('status', PetStatus::Available)
-                ->whereHas('user', fn (Builder $users) => User::activeOnly($users))
+                ->available()
+                ->whereHas('user', User::activeOnly(...))
                 ->select(['slug', 'updated_at'])
                 ->latest('updated_at')
                 ->limit(5000)

@@ -116,7 +116,7 @@ class HomeController extends Controller
             'categories'    => Inertia::defer(
                 fn () => PetCategoryOptionResource::collection($listPetCategories->handle()),
             ),
-            'launch'        => $this->launchProps(),
+            'launch'        => fn (): array => $this->launchProps(),
         ]);
     }
 
