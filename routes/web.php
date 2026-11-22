@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\PetController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\ReportController;
 use App\Http\Controllers\Web\ReviewController;
+use App\Http\Controllers\Web\SitemapController;
 use App\Models\Pet;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -72,6 +73,7 @@ Route::get('pets/{pet}', [PetController::class, 'show'])
 
 Route::inertia('help', 'Help')->name('help');
 Route::inertia('guidelines', 'Guidelines')->name('guidelines');
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('support', fn () => Inertia::render('Support', [
     'supportEmail' => config('mail.from.address'),
 ]))->name('support');

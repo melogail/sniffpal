@@ -22,6 +22,7 @@ The core object: a user posts a pet for adoption, sale or mating, with photos, h
 ## Routes
 - Web: `GET pets/create`, `POST pets`, `GET pets/{pet}`, `GET pets/{pet}/edit`, `PUT pets/{pet}`, `DELETE pets/{pet}`, `PATCH pets/{pet}/status`, `POST pets/{pet}/like`. Create/edit/delete need `auth` + `verified`.
 - API: see [api-v1.md](api-v1.md).
+- `GET sitemap.xml` (`Web/SitemapController`, named `sitemap`): public pages plus available listings of active owners, newest first, capped at 5000, cached one hour under `sitemap`. Advertised in `public/robots.txt`. Test: `SitemapControllerTest`.
 
 ## Frontend
 `pages/pets/{Create,Edit,Show}.vue`; components under `resources/js/components/pets/` (card, gallery carousel via embla, share buttons Facebook/X/WhatsApp, age/litter labels). Client-side image compression with `browser-image-compression`; Google Maps loader for the location picker.
