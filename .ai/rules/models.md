@@ -47,7 +47,7 @@ Do not rely on the DB default alone for a non-fillable column the `@property` bl
 This costs factories nothing: `Illuminate\Database\Eloquent\Factories\Factory` wraps model construction in `Model::unguarded()`, so factory states can keep setting these columns. Removing a column from `#[Fillable]` never breaks a factory — only real request-driven mass assignment.
 
 ## Pet medical JSON shapes: vaccinations {name,date}, medications {name,usage}, additional_info a map
-Verified against what the legacy form actually submits (petconnect-old Create.vue + StorePetRequest + PetService):
+Verified against what the legacy form actually submits (sniffpal-old Create.vue + StorePetRequest + PetService):
 - vaccinations: list<array{name: string, date: string|null}> — the date is real user-entered clinical data with its own `date` validation rule. Do not flatten to a list of strings.
 - medications: list<array{name: string, usage: string|null}> — {name, usage}, NOT {name, date}.
 - allergies: array<int, string> — a plain list of strings.

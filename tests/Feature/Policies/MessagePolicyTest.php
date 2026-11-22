@@ -83,7 +83,7 @@ describe('update', function () {
     });
 
     test('the window is still open one minute before it closes', function () {
-        config(['petconnect.messaging.edit_window_minutes' => 15]);
+        config(['sniffpal.messaging.edit_window_minutes' => 15]);
         $sender       = User::factory()->create();
         $conversation = conversationBetween($sender, User::factory()->create());
         $message      = Message::factory()->for($conversation)->from($sender)
@@ -93,7 +93,7 @@ describe('update', function () {
     });
 
     test('the window is closed the moment the configured minutes have elapsed', function () {
-        config(['petconnect.messaging.edit_window_minutes' => 15]);
+        config(['sniffpal.messaging.edit_window_minutes' => 15]);
         $sender       = User::factory()->create();
         $conversation = conversationBetween($sender, User::factory()->create());
         $message      = Message::factory()->for($conversation)->from($sender)
@@ -103,7 +103,7 @@ describe('update', function () {
     });
 
     test('a window of zero minutes makes a message immutable the moment it is sent', function () {
-        config(['petconnect.messaging.edit_window_minutes' => 0]);
+        config(['sniffpal.messaging.edit_window_minutes' => 0]);
         $sender       = User::factory()->create();
         $conversation = conversationBetween($sender, User::factory()->create());
         $message      = Message::factory()->for($conversation)->from($sender)->create();
@@ -122,7 +122,7 @@ describe('delete', function () {
     });
 
     test('withdrawing is not windowed, so the sender may still delete a year old message', function () {
-        config(['petconnect.messaging.edit_window_minutes' => 15]);
+        config(['sniffpal.messaging.edit_window_minutes' => 15]);
         $sender       = User::factory()->create();
         $conversation = conversationBetween($sender, User::factory()->create());
         $message      = Message::factory()->for($conversation)->from($sender)

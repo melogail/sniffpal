@@ -76,7 +76,7 @@ test('uses the session when there is neither a cookie nor an account', function 
 });
 
 /**
- * Every candidate is checked against `petconnect.locales.supported`. Without
+ * Every candidate is checked against `sniffpal.locales.supported`. Without
  * that filter a hand-edited cookie would hand App::setLocale() an arbitrary
  * string and every `__()` on the page would return its own key.
  */

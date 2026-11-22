@@ -153,17 +153,17 @@ class ListHomeFeedRequest extends FormRequest
 
     public function defaultRadiusKm(): float
     {
-        return (float) config('petconnect.nearby.default_radius_km', 20);
+        return (float) config('sniffpal.nearby.default_radius_km', 20);
     }
 
     public function minRadiusKm(): float
     {
-        return (float) config('petconnect.nearby.min_radius_km', 1);
+        return (float) config('sniffpal.nearby.min_radius_km', 1);
     }
 
     public function maxRadiusKm(): float
     {
-        return (float) config('petconnect.nearby.max_radius_km', 100);
+        return (float) config('sniffpal.nearby.max_radius_km', 100);
     }
 
     /**
@@ -171,7 +171,7 @@ class ListHomeFeedRequest extends FormRequest
      */
     public function maxAgeYears(): float
     {
-        return (float) config('petconnect.filters.max_age_years', 15);
+        return (float) config('sniffpal.filters.max_age_years', 15);
     }
 
     /**
@@ -182,11 +182,11 @@ class ListHomeFeedRequest extends FormRequest
      */
     public function defaultAgeMin(): float
     {
-        return (float) config('petconnect.filters.default_age_min', 0);
+        return (float) config('sniffpal.filters.default_age_min', 0);
     }
 
     public function defaultAgeMax(): float
     {
-        return (float) config('petconnect.filters.default_age_max', 15);
+        return (float) config('sniffpal.filters.default_age_max', 15);
     }
 }

@@ -64,7 +64,7 @@ function attachUpdateFeaturedPhoto(Pet $pet, string $name = 'cover.jpg'): Media
 
 beforeEach(function () {
     Storage::fake(config('media-library.disk_name'));
-    config(['petconnect.pets.max_gallery_images' => 3]);
+    config(['sniffpal.pets.max_gallery_images' => 3]);
 });
 
 describe('gallery capacity', function () {

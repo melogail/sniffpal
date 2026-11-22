@@ -13,7 +13,7 @@ import { unreadBadgeLabel } from '@/components/shell/labels';
  *
  * This was `bg-red-500` through the port, kept literal as the one colour that
  * carried meaning rather than a surface. The "Aubergine & Lavender" guide
- * (`.claude/PETCONNECT-STYLE-GUIDE.md` §1, §5.3) retires every hue but the
+ * (`.claude/SNIFFPAL-STYLE-GUIDE.md` §1, §5.3) retires every hue but the
  * brand violet, and names the header's unread marker as `bg-primary` with
  * `ring-2 ring-background`. The ring is what does the job red used to do: a
  * 2px cut-out of page colour separates the badge from the glyph it overlaps,

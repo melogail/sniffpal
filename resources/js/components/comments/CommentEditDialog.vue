@@ -39,7 +39,7 @@ import type { CommentPreview } from '@/types';
  */
 const { comment, maxLength = null } = defineProps<{
     comment: CommentPreview;
-    /** `petconnect.comments.max_length`, when the page was shipped it. */
+    /** `sniffpal.comments.max_length`, when the page was shipped it. */
     maxLength?: number | null;
 }>();
 

@@ -6,7 +6,7 @@ paths:
 # Nova
 
 ## Nova field rules come from the app's validation Concerns, never restated
-A Nova resource that restates its field rules will drift from the application's own, and nothing catches it. `App\Nova\User` had `username: nullable|string|max:255` against `ProfileValidationRules::usernameRules()`'s `alpha_dash|min:3|max:50`, and `locale: required|string` against `Rule::in(config('petconnect.locales.supported'))`. Verified by live PUT: `username = 'not a valid handle!!!'` and `locale = 'klingon'` both persisted. `bio` was `max:2000` against a configured 1000, the lat/lng pair had lost its `required_with`, and the Images field's `singleMediaRules(['image','max:5120'])` dropped the mimes list and doubled `max_avatar_kilobytes`.
+A Nova resource that restates its field rules will drift from the application's own, and nothing catches it. `App\Nova\User` had `username: nullable|string|max:255` against `ProfileValidationRules::usernameRules()`'s `alpha_dash|min:3|max:50`, and `locale: required|string` against `Rule::in(config('sniffpal.locales.supported'))`. Verified by live PUT: `username = 'not a valid handle!!!'` and `locale = 'klingon'` both persisted. `bio` was `max:2000` against a configured 1000, the lat/lng pair had lost its `required_with`, and the Images field's `singleMediaRules(['image','max:5120'])` dropped the mimes list and doubled `max_avatar_kilobytes`.
 
 A Select's `options()` is not a validator. The docblock claiming a wider Select "would silently write dead values" was right about the risk and wrong about the mechanism — options never reach validation.
 

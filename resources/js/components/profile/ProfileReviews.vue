@@ -24,7 +24,7 @@ defineProps<{
     reviews: Paginated<Review>;
     subjectId: number;
     canReview: boolean;
-    /** `petconnect.reviews.*`, from the page's `reviewBounds` prop. */
+    /** `sniffpal.reviews.*`, from the page's `reviewBounds` prop. */
     bounds: ReviewBounds;
     reportReasons: ReportReasonsByType;
 }>();

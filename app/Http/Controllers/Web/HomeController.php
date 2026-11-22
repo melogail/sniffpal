@@ -122,19 +122,19 @@ class HomeController extends Controller
 
     /**
      * The founding-member offer the home notice renders, mirroring the award
-     * rule in PetObserver::created (`petconnect.founding`).
+     * rule in PetObserver::created (`sniffpal.founding`).
      *
      * @return array{founding_open: bool, founding_remaining: int, facebook_group_url: string|null}
      */
     private function launchProps(): array
     {
-        $windowEnd = Carbon::parse(config('petconnect.founding.window_ends_at'), 'Africa/Cairo');
-        $remaining = max(0, (int) config('petconnect.founding.cap') - User::foundingMembers()->count());
+        $windowEnd = Carbon::parse(config('sniffpal.founding.window_ends_at'), 'Africa/Cairo');
+        $remaining = max(0, (int) config('sniffpal.founding.cap') - User::foundingMembers()->count());
 
         return [
             'founding_open'      => $remaining > 0 && now()->lessThanOrEqualTo($windowEnd),
             'founding_remaining' => $remaining,
-            'facebook_group_url' => config('petconnect.founding.facebook_group_url'),
+            'facebook_group_url' => config('sniffpal.founding.facebook_group_url'),
         ];
     }
 }

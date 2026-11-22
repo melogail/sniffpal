@@ -101,7 +101,7 @@ import { useTranslations } from '@/composables/useTranslations';
  * Read off legacy's `components/web/NotificationsSheet.vue`: a 40px round
  * control (`p-2` around a 24px glyph) that tints violet while the sheet is
  * open, with the shared `UnreadBadge` on its corner. The "Aubergine &
- * Lavender" guide (`.claude/PETCONNECT-STYLE-GUIDE.md` §5.3) re-sizes that to
+ * Lavender" guide (`.claude/SNIFFPAL-STYLE-GUIDE.md` §5.3) re-sizes that to
  * the header's 38px `rounded-[14px]` ghost control — `size-[38px]` over
  * `size="icon-lg"`, the glyph still `size-6`, the open tint `text-primary` —
  * and the badge is now the guide's 7px `bg-primary` dot; the badge component's
@@ -115,7 +115,7 @@ import { useTranslations } from '@/composables/useTranslations';
  * flies in from the physical right is on the wrong side of an Arabic reader,
  * and `SheetContent`'s slide animation is per-side so it cannot be corrected
  * with a logical utility afterwards. `isRtl` comes from the `locale` shared
- * prop, built from `petconnect.locales.rtl` — never a comparison against `ar`
+ * prop, built from `sniffpal.locales.rtl` — never a comparison against `ar`
  * (.ai/rules/lang.md).
  */
 const page = usePage();

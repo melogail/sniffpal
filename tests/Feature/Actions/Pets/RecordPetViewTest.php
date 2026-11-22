@@ -24,7 +24,7 @@ test('does not count the owner looking at their own listing', function () {
 });
 
 test('counts the same visitor only once inside the dedup window', function () {
-    config(['petconnect.pets.view_dedup_minutes' => 60]);
+    config(['sniffpal.pets.view_dedup_minutes' => 60]);
     $pet    = Pet::factory()->create(['views' => 0]);
     $action = app(RecordPetView::class);
 
@@ -46,7 +46,7 @@ test('counts a different visitor inside the same window', function () {
 });
 
 test('counts the same visitor again once the dedup window has passed', function () {
-    config(['petconnect.pets.view_dedup_minutes' => 60]);
+    config(['sniffpal.pets.view_dedup_minutes' => 60]);
     $pet    = Pet::factory()->create(['views' => 0]);
     $action = app(RecordPetView::class);
 

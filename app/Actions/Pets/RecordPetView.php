@@ -55,7 +55,7 @@ class RecordPetView
         $counted = Cache::add(
             sprintf('pet-view:%s:%s', $pet->getKey(), $visitorKey),
             true,
-            now()->addMinutes((int) config('petconnect.pets.view_dedup_minutes', 60)),
+            now()->addMinutes((int) config('sniffpal.pets.view_dedup_minutes', 60)),
         );
 
         if (! $counted) {

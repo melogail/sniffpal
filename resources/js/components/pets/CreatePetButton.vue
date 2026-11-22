@@ -44,7 +44,7 @@ import { create as createPet } from '@/routes/pets';
  * rest (white on `violet-500` 4.40:1, on `fuchsia-500` 3.53:1, with the worse
  * stop under the end of the word) — shipped anyway on a phase-3 ruling for
  * exact legacy parity. The "Aubergine & Lavender" restyle
- * (`.claude/PETCONNECT-STYLE-GUIDE.md`, §1 and §5.1) retires every gradient:
+ * (`.claude/SNIFFPAL-STYLE-GUIDE.md`, §1 and §5.1) retires every gradient:
  * violet is the single brand colour, and the primary action on a surface is
  * one solid `--primary` button under `shadow-cta`. So this is now a bare
  * `variant="default"`, and that ruling is superseded rather than re-opened.

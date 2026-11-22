@@ -13,7 +13,7 @@ import { useTranslations } from '@/composables/useTranslations';
  * The glyph is `CircleCheck` — check enclosed by the circle — because that is
  * what the legacy screen's `CheckCircle2` resolves to. Established by grepping
  * both installed packages, not from memory: `@lucide/vue/dist/lucide-vue.d.ts`
- * and `petconnect-old/node_modules/lucide-vue-next/dist/lucide-vue-next.d.ts`
+ * and `sniffpal-old/node_modules/lucide-vue-next/dist/lucide-vue-next.d.ts`
  * both export `CircleCheck as CheckCircle2` and `CircleCheckBig as
  * CheckCircle`. `CircleCheckBig` is a visibly different mark (the check
  * overflows the circle) and is what `CheckCircle`, not `CheckCircle2`, would

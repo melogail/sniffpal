@@ -42,15 +42,15 @@ use Inertia\Response;
  * told. Both keys are read through App\Concerns\CommentValidationRules — the
  * same accessors the store and update requests build their `max:` rule from and
  * Actions\Comments\ListCommentThread paginates by — rather than from `config()`
- * here, so `petconnect.comments.max_length` and `.thread_per_page` each have
+ * here, so `sniffpal.comments.max_length` and `.thread_per_page` each have
  * one spelling and one default, and neither the counter nor the thread's page
  * cursor can drift from the server. Web\ProfileController and
  * Web\ConversationController do the same for review and message bounds.
  *
  * `thread_per_page` is on that prop because the client genuinely cannot work it
  * out: the first slice of roots rides `pet.comments` and is sized by
- * `petconnect.pets.detail_comment_page_size`, while `comments.index` pages by
- * `petconnect.comments.thread_per_page`, and the two are independent env vars.
+ * `sniffpal.pets.detail_comment_page_size`, while `comments.index` pages by
+ * `sniffpal.comments.thread_per_page`, and the two are independent env vars.
  * Assuming they matched made the first "load more" refetch the slice already on
  * screen. Its companion is `pet.root_comments_count`, which is the total the
  * shipped roots have to be compared against — `comments_count` counts replies
@@ -60,7 +60,7 @@ use Inertia\Response;
  * same way, through App\Concerns\PetPhotoRules. The photo step caps the gallery
  * and compresses each file to fit the per-image ceiling before it is attached,
  * and both numbers were hardcoded in the Vue pages against
- * `config/petconnect.php`. It is PetPhotoRules rather than PetValidationRules
+ * `config/sniffpal.php`. It is PetPhotoRules rather than PetValidationRules
  * deliberately: that trait carries `featuredImage()` / `galleryImages()`, which
  * call `Illuminate\Http\Request::file()` and would fatal on a controller, and
  * rule methods that read `$this->input()`. PetPhotoRules is the half that is

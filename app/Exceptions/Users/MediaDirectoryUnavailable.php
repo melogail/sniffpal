@@ -31,7 +31,7 @@ use RuntimeException;
  * — a substring match on the driver's message. Any integrity error whose text
  * mentioned that column recursed forever and ended in a stack overflow rather
  * than an error anybody could read. Actions\Users\RegisterUser retries a bounded
- * number of times (`petconnect.profiles.media_directory_attempts`) and throws
+ * number of times (`sniffpal.profiles.media_directory_attempts`) and throws
  * this when the budget runs out, so the failure is finite, named and logged.
  */
 class MediaDirectoryUnavailable extends RuntimeException

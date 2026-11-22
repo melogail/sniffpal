@@ -93,7 +93,7 @@ class ListReviews
             throw ReviewingNotSupported::for($reviewable);
         }
 
-        $perPage ??= (int) config('petconnect.reviews.per_page', 10);
+        $perPage ??= (int) config('sniffpal.reviews.per_page', 10);
 
         return $reviewable->reviews()
             ->with('user.media')

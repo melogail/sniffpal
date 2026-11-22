@@ -23,8 +23,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * per rendered avatar.
  *
  * The comment thread is bounded, not complete: the newest
- * `petconnect.pets.detail_comment_page_size` top-level comments, each with its
- * newest `petconnect.pets.detail_reply_preview` replies. `comments_count`
+ * `sniffpal.pets.detail_comment_page_size` top-level comments, each with its
+ * newest `sniffpal.pets.detail_reply_preview` replies. `comments_count`
  * carries the true total, so the page can show "N comments" and offer to fetch
  * the rest. Real pagination of a thread belongs to the comments vertical, which
  * will own a paginated endpoint; the bound is here now so no page can ever ship
@@ -54,8 +54,8 @@ class LoadPetDetail
 {
     public function handle(Pet $pet, ?User $viewer): Pet
     {
-        $commentPageSize = (int) config('petconnect.pets.detail_comment_page_size', 20);
-        $replyPreview    = (int) config('petconnect.pets.detail_reply_preview', 3);
+        $commentPageSize = (int) config('sniffpal.pets.detail_comment_page_size', 20);
+        $replyPreview    = (int) config('sniffpal.pets.detail_reply_preview', 3);
 
         return $pet->newQuery()
             ->whereKey($pet->getKey())

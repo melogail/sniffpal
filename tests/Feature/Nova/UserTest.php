@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
  * Before that, App\Nova\User carried rules for `name` and nothing else, so every
  * value below was written straight through: a `username` no URL could carry, a
  * `locale` User::preferredLocale() silently falls back from, a bio past the
- * `petconnect.profiles.bio_max_length` ceiling every read path assumes, and an
+ * `sniffpal.profiles.bio_max_length` ceiling every read path assumes, and an
  * avatar that is not an image. A Select's `options()` never stopped any of it —
  * options are a rendering concern and the validator never sees them, which is
  * how `locale = klingon` reached the column.
@@ -58,13 +58,13 @@ test('returns 422 to a member profile edited through Nova with an invalid value'
 
 /**
  * Spelled out rather than folded into the dataset above, because the ceiling is
- * `petconnect.profiles.bio_max_length` and a literal 1001-character string in a
+ * `sniffpal.profiles.bio_max_length` and a literal 1001-character string in a
  * dataset would read as a magic number that happens to work.
  */
 test('returns 422 to a bio one character past the configured ceiling', function () {
     $admin   = Admin::factory()->create();
     $member  = User::factory()->create();
-    $ceiling = config('petconnect.profiles.bio_max_length');
+    $ceiling = config('sniffpal.profiles.bio_max_length');
 
     $this->actingAs($admin, 'admin')
         ->putJson("/nova-api/users/{$member->getKey()}", novaUserPayload($member, [

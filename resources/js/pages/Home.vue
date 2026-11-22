@@ -150,7 +150,7 @@ const { filters, nearby, filterBounds, categories } = defineProps<{
  * `useGeolocation`, which answers "am I allowed to ask?" — this answers "has
  * this page already asked?", and the two expire on different clocks.
  */
-const LOCATION_VISIT_KEY = 'petconnect:home-location-visit';
+const LOCATION_VISIT_KEY = 'sniffpal:home-location-visit';
 
 const { t } = useTranslations();
 

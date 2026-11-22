@@ -158,7 +158,7 @@ test('emits the sender own editing and withdrawal rights, and refuses them to th
 });
 
 test('closes can_edit once the window has passed while leaving can_delete open', function () {
-    config(['petconnect.messaging.edit_window_minutes' => 15]);
+    config(['sniffpal.messaging.edit_window_minutes' => 15]);
     [$conversation, $sender] = threadWithOneMessage();
     Message::query()->sole()->forceFill(['created_at' => now()->subMinutes(16)])->saveQuietly();
 

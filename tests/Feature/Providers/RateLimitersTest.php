@@ -235,7 +235,7 @@ describe('locale-switches', function () {
                 ->assertSessionHasNoErrors();
         }
 
-        expect(session(config('petconnect.locales.cookie')))->toBe('ar');
+        expect(session(config('sniffpal.locales.cookie')))->toBe('ar');
 
         $user = User::factory()->create(['locale' => 'en']);
 

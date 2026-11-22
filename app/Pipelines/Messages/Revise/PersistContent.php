@@ -27,7 +27,7 @@ use Closure;
  * last-write stamp and pinning, a restore or a future delivery-state column
  * move it without anybody having rewritten a message. Stamping the edit
  * explicitly is also what keeps a bounded edit window meaningful: see
- * MessagePolicy::update and `petconnect.messaging.edit_window_minutes`.
+ * MessagePolicy::update and `sniffpal.messaging.edit_window_minutes`.
  */
 class PersistContent
 {

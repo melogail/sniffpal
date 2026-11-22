@@ -22,7 +22,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * | `rate`    | required, integer, min 1, max 5 | required, integer, min 1, max 5          |
  * | `comment` | nullable, string, max           | present, nullable, string, max           |
  *
- * The bounds come from `petconnect.reviews.*` through
+ * The bounds come from `sniffpal.reviews.*` through
  * App\Concerns\ReviewValidationRules, which is the single place either key is
  * spelled — and therefore the file most likely to break this parity. See
  * .ai/rules/resources.md.

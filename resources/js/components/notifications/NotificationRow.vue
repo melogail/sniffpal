@@ -29,7 +29,7 @@ import type { InboxNotification } from "@/types";
  *
  * The phase 5 parity sweep put this back to legacy's treatment: a 36px disc
  * holding the notification's type glyph. Legacy filled it `violet-100` /
- * `violet-600`; the "Aubergine & Lavender" guide (`.claude/PETCONNECT-STYLE-GUIDE.md`
+ * `violet-600`; the "Aubergine & Lavender" guide (`.claude/SNIFFPAL-STYLE-GUIDE.md`
  * §5.8) spells it `bg-secondary text-secondary-foreground rounded-xl` — the
  * same wash-and-violet pair as a secondary button (#4A32C4 on #EEEAFB, 7.4:1
  * light; #CDBDFF on #261D45, 9.2:1 dark), square-rounded like every avatar

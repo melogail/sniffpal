@@ -60,7 +60,7 @@ import { cn } from '@/lib/utils';
  *
  * Legacy uses two spacings for one heading style: `mb-3` on the five in-card
  * blocks (`PetAbout.vue:28`, `PetLocation.vue:21`, `PetHealthInfo.vue:40` and
- * `:119` in petconnect-old) and `mb-4` above the Quick Info grid
+ * `:119` in sniffpal-old) and `mb-4` above the Quick Info grid
  * (`PetStats.vue:102`). Collapsing them onto one value would move a block on
  * one side or the other, so the difference is kept rather than averaged away —
  * the in-card spacing is the default and the odd one out passes `class="mb-4"`.

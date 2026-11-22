@@ -47,9 +47,9 @@ const { commentsCount, commentableType, commentableId } = defineProps<{
     rootCommentsCount: number;
     commentableType: CommentableType;
     commentableId: number;
-    /** `petconnect.comments.thread_per_page` — the *endpoint's* page size. */
+    /** `sniffpal.comments.thread_per_page` — the *endpoint's* page size. */
     threadPerPage: number;
-    /** `petconnect.comments.max_length` — the composer's ceiling. */
+    /** `sniffpal.comments.max_length` — the composer's ceiling. */
     maxLength: number;
     canInteract: boolean;
     reportReasons: ReportReasonsByType;

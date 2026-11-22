@@ -4,7 +4,7 @@
 English and Arabic UI with RTL, per-user locale preference, and a translation catalogue shipped to the client once.
 
 ## Data
-`users.locale`, `users.timezone`. Translations in `lang/en` and `lang/ar` (rules: `.ai/rules/lang.md`). Supported and RTL locales in `config/petconnect.php` (`locales.supported`, `locales.rtl`).
+`users.locale`, `users.timezone`. Translations in `lang/en` and `lang/ar` (rules: `.ai/rules/lang.md`). Supported and RTL locales in `config/sniffpal.php` (`locales.supported`, `locales.rtl`).
 
 ## Backend
 - `SetLocale` middleware picks the locale from the user, session or `Accept-Language`.

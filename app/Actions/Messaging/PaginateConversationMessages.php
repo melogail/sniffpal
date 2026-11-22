@@ -57,7 +57,7 @@ class PaginateConversationMessages
      */
     public function handle(Conversation $conversation, ?int $perPage = null): LengthAwarePaginator
     {
-        $perPage ??= (int) config('petconnect.messaging.thread_per_page', 30);
+        $perPage ??= (int) config('sniffpal.messaging.thread_per_page', 30);
 
         $conversation->loadMissing('users');
 

@@ -143,7 +143,7 @@ describe('index', function () {
      * Counting the page would report "2 unread" to a reader who has five.
      */
     test('counts the unread total across the mailbox and not across the page', function () {
-        config(['petconnect.notifications.inbox_per_page' => 2]);
+        config(['sniffpal.notifications.inbox_per_page' => 2]);
         $reader = User::factory()->create();
         foreach (range(1, 5) as $ignored) {
             inboxRow($reader);

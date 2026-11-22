@@ -22,7 +22,7 @@ These were the defects the review found that would have cost users or trust on d
 | 6 | Any filter hid listings without a birth date | Fixed and tested |
 | 7 | Liking a scrolled card collapsed the feed | Fixed in `PetLikeButton`; not browser-verified, check once with seeded listings |
 | 8 | Hard-coded English strings | Routed through `t()` with Arabic translations (see localization.md) |
-| 9 | Support page mailed `support@petconnect.com` | Fixed: the page reads `mail.from.address`; set `MAIL_FROM_ADDRESS` to the real support inbox |
+| 9 | Support page mailed `support@sniffpal.com` | Fixed: the page reads `mail.from.address`; set `MAIL_FROM_ADDRESS` to the real support inbox |
 | 10 | Password reset left mobile tokens alive | Fixed: reset and web change revoke every token; tokens expire after a year and are pruned daily |
 
 Deployment checklist still open: write the production `.env` (`QUEUE_CONNECTION=redis`, `CACHE_STORE=redis`, `APP_LOCALE=ar`, `APP_TIMEZONE=Africa/Cairo`, `LOG_STACK=daily`, `SESSION_SECURE_COOKIE=true`, `MEDIA_DISK=s3` with `AWS_*`, `MAIL_FROM_ADDRESS`), install the three supervisor programs, add the one cron line for `schedule:run`, confirm the Reverb proxy path.
@@ -72,7 +72,7 @@ Taken 2026-11-19: social login removed for now; mobile real-time out of launch s
 
 Still open:
 1. Hosting target and go-live date.
-2. Brand name on the public pages (PetConnect still appears in the style guide). Arabic is now the default locale in `.env.example`.
+2. Brand name on the public pages (SniffPal still appears in the style guide). Arabic is now the default locale in `.env.example`.
 3. Whether reviews require a prior conversation.
 4. Policy on comment prose and rule size (section 5), since it changes how every future change is written.
 

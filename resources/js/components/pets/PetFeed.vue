@@ -114,7 +114,7 @@ import type { Paginated, PetCard } from '@/types';
  * quantises the `hsl()` token to 8-bit before compositing.
  *
  * The tokens have since moved to the "Aubergine & Lavender" values
- * (`.claude/PETCONNECT-STYLE-GUIDE.md`, §2), and the argument survives the
+ * (`.claude/SNIFFPAL-STYLE-GUIDE.md`, §2), and the argument survives the
  * move because it was about the token, not the hex: `--muted-foreground` is
  * now `#756B88`, **4.9:1** on the white card and about 4.6:1 on the `#F6F4FB`
  * page in light, and `#9C92B4`, **6.9:1** on the `#0F0C18` page in dark — the

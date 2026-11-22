@@ -107,7 +107,7 @@ class BuildInbox
      */
     public function handle(User $user, ?int $perPage = null): LengthAwarePaginator
     {
-        $perPage ??= (int) config('petconnect.messaging.inbox_per_page', 15);
+        $perPage ??= (int) config('sniffpal.messaging.inbox_per_page', 15);
 
         return $user->conversations()
             ->with([

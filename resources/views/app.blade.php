@@ -1,7 +1,7 @@
 {{--
     `lang` and `dir` both come from the `locale` shared prop, which
     Http\Middleware\HandleInertiaRequests derives from App::getLocale() and the
-    `petconnect.locales.rtl` whitelist. Reading the prop rather than recomputing
+    `sniffpal.locales.rtl` whitelist. Reading the prop rather than recomputing
     it here keeps one reader of that whitelist: the SetLocale middleware has
     already resolved cookie -> user -> session -> app.locale by the time this
     renders.

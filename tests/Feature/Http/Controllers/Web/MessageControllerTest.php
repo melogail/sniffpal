@@ -216,7 +216,7 @@ describe('store', function () {
         $conversation = Conversation::factory()->direct()
             ->withParticipants($sender, User::factory()->create())
             ->create();
-        $maxLength    = config('petconnect.messaging.max_length');
+        $maxLength    = config('sniffpal.messaging.max_length');
 
         $this->actingAs($sender)
             ->post(route('conversations.messages.store', $conversation), [
@@ -344,7 +344,7 @@ describe('update', function () {
     });
 
     test('returns 403 once the edit window has closed and leaves the text unchanged', function () {
-        config(['petconnect.messaging.edit_window_minutes' => 15]);
+        config(['sniffpal.messaging.edit_window_minutes' => 15]);
         $sender      = User::factory()->create();
         [, $message] = threadWithMessageFrom($sender, User::factory()->create());
         $message->forceFill(['created_at' => now()->subMinutes(16)])->saveQuietly();
@@ -401,7 +401,7 @@ describe('destroy', function () {
     });
 
     test('withdraws a message the edit window has long closed on', function () {
-        config(['petconnect.messaging.edit_window_minutes' => 15]);
+        config(['sniffpal.messaging.edit_window_minutes' => 15]);
         $sender      = User::factory()->create();
         [, $message] = threadWithMessageFrom($sender, User::factory()->create());
         $message->forceFill(['created_at' => now()->subYear()])->saveQuietly();

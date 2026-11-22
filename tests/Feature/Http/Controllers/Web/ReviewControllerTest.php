@@ -242,7 +242,7 @@ describe('store', function () {
 
     test('rejects a comment longer than the configured ceiling and writes nothing', function () {
         $subject   = User::factory()->create();
-        $maxLength = config('petconnect.reviews.max_comment_length');
+        $maxLength = config('sniffpal.reviews.max_comment_length');
 
         $this->actingAs(User::factory()->create())
             ->post(route('reviews.store', reviewRouteParameters($subject)), [

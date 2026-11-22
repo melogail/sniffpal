@@ -48,7 +48,7 @@ const {
 } = defineProps<{
     commentableType: CommentableType;
     commentableId: number;
-    /** `petconnect.comments.max_length`, when the page was shipped it. */
+    /** `sniffpal.comments.max_length`, when the page was shipped it. */
     maxLength?: number | null;
     parentId?: number | null;
     placeholder?: string;

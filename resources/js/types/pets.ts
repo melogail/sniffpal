@@ -279,7 +279,7 @@ export type HomeFeedBounds = {
 export type CommentBounds = {
     max_length: number;
     /**
-     * `petconnect.comments.thread_per_page` — the page size `comments.index`
+     * `sniffpal.comments.thread_per_page` — the page size `comments.index`
      * answers with, which is not the size of the slice the page shipped.
      *
      * `CommentThread` needs it to know where the shipped roots stop and the

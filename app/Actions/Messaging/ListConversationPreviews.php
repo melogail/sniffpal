@@ -61,7 +61,7 @@ class ListConversationPreviews
      */
     public function handle(User $user, ?int $limit = null): Collection
     {
-        $limit ??= (int) config('petconnect.messaging.preview_per_page', 5);
+        $limit ??= (int) config('sniffpal.messaging.preview_per_page', 5);
 
         return $user->conversations()
             ->with(['users.media', 'lastMessage'])

@@ -50,26 +50,26 @@ class BuildClientOptions
             'ticket_categories' => TicketCategory::options(),
             'bounds'            => [
                 'filters'  => [
-                    'default_radius_km' => (float) config('petconnect.nearby.default_radius_km', 20),
-                    'min_radius_km'     => (float) config('petconnect.nearby.min_radius_km', 1),
-                    'max_radius_km'     => (float) config('petconnect.nearby.max_radius_km', 100),
-                    'max_age_years'     => (float) config('petconnect.filters.max_age_years', 15),
-                    'default_age_min'   => (float) config('petconnect.filters.default_age_min', 0),
-                    'default_age_max'   => (float) config('petconnect.filters.default_age_max', 15),
+                    'default_radius_km' => (float) config('sniffpal.nearby.default_radius_km', 20),
+                    'min_radius_km'     => (float) config('sniffpal.nearby.min_radius_km', 1),
+                    'max_radius_km'     => (float) config('sniffpal.nearby.max_radius_km', 100),
+                    'max_age_years'     => (float) config('sniffpal.filters.max_age_years', 15),
+                    'default_age_min'   => (float) config('sniffpal.filters.default_age_min', 0),
+                    'default_age_max'   => (float) config('sniffpal.filters.default_age_max', 15),
                 ],
                 'photos'   => $this->photoBounds(),
                 'comments' => $this->commentBounds(),
                 'reviews'  => $this->reviewBounds(),
                 'messages' => ['max_length' => $this->maxMessageLength()],
                 'profiles' => [
-                    'bio_max_length'       => (int) config('petconnect.profiles.bio_max_length', 1000),
-                    'max_avatar_kilobytes' => (int) config('petconnect.profiles.max_avatar_kilobytes', 2048),
+                    'bio_max_length'       => (int) config('sniffpal.profiles.bio_max_length', 1000),
+                    'max_avatar_kilobytes' => (int) config('sniffpal.profiles.max_avatar_kilobytes', 2048),
                 ],
                 'support'  => $this->ticketBounds(),
             ],
             'locales'           => [
-                'supported' => config('petconnect.locales.supported', ['en']),
-                'rtl'       => config('petconnect.locales.rtl', []),
+                'supported' => config('sniffpal.locales.supported', ['en']),
+                'rtl'       => config('sniffpal.locales.rtl', []),
             ],
         ];
     }

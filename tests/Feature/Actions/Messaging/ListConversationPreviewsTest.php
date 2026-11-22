@@ -146,7 +146,7 @@ test('orders the menu by the most recent message first', function () {
 });
 
 test('takes the size of the menu from the configured preview page size', function () {
-    config(['petconnect.messaging.preview_per_page' => 2]);
+    config(['sniffpal.messaging.preview_per_page' => 2]);
     $reader = User::factory()->create();
     seedPreviewThreadsFor($reader, conversations: 3);
 
@@ -154,7 +154,7 @@ test('takes the size of the menu from the configured preview page size', functio
 });
 
 test('honours a limit it is given over the configured one', function () {
-    config(['petconnect.messaging.preview_per_page' => 5]);
+    config(['sniffpal.messaging.preview_per_page' => 5]);
     $reader = User::factory()->create();
     seedPreviewThreadsFor($reader, conversations: 4);
 

@@ -34,7 +34,7 @@ const { profile, canInteract } = defineProps<{
      * opening a thread and liking — need one.
      */
     canInteract: boolean;
-    /** `petconnect.reviews.*`, so the stars draw the real scale. */
+    /** `sniffpal.reviews.*`, so the stars draw the real scale. */
     bounds: ReviewBounds;
     /** The `reportReasons` page prop, keyed by target type. */
     reportReasons: ReportReasonsByType;

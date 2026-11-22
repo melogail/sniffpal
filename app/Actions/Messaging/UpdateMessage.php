@@ -27,7 +27,7 @@ use Illuminate\Pipeline\Pipeline;
  * that can be wiped by omission.
  *
  * *Whether* an edit is still allowed is not decided here: MessagePolicy::update
- * closes the window `petconnect.messaging.edit_window_minutes` after sending,
+ * closes the window `sniffpal.messaging.edit_window_minutes` after sending,
  * and MessageController calls it. The legacy app had no window at all — a
  * message could be rewritten indefinitely, including after the other side had
  * read and acted on it.

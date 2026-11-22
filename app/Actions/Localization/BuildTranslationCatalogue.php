@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\App;
  * ## The locale is filtered here, not just by the caller
  *
  * `$locale` names a file. SetLocale has already checked the cookie, the user
- * row and the session against `petconnect.locales.supported` before anything
+ * row and the session against `sniffpal.locales.supported` before anything
  * reaches App::getLocale(), but this Action builds a path out of the value and
  * must not depend on a caller having done that — an unfiltered locale here is a
  * `lang/../../<anything>.json` read primitive. Same whitelist, same fallback to
@@ -91,7 +91,7 @@ class BuildTranslationCatalogue
     protected function supported(string $locale): string
     {
         /** @var list<string> $supported */
-        $supported = config('petconnect.locales.supported', ['en']);
+        $supported = config('sniffpal.locales.supported', ['en']);
 
         return in_array($locale, $supported, true)
             ? $locale

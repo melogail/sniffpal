@@ -272,7 +272,7 @@ describe('the payload', function () {
 
     test('pages the listings and the reviews independently', function () {
         Storage::fake(config('media-library.disk_name'));
-        config(['petconnect.profiles.listings_per_page' => 1, 'petconnect.profiles.reviews_per_page' => 1]);
+        config(['sniffpal.profiles.listings_per_page' => 1, 'sniffpal.profiles.reviews_per_page' => 1]);
         $profile = profileWithListingsAndReviews();
 
         $this->get(route('profile.show', ['user' => $profile, 'listings' => 2]))
@@ -343,16 +343,16 @@ describe('the payload', function () {
  * The star widget cannot draw a scale it has not been told the length of, and
  * was hardcoding five. The bounds are read through the same
  * ReviewValidationRules accessors the `min:`/`max:` rules are built from, so
- * `petconnect.reviews.max_rate` cannot move for the validator without moving
+ * `sniffpal.reviews.max_rate` cannot move for the validator without moving
  * for the widget — which is the promise the config file makes and could not
  * keep until this prop existed. A non-default value is what tells the two
  * apart; a hardcoded prop passes on the defaults.
  */
 test('ships the rating scale the star widget draws itself from, and enforces the same one', function () {
     config([
-        'petconnect.reviews.min_rate'           => 1,
-        'petconnect.reviews.max_rate'           => 10,
-        'petconnect.reviews.max_comment_length' => 300,
+        'sniffpal.reviews.min_rate'           => 1,
+        'sniffpal.reviews.max_rate'           => 10,
+        'sniffpal.reviews.max_comment_length' => 300,
     ]);
     $profile = User::factory()->create();
 

@@ -17,7 +17,7 @@ use Illuminate\Support\Carbon;
  * A rating (1-5) plus optional comment written by a user about a reviewable model.
  *
  * The 1-5 range is enforced by App\Concerns\ReviewValidationRules against
- * `petconnect.reviews.min_rate` / `max_rate`, not by the column: `rate` is an
+ * `sniffpal.reviews.min_rate` / `max_rate`, not by the column: `rate` is an
  * unsignedTinyInteger, which accepts 0-255. The legacy app validated it with
  * nothing at all.
  *

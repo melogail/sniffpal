@@ -43,7 +43,7 @@ test('leaves the server side group files out of the catalogue', function () {
 /**
  * `$locale` is interpolated into a filesystem path, so an unfiltered value here
  * is a read primitive over anything reachable from `lang/`. The Action filters
- * against `petconnect.locales.supported` itself rather than trusting that
+ * against `sniffpal.locales.supported` itself rather than trusting that
  * SetLocale already did — a caller passing `App::getLocale()` is the usual case,
  * not the guaranteed one.
  */
@@ -72,7 +72,7 @@ test('reads the language the application is currently in when it is given none',
  * the cheaper of the two failures.
  */
 test('returns an empty catalogue for a supported language with no file yet', function () {
-    config(['petconnect.locales.supported' => ['en', 'fr']]);
+    config(['sniffpal.locales.supported' => ['en', 'fr']]);
 
     expect(app(BuildTranslationCatalogue::class)->handle('fr'))->toBe([]);
 });

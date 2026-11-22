@@ -253,7 +253,7 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
      * Nothing looked broken, because `getFirstMediaUrl()` falls back to the
      * original when the named conversion has not been generated. Profile pages
      * were therefore serving the raw upload — 23 KB in the fixture, but
-     * `petconnect.profiles.max_avatar_kilobytes` allows 2 MB — where a ~40 KB
+     * `sniffpal.profiles.max_avatar_kilobytes` allows 2 MB — where a ~40 KB
      * 512px crop was intended, and `PetMediaResource` calls
      * `Media::getUrl('display')`, which does NOT fall back and would resolve to
      * a file that was never written.
@@ -289,7 +289,7 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
         return $this->email_verified_at !== null;
     }
 
-    /** Holds the launch badge, see `petconnect.founding` and PetObserver::created. */
+    /** Holds the launch badge, see `sniffpal.founding` and PetObserver::created. */
     public function isFoundingMember(): bool
     {
         return $this->founding_member_at !== null;
@@ -406,7 +406,7 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
         $locale    = (string) ($this->locale ?: $fallback);
 
         /** @var list<string> $supported */
-        $supported = config('petconnect.locales.supported', ['en']);
+        $supported = config('sniffpal.locales.supported', ['en']);
 
         return in_array($locale, $supported, true) ? $locale : $fallback;
     }

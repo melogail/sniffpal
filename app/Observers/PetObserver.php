@@ -33,7 +33,7 @@ class PetObserver
 
     /**
      * The launch offer: the owner's first listing inside the window earns the
-     * founding badge while fewer than `petconnect.founding.cap` hold it. Never
+     * founding badge while fewer than `sniffpal.founding.cap` hold it. Never
      * revoked, so a deleted listing keeps it (plan: launch-prerequisites).
      */
     public function created(Pet $pet): void
@@ -44,14 +44,14 @@ class PetObserver
             return;
         }
 
-        $windowEnd                 = Carbon::parse(config('petconnect.founding.window_ends_at'), 'Africa/Cairo');
+        $windowEnd                 = Carbon::parse(config('sniffpal.founding.window_ends_at'), 'Africa/Cairo');
 
         if (now()->greaterThan($windowEnd)) {
             return;
         }
 
         // shortcut: the count-then-save can overshoot the cap by the number of first listings committed in the same instant; wrap in Cache::lock if an exact cap ever matters.
-        if (User::foundingMembers()->count() >= (int) config('petconnect.founding.cap')) {
+        if (User::foundingMembers()->count() >= (int) config('sniffpal.founding.cap')) {
             return;
         }
 

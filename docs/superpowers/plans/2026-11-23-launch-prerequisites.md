@@ -17,7 +17,7 @@
 - No new dependencies. No fake data. No listing is ever created by code outside tests.
 - Pixel and tag render only when their env value is set; local and tests must send nothing (same pattern as `GOOGLE_TAG_ID`).
 - Event names on the Meta side: `registered` → standard event `CompleteRegistration`; `listing_published` → custom event `listing_published` **(my call: the standard name lets Meta optimise ad delivery on registrations, the custom name keeps the plan's vocabulary for the listing event)**.
-- Founding badge: cap `100` members, window closes `2027-01-31 23:59:59 Africa/Cairo` **(my call: covers the 4-week ads test ending 26 Jan plus slack; both values in `config/petconnect.php` so Mohamed can move them without code)**.
+- Founding badge: cap `100` members, window closes `2027-01-31 23:59:59 Africa/Cairo` **(my call: covers the 4-week ads test ending 26 Jan plus slack; both values in `config/sniffpal.php` so Mohamed can move them without code)**.
 - Badge is awarded once, on the user's first created listing, and is never revoked **(my call: simplest; see Review Focus for the deleted-listing case)**.
 - Run `vendor/bin/pint --format agent <files>` with explicit paths on every PHP file touched. Run `npm run types:check` and `npx vp check --fix <files>` on every TS/Vue file touched.
 - Commit after each task. Update `.ai/plans/pet-listings.md` (badge, sitemap) and `.ai/plans/home-feed.md` (launch section) **Open work / Frontend** sections in the same commit as the feature, per `.ai/plans/README.md`.
@@ -101,7 +101,7 @@ git commit -m "feat(analytics): add Meta pixel with registration and listing eve
 
 **Files:**
 - Create: `database/migrations/2026_11_23_000000_add_founding_member_at_to_users_table.php` (via `php artisan make:migration add_founding_member_at_to_users_table --no-interaction`)
-- Modify: `config/petconnect.php` (new top-level `'founding'` key)
+- Modify: `config/sniffpal.php` (new top-level `'founding'` key)
 - Modify: `app/Models/User.php` (cast, `isFoundingMember(): bool`, scope)
 - Modify: `app/Observers/PetObserver.php` (new `created()` hook)
 - Modify: `app/Http/Resources/User/UserSummaryResource.php`, `app/Http/Resources/Profile/ProfileResource.php` (add `is_founding_member`)
@@ -110,7 +110,7 @@ git commit -m "feat(analytics): add Meta pixel with registration and listing eve
 - Test: `tests/Feature/Observers/FoundingMemberBadgeTest.php`
 
 **Interfaces:**
-- Produces: `users.founding_member_at` nullable timestamp (not in `#[Fillable]`, per `.ai/rules/models.md` "Privileged columns stay out of Fillable"); `User::isFoundingMember(): bool`; `User::scopeFoundingMembers(Builder $query): Builder`; `config('petconnect.founding.cap')` = `100`, `config('petconnect.founding.window_ends_at')` = `'2027-01-31 23:59:59'`; `is_founding_member: bool` on every `UserSummaryResource` (hence `PetOwnerResource`) and on `ProfileResource`.
+- Produces: `users.founding_member_at` nullable timestamp (not in `#[Fillable]`, per `.ai/rules/models.md` "Privileged columns stay out of Fillable"); `User::isFoundingMember(): bool`; `User::scopeFoundingMembers(Builder $query): Builder`; `config('sniffpal.founding.cap')` = `100`, `config('sniffpal.founding.window_ends_at')` = `'2027-01-31 23:59:59'`; `is_founding_member: bool` on every `UserSummaryResource` (hence `PetOwnerResource`) and on `ProfileResource`.
 
 - [ ] **Step 1: Write the failing tests** in `tests/Feature/Observers/FoundingMemberBadgeTest.php`
 
@@ -120,7 +120,7 @@ use App\Models\User;
 use Illuminate\Support\Carbon;
 
 beforeEach(function () {
-    config(['petconnect.founding.cap' => 3, 'petconnect.founding.window_ends_at' => '2027-01-31 23:59:59']);
+    config(['sniffpal.founding.cap' => 3, 'sniffpal.founding.window_ends_at' => '2027-01-31 23:59:59']);
     Carbon::setTestNow('2026-12-10 12:00:00');
 });
 
@@ -184,7 +184,7 @@ Expected: FAIL, `isFoundingMember` undefined / column missing.
 
 - [ ] **Step 4: Config**
 
-In `config/petconnect.php` add a `'founding'` block with a docblock in the file's style: `'cap' => 100`, `'window_ends_at' => env('FOUNDING_WINDOW_ENDS_AT', '2027-01-31 23:59:59')`. Add `FOUNDING_WINDOW_ENDS_AT=` to `.env.example` with a one-line comment.
+In `config/sniffpal.php` add a `'founding'` block with a docblock in the file's style: `'cap' => 100`, `'window_ends_at' => env('FOUNDING_WINDOW_ENDS_AT', '2027-01-31 23:59:59')`. Add `FOUNDING_WINDOW_ENDS_AT=` to `.env.example` with a one-line comment.
 
 - [ ] **Step 5: Model**
 
@@ -192,7 +192,7 @@ In `config/petconnect.php` add a `'founding'` block with a docblock in the file'
 
 - [ ] **Step 6: Observer**
 
-`PetObserver::created(Pet $pet): void`: return early when the owner already has the badge, when `now()` is past `Carbon::parse(config('petconnect.founding.window_ends_at'), 'Africa/Cairo')`, or when `User::foundingMembers()->count() >= config('petconnect.founding.cap')`; otherwise set `founding_member_at = now()` and `saveQuietly()` on the owner. Use `$pet->user` (the relation; `whenLoaded` is irrelevant here). One-line docblock stating the rule. Note in `.ai/rules/observers.md`-style terms is not needed; the test file documents it.
+`PetObserver::created(Pet $pet): void`: return early when the owner already has the badge, when `now()` is past `Carbon::parse(config('sniffpal.founding.window_ends_at'), 'Africa/Cairo')`, or when `User::foundingMembers()->count() >= config('sniffpal.founding.cap')`; otherwise set `founding_member_at = now()` and `saveQuietly()` on the owner. Use `$pet->user` (the relation; `whenLoaded` is irrelevant here). One-line docblock stating the rule. Note in `.ai/rules/observers.md`-style terms is not needed; the test file documents it.
 
 - [ ] **Step 7: Resources and factory**
 
@@ -208,7 +208,7 @@ Expected: all pass, pint clean, phpstan 0 errors (if phpstan reports `Undefined 
 Add the award rule and the config keys to `.ai/plans/pet-listings.md` (Backend and Guards sections).
 
 ```bash
-git add database/migrations config/petconnect.php .env.example app/Models/User.php app/Observers/PetObserver.php app/Http/Resources/User/UserSummaryResource.php app/Http/Resources/Profile/ProfileResource.php database/factories/UserFactory.php tests/Feature/Observers/FoundingMemberBadgeTest.php .ai/plans/pet-listings.md
+git add database/migrations config/sniffpal.php .env.example app/Models/User.php app/Observers/PetObserver.php app/Http/Resources/User/UserSummaryResource.php app/Http/Resources/Profile/ProfileResource.php database/factories/UserFactory.php tests/Feature/Observers/FoundingMemberBadgeTest.php .ai/plans/pet-listings.md
 git commit -m "feat(users): award a founding-member badge on the first listing in the launch window"
 ```
 
@@ -227,13 +227,13 @@ git commit -m "feat(users): award a founding-member badge on the first listing i
 
 **Interfaces:**
 - Consumes: `is_founding_member` from Task 2; `CreatePetButton` (existing, auth-aware link to `pets.create`); `register` route from `@/routes`.
-- Produces: `launch` Inertia prop on `Home`: `{ founding_open: boolean; founding_remaining: number; facebook_group_url: string | null }`; `config('petconnect.founding.facebook_group_url')` = `env('FACEBOOK_GROUP_URL')`.
+- Produces: `launch` Inertia prop on `Home`: `{ founding_open: boolean; founding_remaining: number; facebook_group_url: string | null }`; `config('sniffpal.founding.facebook_group_url')` = `env('FACEBOOK_GROUP_URL')`.
 
 - [ ] **Step 1: Write the failing tests** in `HomeControllerTest.php`
 
 ```php
 test('the home page carries the launch notice while the founding window is open', function () {
-    config(['petconnect.founding.cap' => 100, 'petconnect.founding.facebook_group_url' => 'https://facebook.com/groups/sniffpal']);
+    config(['sniffpal.founding.cap' => 100, 'sniffpal.founding.facebook_group_url' => 'https://facebook.com/groups/sniffpal']);
     User::factory()->count(2)->foundingMember()->create();
 
     $this->get(route('home'))->assertInertia(fn ($page) => $page
@@ -243,7 +243,7 @@ test('the home page carries the launch notice while the founding window is open'
 });
 
 test('the launch notice closes when the cap is reached or the window has passed', function () {
-    config(['petconnect.founding.cap' => 1]);
+    config(['sniffpal.founding.cap' => 1]);
     User::factory()->foundingMember()->create();
 
     $this->get(route('home'))->assertInertia(fn ($page) => $page->where('launch.founding_open', false));
@@ -289,7 +289,7 @@ Run the app (`composer run dev`), open `/` logged out and logged in, confirm the
 Add the `launch` prop and `LaunchNotice` to `.ai/plans/home-feed.md` Frontend section.
 
 ```bash
-git add resources/js app/Http/Controllers/Web/HomeController.php config/petconnect.php .env.example lang/en.json lang/ar.json tests/Feature/Http/Controllers/Web/HomeControllerTest.php .ai/plans/home-feed.md
+git add resources/js app/Http/Controllers/Web/HomeController.php config/sniffpal.php .env.example lang/en.json lang/ar.json tests/Feature/Http/Controllers/Web/HomeControllerTest.php .ai/plans/home-feed.md
 git commit -m "feat(home): founding-member badge and launch notice"
 ```
 
@@ -378,4 +378,4 @@ git commit -m "feat(seo): add sitemap.xml and advertise it in robots.txt"
 
 - Admin-to-user in-site message for the consent flow: the Facebook plan's Task 5 falls back to email until built. Not in this plan.
 - Nova column for the badge, badge in messaging bylines, revoking the badge: not built.
-- Brand-name clean-up ("PetConnect" in the style guide and config key names): separate change.
+- Brand-name clean-up ("SniffPal" in the style guide and config key names): separate change.

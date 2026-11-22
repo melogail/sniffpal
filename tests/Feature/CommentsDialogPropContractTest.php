@@ -127,8 +127,8 @@ function commentsDialogThreadParameters(Pet $pet): array
 
 test('ships the report vocabulary and the comment ceiling the dialog reads', function (string $component) {
     config([
-        'petconnect.comments.max_length'      => 140,
-        'petconnect.comments.thread_per_page' => 3,
+        'sniffpal.comments.max_length'      => 140,
+        'sniffpal.comments.thread_per_page' => 3,
     ]);
 
     $this->get(commentsDialogHostUrl($component))
@@ -158,7 +158,7 @@ test('ships the report vocabulary and the comment ceiling the dialog reads', fun
  * send it at all.
  */
 test('ships a composer ceiling that is the one comments.store enforces', function () {
-    config(['petconnect.comments.max_length' => 140]);
+    config(['sniffpal.comments.max_length' => 140]);
     $author    = User::factory()->create();
     $pet       = Pet::factory()->create();
 
@@ -202,7 +202,7 @@ test('ships a composer ceiling that is the one comments.store enforces', functio
  * `meta.per_page` and `meta.total` on page one alone.
  */
 test('answers a page of the thread with the envelope the dialog pages and retries by', function () {
-    config(['petconnect.comments.thread_per_page' => 2]);
+    config(['sniffpal.comments.thread_per_page' => 2]);
     $pet = Pet::factory()->create();
     Comment::factory()->count(5)->for($pet, 'commentable')->create();
 

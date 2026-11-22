@@ -59,7 +59,7 @@ const FEED_CARD_EAGER_LOADED_KEYS = ['category', 'breed', 'user', 'comments'];
  */
 function countFeedQueries(TestCase $test, int $perPage): int
 {
-    config(['petconnect.pets.feed_per_page' => $perPage]);
+    config(['sniffpal.pets.feed_per_page' => $perPage]);
 
     DB::flushQueryLog();
     DB::enableQueryLog();
@@ -202,12 +202,12 @@ test('the feed costs the same number of queries however many comments its cards 
  */
 test('ships the filter bounds the sheet draws its sliders from', function () {
     config([
-        'petconnect.nearby.default_radius_km' => 25.5,
-        'petconnect.nearby.min_radius_km'     => 3.5,
-        'petconnect.nearby.max_radius_km'     => 80.5,
-        'petconnect.filters.max_age_years'    => 18.5,
-        'petconnect.filters.default_age_min'  => 1.5,
-        'petconnect.filters.default_age_max'  => 9.5,
+        'sniffpal.nearby.default_radius_km' => 25.5,
+        'sniffpal.nearby.min_radius_km'     => 3.5,
+        'sniffpal.nearby.max_radius_km'     => 80.5,
+        'sniffpal.filters.max_age_years'    => 18.5,
+        'sniffpal.filters.default_age_min'  => 1.5,
+        'sniffpal.filters.default_age_max'  => 9.5,
     ]);
 
     $this->get(route('home'))
@@ -328,8 +328,8 @@ test('rejects a coordinate outside the world', function (array $query, string $f
  */
 test('rejects a radius outside the configured window', function (float $radius) {
     config([
-        'petconnect.nearby.min_radius_km' => 5,
-        'petconnect.nearby.max_radius_km' => 50,
+        'sniffpal.nearby.min_radius_km' => 5,
+        'sniffpal.nearby.max_radius_km' => 50,
     ]);
 
     $this->from(route('home'))
@@ -609,9 +609,9 @@ test('a partial feed visit from the filter sheet comes back with the filters it 
 
 test('the home page carries the launch notice while the founding window is open', function () {
     config([
-        'petconnect.founding.cap'                => 100,
-        'petconnect.founding.window_ends_at'     => '2027-01-31 23:59:59',
-        'petconnect.founding.facebook_group_url' => 'https://facebook.com/groups/sniffpal',
+        'sniffpal.founding.cap'                => 100,
+        'sniffpal.founding.window_ends_at'     => '2027-01-31 23:59:59',
+        'sniffpal.founding.facebook_group_url' => 'https://facebook.com/groups/sniffpal',
     ]);
     User::factory()->count(2)->foundingMember()->create();
 
@@ -622,7 +622,7 @@ test('the home page carries the launch notice while the founding window is open'
 });
 
 test('the launch notice closes when the cap is reached', function () {
-    config(['petconnect.founding.cap' => 1, 'petconnect.founding.window_ends_at' => '2027-01-31 23:59:59']);
+    config(['sniffpal.founding.cap' => 1, 'sniffpal.founding.window_ends_at' => '2027-01-31 23:59:59']);
     User::factory()->foundingMember()->create();
 
     $this->get(route('home'))->assertInertia(fn ($page) => $page
@@ -631,7 +631,7 @@ test('the launch notice closes when the cap is reached', function () {
 });
 
 test('the launch notice closes when the window has passed', function () {
-    config(['petconnect.founding.cap' => 100, 'petconnect.founding.window_ends_at' => '2026-01-01 00:00:00']);
+    config(['sniffpal.founding.cap' => 100, 'sniffpal.founding.window_ends_at' => '2026-01-01 00:00:00']);
 
     $this->get(route('home'))->assertInertia(fn ($page) => $page->where('launch.founding_open', false));
 });

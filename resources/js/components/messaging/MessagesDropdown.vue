@@ -86,7 +86,7 @@ import { index as conversationsIndex } from '@/routes/conversations';
  *
  * ## Geometry, and where each number comes from
  *
- * Read off `components/web/MessagesDropdown.vue` in petconnect-old: a 40px
+ * Read off `components/web/MessagesDropdown.vue` in sniffpal-old: a 40px
  * round trigger (`p-2` around a 24px glyph), a `w-80` panel `mt-2` below it
  * (the `:side-offset="8"`), `rounded-lg` with `shadow-xl ring-1`, a `max-h-96`
  * scroll region, and `px-4 py-3` rows. The enter/leave transition is legacy's
@@ -94,7 +94,7 @@ import { index as conversationsIndex } from '@/routes/conversations';
  * `data-[state]` attributes instead of a `<Transition>` wrapper, because the
  * portalled content is mounted and unmounted by the primitive.
  *
- * The "Aubergine & Lavender" guide (`.claude/PETCONNECT-STYLE-GUIDE.md` §5.3,
+ * The "Aubergine & Lavender" guide (`.claude/SNIFFPAL-STYLE-GUIDE.md` §5.3,
  * §5.6) re-sets the geometry on top of that: the trigger is a 38px
  * `rounded-[14px]` ghost control (`size-[38px]` over `size="icon-lg"`, the
  * glyph still `size-6`), and the panel is the popover frame — `rounded-[20px]`,

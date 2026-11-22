@@ -14,7 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * authorization here and none in the controller: `locale.update` governs no
  * model, and .ai/rules/controllers.md exempts exactly that case.
  *
- * The whitelist is `petconnect.locales.supported` through
+ * The whitelist is `sniffpal.locales.supported` through
  * App\Concerns\ProfileValidationRules::localeRules(), the same list the profile
  * form's `locale` field validates against and the same one
  * Actions\Profiles\ApplyUserLocale falls back from. One list, three readers.

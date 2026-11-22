@@ -163,7 +163,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      * somebody could clear, and Laravel\Nova\Util::userGuard() falls back to
      * `config('auth.defaults.guard')` — i.e. `web` — when it is null. The
      * legacy app had this gate with a body of `return true` and nothing else;
-     * verified in petconnect-old/app/Providers/NovaServiceProvider.php.
+     * verified in sniffpal-old/app/Providers/NovaServiceProvider.php.
      *
      * Every admin is a full moderator; there are no roles on the `admins`
      * table and inventing one here would be a schema decision made in a

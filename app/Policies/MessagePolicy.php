@@ -50,7 +50,7 @@ use App\Models\User;
  *
  * ## The edit window
  *
- * `update` closes `petconnect.messaging.edit_window_minutes` after the message
+ * `update` closes `sniffpal.messaging.edit_window_minutes` after the message
  * was sent. The legacy policy had no window: a message could be rewritten
  * indefinitely, including long after the other side had read it and acted on
  * it, and the only trace was `updated_at` moving. Correspondence is not a wiki
@@ -158,7 +158,7 @@ class MessagePolicy
      */
     protected function withinEditWindow(Message $message): bool
     {
-        $windowMinutes = (int) config('petconnect.messaging.edit_window_minutes', 15);
+        $windowMinutes = (int) config('sniffpal.messaging.edit_window_minutes', 15);
 
         if ($windowMinutes <= 0) {
             return false;

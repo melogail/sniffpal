@@ -36,7 +36,7 @@ describe('index', function () {
      * with the drift this pins.
      */
     test('pages the thread at the configured size', function () {
-        config(['petconnect.comments.thread_per_page' => 3]);
+        config(['sniffpal.comments.thread_per_page' => 3]);
         $pet = Pet::factory()->create();
         Comment::factory()->count(5)->for($pet, 'commentable')->create();
 
@@ -180,7 +180,7 @@ describe('store', function () {
 
     test('rejects a comment longer than the configured ceiling and writes nothing', function () {
         $pet       = Pet::factory()->create();
-        $maxLength = config('petconnect.comments.max_length');
+        $maxLength = config('sniffpal.comments.max_length');
 
         $this->actingAs(User::factory()->create())
             ->post(route('comments.store', threadRouteParameters($pet)), [
@@ -194,7 +194,7 @@ describe('store', function () {
     test('stores a comment of the full configured length intact', function () {
         $author  = User::factory()->create();
         $pet     = Pet::factory()->create();
-        $content = Str::repeat('a', config('petconnect.comments.max_length'));
+        $content = Str::repeat('a', config('sniffpal.comments.max_length'));
 
         $this->actingAs($author)
             ->from(route('pets.show', $pet))

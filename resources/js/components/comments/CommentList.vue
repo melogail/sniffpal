@@ -106,9 +106,9 @@ const {
     rootCommentsCount?: number | null;
     commentableType: CommentableType;
     commentableId: number;
-    /** `petconnect.comments.thread_per_page` — the *endpoint's* page size. */
+    /** `sniffpal.comments.thread_per_page` — the *endpoint's* page size. */
     threadPerPage?: number | null;
-    /** `petconnect.comments.max_length` — the composer's ceiling. */
+    /** `sniffpal.comments.max_length` — the composer's ceiling. */
     maxLength?: number | null;
     canInteract: boolean;
     reportReasons?: ReportReasonsByType;

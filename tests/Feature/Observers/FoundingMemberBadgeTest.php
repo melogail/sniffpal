@@ -7,10 +7,10 @@ use Illuminate\Support\Carbon;
 /**
  * The founding-member badge: awarded by PetObserver::created to the owner of
  * a listing created inside the launch window while fewer than
- * `petconnect.founding.cap` members hold it. Never revoked.
+ * `sniffpal.founding.cap` members hold it. Never revoked.
  */
 beforeEach(function () {
-    config(['petconnect.founding.cap' => 3, 'petconnect.founding.window_ends_at' => '2027-01-31 23:59:59']);
+    config(['sniffpal.founding.cap' => 3, 'sniffpal.founding.window_ends_at' => '2027-01-31 23:59:59']);
     Carbon::setTestNow('2026-12-10 12:00:00');
 });
 

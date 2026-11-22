@@ -146,7 +146,7 @@ test('cuts the last message down to a snippet', function (string $content, strin
 ]);
 
 test('takes the length of the snippet from the configured bound', function () {
-    config(['petconnect.messaging.preview_snippet_length' => 20]);
+    config(['sniffpal.messaging.preview_snippet_length' => 20]);
     $reader       = User::factory()->create();
     $peer         = User::factory()->create();
     $conversation = Conversation::factory()->direct()->withParticipants($reader, $peer)->create();

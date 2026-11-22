@@ -176,7 +176,7 @@ class ProfileController extends Controller
     protected function localeOptions(): array
     {
         /** @var list<string> $supported */
-        $supported = config('petconnect.locales.supported', ['en']);
+        $supported = config('sniffpal.locales.supported', ['en']);
 
         return array_map(
             fn (string $locale): array => [

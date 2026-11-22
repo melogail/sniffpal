@@ -1,17 +1,17 @@
-# PetConnect → Laravel 13 upgrade — maystro brief
+# SniffPal → Laravel 13 upgrade — maystro brief
 
 Hand this to `maystro`. Written after a read-only survey of both codebases on 2026-08-30.
 
 ## The two codebases
 
-**SOURCE (old, read-only reference — never modify):** `/home/asciisd/sites/petconnect-old`
+**SOURCE (old, read-only reference — never modify):** `/home/asciisd/sites/sniffpal-old`
 
 - Laravel 12.51, PHP 8.2, Inertia 2, Pest 4, Ziggy 2.6, Nova 5, spatie/laravel-medialibrary 11, ebess/advanced-nova-media-library 5
 - 133 PHP files in `app/`, 13 models, 26 migrations, 12 seeders, 32 test files
 - 192 Vue components, ~19,465 lines of Vue + ~1,248 lines of TS, 17 pages
 - Also contains `REFACTORING_SUMMARY.md` and `PET_FORM_IMPROVEMENTS.md` — read them, they record prior intent.
 
-**TARGET (this project):** `/home/asciisd/sites/petconnect` — clean Laravel 13.17 / PHP 8.4 Vue starter kit. Inertia v3, Pest 5, Fortify, Wayfinder 0.1.14, Larastan, Pint. Only auth/settings scaffolding exists today. All work happens here.
+**TARGET (this project):** `/home/asciisd/sites/sniffpal` — clean Laravel 13.17 / PHP 8.4 Vue starter kit. Inertia v3, Pest 5, Fortify, Wayfinder 0.1.14, Larastan, Pint. Only auth/settings scaffolding exists today. All work happens here.
 
 ## Inventory of the source
 

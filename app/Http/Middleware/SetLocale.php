@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
  * language to a new browser on the first request, before any cookie exists.
  * The session is a fallback for a client that refuses cookies.
  *
- * Every candidate is checked against `petconnect.locales.supported`, so a
+ * Every candidate is checked against `sniffpal.locales.supported`, so a
  * hand-edited cookie cannot make App::setLocale() take an arbitrary string —
  * which would leave every `__()` on the page returning its own key.
  *
@@ -82,7 +82,7 @@ class SetLocale
     protected function resolveLocale(Request $request): string
     {
         /** @var list<string> $supported */
-        $supported  = config('petconnect.locales.supported', ['en']);
+        $supported  = config('sniffpal.locales.supported', ['en']);
 
         $user       = $request->user();
 
@@ -130,7 +130,7 @@ class SetLocale
 
     protected function cookieName(): string
     {
-        return (string) config('petconnect.locales.cookie', 'locale');
+        return (string) config('sniffpal.locales.cookie', 'locale');
     }
 
     protected function isNovaRequest(Request $request): bool

@@ -60,6 +60,6 @@ trait ReportValidationRules
      */
     public function maxDescriptionLength(): int
     {
-        return (int) config('petconnect.reports.max_description_length', 1000);
+        return (int) config('sniffpal.reports.max_description_length', 1000);
     }
 }

@@ -15,7 +15,7 @@ Nova is a private Composer package. The credentials for `nova.laravel.com` must 
 ## First install
 
 ```bash
-git clone git@github.com:melogail/petconnect.git sniffpal
+git clone git@github.com:melogail/sniffpal.git sniffpal
 cd sniffpal
 composer setup
 ```

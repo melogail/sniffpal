@@ -162,7 +162,7 @@ class UserFactory extends Factory
         ]);
     }
 
-    /** Holds the launch badge, see `petconnect.founding`. */
+    /** Holds the launch badge, see `sniffpal.founding`. */
     public function foundingMember(): static
     {
         return $this->state(fn (array $attributes): array => [

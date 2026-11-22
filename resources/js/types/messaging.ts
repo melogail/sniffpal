@@ -13,7 +13,7 @@ export type ConversationType = 'direct';
  * flag derived from `updated_at` would publish "edited" for it.
  *
  * `can_edit` closes on its own — `MessagePolicy::update` only allows the sender
- * inside `petconnect.messaging.edit_window_minutes` (15 by default) — so it is
+ * inside `sniffpal.messaging.edit_window_minutes` (15 by default) — so it is
  * accurate at render time and stale afterwards.
  */
 export type Message = {
@@ -105,7 +105,7 @@ export type ConversationPreview = {
      * goes stale while the menu is open.
      */
     last_message_at: string | null;
-    /** Truncated server-side to `petconnect.messaging.preview_snippet_length`. */
+    /** Truncated server-side to `sniffpal.messaging.preview_snippet_length`. */
     last_message_snippet: string | null;
     /**
      * An id, not a sender object, because rendering a user would cost the

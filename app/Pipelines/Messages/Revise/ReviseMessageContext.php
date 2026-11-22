@@ -18,7 +18,7 @@ use App\Pipelines\Messages\MessageContentContext;
  * no attribute bag here and no key an omission can silently wipe.
  *
  * Whether an edit is still allowed at all is not asked here. That is a window
- * in wall-clock time (`petconnect.messaging.edit_window_minutes`) and it is
+ * in wall-clock time (`sniffpal.messaging.edit_window_minutes`) and it is
  * MessagePolicy::update's decision, made at the call site in
  * MessageController — one place to audit, per .ai/rules/controllers.md.
  *
