@@ -22,6 +22,10 @@ return [
         'id' => env('GOOGLE_TAG_ID'),
     ],
 
+    'meta_pixel' => [
+        'id' => env('META_PIXEL_ID'),
+    ],
+
     'resend'     => [
         'key' => env('RESEND_API_KEY'),
     ],
