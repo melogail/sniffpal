@@ -132,7 +132,7 @@ test('describes the sender with a byline and nothing that belongs to their accou
     $payload                 = threadMessagePayload($conversation, $sender);
 
     expect(array_keys($payload['sender']))
-        ->toEqualCanonicalizing(['id', 'name', 'username', 'location', 'avatar'])
+        ->toEqualCanonicalizing(['id', 'name', 'username', 'location', 'avatar', 'is_founding_member'])
         ->and($payload['sender']['id'])->toBe($sender->getKey());
 });
 

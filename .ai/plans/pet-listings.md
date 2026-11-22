@@ -16,6 +16,7 @@ The core object: a user posts a pet for adoption, sale or mating, with photos, h
 - Requests: `Pet/StorePetRequest`, `Pet/UpdatePetRequest` (rules in `PetValidationRules`, `PetPhotoRules`).
 - Resources: `app/Http/Resources/Pet/` (card, detail, media, owner, category/breed options). `PetDetailResource` is also the edit-form contract.
 - Policy: `PetPolicy` (owner-only update/delete/status).
+- Founding badge: `PetObserver::created` stamps `users.founding_member_at` on the owner's first listing while `now()` is before `petconnect.founding.window_ends_at` (Africa/Cairo) and fewer than `petconnect.founding.cap` members hold it. Never revoked. Serialised as `is_founding_member` on `UserSummaryResource` (hence every byline and `PetOwnerResource`) and `ProfileResource`. Tests: `tests/Feature/Observers/FoundingMemberBadgeTest.php`.
 - Controllers: `Web/PetController`, `Api/V1/PetController`.
 
 ## Routes

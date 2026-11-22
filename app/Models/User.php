@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -124,6 +125,7 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     {
         return [
             'email_verified_at'       => 'datetime',
+            'founding_member_at'      => 'datetime',
             'last_seen_at'            => 'datetime',
             'is_active'               => 'boolean',
             'show_phone'              => 'boolean',
@@ -285,6 +287,22 @@ class User extends Authenticatable implements HasLocalePreference, HasMedia, Lik
     public function isVerified(): bool
     {
         return $this->email_verified_at !== null;
+    }
+
+    /** Holds the launch badge, see `petconnect.founding` and PetObserver::created. */
+    public function isFoundingMember(): bool
+    {
+        return $this->founding_member_at !== null;
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function foundingMembers(Builder $query): Builder
+    {
+        return $query->whereNotNull('founding_member_at');
     }
 
     /**

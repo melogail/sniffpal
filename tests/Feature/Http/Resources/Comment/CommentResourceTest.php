@@ -93,7 +93,7 @@ test('describes the author with a byline and nothing that belongs to their accou
     $payload = threadPayload($pet);
 
     expect(array_keys($payload['author']))
-        ->toEqualCanonicalizing(['id', 'name', 'username', 'location', 'avatar'])
+        ->toEqualCanonicalizing(['id', 'name', 'username', 'location', 'avatar', 'is_founding_member'])
         ->and($payload['author']['id'])->toBe($author->getKey());
 });
 

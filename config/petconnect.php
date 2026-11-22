@@ -291,4 +291,23 @@ return [
         'inbox_per_page' => (int) env('NOTIFICATIONS_INBOX_PER_PAGE', 15),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Founding members
+    |--------------------------------------------------------------------------
+    |
+    | The launch offer (marketing decision of 2026-11-22): the first `cap`
+    | members to publish a real listing before `window_ends_at` (Africa/Cairo)
+    | keep a founding-member badge for good. PetObserver::created awards it;
+    | HomeController shows the offer while it is open. `facebook_group_url`
+    | is the community group the home notice links to.
+    |
+    */
+
+    'founding'      => [
+        'cap'                => (int) env('FOUNDING_CAP', 100),
+        'window_ends_at'     => env('FOUNDING_WINDOW_ENDS_AT', '2027-01-31 23:59:59'),
+        'facebook_group_url' => env('FACEBOOK_GROUP_URL'),
+    ],
+
 ];
