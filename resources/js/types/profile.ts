@@ -41,6 +41,7 @@ export type ProfileSummary = {
     whatsapp: string | null;
     avatar: string | null;
     is_verified: boolean;
+    is_founding_member: boolean;
     is_self: boolean;
     /** The signed-in viewer already filed a report about this member. */
     has_reported: boolean;

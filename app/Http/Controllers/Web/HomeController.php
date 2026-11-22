@@ -13,6 +13,8 @@ use App\Http\Requests\Pet\ListHomeFeedRequest;
 use App\Http\Resources\Pet\PetCardResource;
 use App\Http\Resources\Pet\PetCategoryOptionResource;
 use App\Models\Pet;
+use App\Models\User;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -114,6 +116,25 @@ class HomeController extends Controller
             'categories'    => Inertia::defer(
                 fn () => PetCategoryOptionResource::collection($listPetCategories->handle()),
             ),
+            'launch'        => $this->launchProps(),
         ]);
+    }
+
+    /**
+     * The founding-member offer the home notice renders, mirroring the award
+     * rule in PetObserver::created (`petconnect.founding`).
+     *
+     * @return array{founding_open: bool, founding_remaining: int, facebook_group_url: string|null}
+     */
+    private function launchProps(): array
+    {
+        $windowEnd = Carbon::parse(config('petconnect.founding.window_ends_at'), 'Africa/Cairo');
+        $remaining = max(0, (int) config('petconnect.founding.cap') - User::foundingMembers()->count());
+
+        return [
+            'founding_open'      => $remaining > 0 && now()->lessThanOrEqualTo($windowEnd),
+            'founding_remaining' => $remaining,
+            'facebook_group_url' => config('petconnect.founding.facebook_group_url'),
+        ];
     }
 }

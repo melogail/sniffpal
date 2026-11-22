@@ -65,6 +65,7 @@ export type PetOwner = {
     username: string | null;
     location: string | null;
     avatar: string | null;
+    is_founding_member: boolean;
     /** A `wa.me` link, only while the owner enabled direct WhatsApp contact. */
     whatsapp: string | null;
 };

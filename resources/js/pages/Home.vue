@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import LaunchNotice from '@/components/home/LaunchNotice.vue';
 import CreatePetButton from '@/components/pets/CreatePetButton.vue';
 import NearbySearchButton from '@/components/pets/NearbySearchButton.vue';
 import PetFeed from '@/components/pets/PetFeed.vue';
@@ -9,6 +10,7 @@ import { safeGet, safeSet, useGeolocation } from '@/composables/useGeolocation';
 import { useTranslations } from '@/composables/useTranslations';
 import { home } from '@/routes';
 import type {
+    LaunchProps,
     HomeFeedBounds,
     HomeFeedFilters,
     Paginated,
@@ -140,6 +142,7 @@ const { filters, nearby, filterBounds, categories } = defineProps<{
     listingTypes: SelectOption<PetListingType>[];
     filterBounds: HomeFeedBounds;
     categories?: PetCategoryOption[];
+    launch: LaunchProps;
 }>();
 
 /**
@@ -361,6 +364,8 @@ onMounted(async () => {
 
         <!-- The visible heading is an h2, so the page still owes the document an h1. -->
         <h1 class="sr-only">{{ heading }}</h1>
+
+        <LaunchNotice :launch="launch" />
 
         <div class="mb-6 flex flex-wrap items-center gap-2">
             <PetFilterSheet

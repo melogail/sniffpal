@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { MapPin } from '@lucide/vue';
+import FoundingMemberBadge from '@/components/FoundingMemberBadge.vue';
 import StartConversationButton from '@/components/messaging/StartConversationButton.vue';
 import { Button } from '@/components/ui/button';
 import UserAvatar from '@/components/UserAvatar.vue';
@@ -121,6 +122,10 @@ const { t } = useTranslations();
                             {{ owner.name }}
                         </Link>
                     </h2>
+                    <FoundingMemberBadge
+                        v-if="owner.is_founding_member"
+                        class="mb-1"
+                    />
 
                     <p
                         class="text-muted-foreground flex items-center gap-1.5 text-sm"

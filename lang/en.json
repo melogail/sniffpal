@@ -720,5 +720,10 @@
     "help.faq_update_pet_after": ". You will see the same eight steps with everything already filled in. Saving replaces the whole listing, so leave the fields you are not changing exactly as they are — including the cover photo, which stays as it is unless you pick a new one.",
     "comments.like_name": "Like :name's comment, :count",
     "comments.count_on": ":count comments on :name",
-    "reviews.not_rated": "Not rated"
+    "reviews.not_rated": "Not rated",
+    "launch.title": "We launched on 23 November 2026 and we are starting from zero",
+    "launch.body": "Post a real listing now and keep the founding-member badge forever. :remaining badges left.",
+    "launch.register_cta": "Create an account to post",
+    "launch.join_group": "Join the Facebook group",
+    "profile.founding_member": "Founding member"
 }

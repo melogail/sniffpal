@@ -27,8 +27,12 @@ use Tests\TestCase;
  * the bound — by which point the commit that spent it is long gone. The bound
  * this replaces read 12 while the page measured 11, so it had already absorbed
  * one query's worth of drift in exactly that way.
+ *
+ * 11 became 12 on 2026-11-23 for `HomeController::launchProps()`: one COUNT of
+ * founding members for the launch notice, spent knowingly for the launch
+ * window. Drop it back when the notice goes.
  */
-const FEED_QUERY_COST             = 11;
+const FEED_QUERY_COST             = 12;
 
 /**
  * The keys PetCardResource emits behind `whenLoaded()`, which are the reason a
@@ -601,4 +605,33 @@ test('a partial feed visit from the filter sheet comes back with the filters it 
         ]);
 
     expect(array_keys($response->json('props')))->toEqualCanonicalizing(['errors', 'pets', 'filters']);
+});
+
+test('the home page carries the launch notice while the founding window is open', function () {
+    config([
+        'petconnect.founding.cap'                => 100,
+        'petconnect.founding.window_ends_at'     => '2027-01-31 23:59:59',
+        'petconnect.founding.facebook_group_url' => 'https://facebook.com/groups/sniffpal',
+    ]);
+    User::factory()->count(2)->foundingMember()->create();
+
+    $this->get(route('home'))->assertInertia(fn ($page) => $page
+        ->where('launch.founding_open', true)
+        ->where('launch.founding_remaining', 98)
+        ->where('launch.facebook_group_url', 'https://facebook.com/groups/sniffpal'));
+});
+
+test('the launch notice closes when the cap is reached', function () {
+    config(['petconnect.founding.cap' => 1, 'petconnect.founding.window_ends_at' => '2027-01-31 23:59:59']);
+    User::factory()->foundingMember()->create();
+
+    $this->get(route('home'))->assertInertia(fn ($page) => $page
+        ->where('launch.founding_open', false)
+        ->where('launch.founding_remaining', 0));
+});
+
+test('the launch notice closes when the window has passed', function () {
+    config(['petconnect.founding.cap' => 100, 'petconnect.founding.window_ends_at' => '2026-01-01 00:00:00']);
+
+    $this->get(route('home'))->assertInertia(fn ($page) => $page->where('launch.founding_open', false));
 });

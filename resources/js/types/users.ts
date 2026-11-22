@@ -13,4 +13,6 @@ export type UserSummary = {
     /** The coarse "City, State, Country" accessor — never a street address. */
     location: string | null;
     avatar: string | null;
+    /** Holds the launch badge, see `petconnect.founding`. */
+    is_founding_member: boolean;
 };
