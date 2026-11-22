@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslations } from '@/composables/useTranslations';
+import { trackEvent } from '@/lib/analytics';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 
@@ -35,6 +36,7 @@ defineProps<{
     <Form
         v-bind="store.form()"
         :reset-on-success="['password', 'password_confirmation']"
+        @success="trackEvent('sign_up', { method: 'email' })"
         v-slot="{ errors, processing }"
         class="flex flex-col gap-6"
     >

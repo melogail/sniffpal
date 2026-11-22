@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import { trackEvent } from '@/lib/analytics';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
 import PetFormWizard from '@/components/pets/form/PetFormWizard.vue';
@@ -66,6 +67,14 @@ const form = useForm<PetFormState>(
 function submit(): void {
     form.transform(toPetPayload).post(storePet().url, {
         preserveScroll: true,
+        onSuccess: () =>
+            trackEvent('pet_posted', {
+                listing_type: form.listing_type,
+                category: props.categories.find(
+                    (category) => category.id === form.category_id,
+                )?.slug,
+                city: form.location.city,
+            }),
     });
 }
 </script>

@@ -21,6 +21,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useTranslations } from '@/composables/useTranslations';
+import { trackEvent } from '@/lib/analytics';
 import { show as showPet } from '@/routes/pets';
 
 /**
@@ -75,7 +76,6 @@ const { petSlug, name } = defineProps<{
     name: string;
 }>();
 const { t } = useTranslations();
-
 
 /** This listing's absolute URL. See the note above before changing the base. */
 const petUrl = computed(() => {
@@ -132,6 +132,7 @@ const itemClass = 'size-9 justify-center p-0';
  * permission prompt. Both want the same message.
  */
 async function copyLink(): Promise<void> {
+    trackEvent('share', { method: 'copy_link', item_id: petSlug });
     try {
         await navigator.clipboard.writeText(petUrl.value);
         toast.success(t('pets.link_copied', { name }));
@@ -173,6 +174,12 @@ async function copyLink(): Promise<void> {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     :aria-label="destination.label"
+                                    @click="
+                                        trackEvent('share', {
+                                            method: destination.key,
+                                            item_id: petSlug,
+                                        })
+                                    "
                                 >
                                     <component
                                         :is="destination.icon"
@@ -195,7 +202,9 @@ async function copyLink(): Promise<void> {
                                 <Link class="size-4" aria-hidden="true" />
                             </DropdownMenuItem>
                         </TooltipTrigger>
-                        <TooltipContent>{{ t('pets.copy_link') }}</TooltipContent>
+                        <TooltipContent>{{
+                            t('pets.copy_link')
+                        }}</TooltipContent>
                     </Tooltip>
                 </div>
             </TooltipProvider>

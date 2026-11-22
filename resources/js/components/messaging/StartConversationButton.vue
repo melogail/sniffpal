@@ -18,6 +18,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { store as storeConversation } from '@/routes/conversations';
 import { useTranslations } from '@/composables/useTranslations';
+import { trackEvent } from '@/lib/analytics';
 
 /**
  * Open a thread with somebody.
@@ -199,6 +200,7 @@ const { t } = useTranslations();
             <Form
                 v-bind="storeConversation.form()"
                 class="space-y-4"
+                @success="trackEvent('conversation_started')"
                 v-slot="{ errors, processing }"
             >
                 <input type="hidden" name="recipient_id" :value="recipientId" />
